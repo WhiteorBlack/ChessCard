@@ -6,4 +6,36 @@
 
     </style>
 
+    <style name="loading_game_text">
+        <item name="android:textColor">@color/textYellow</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+
+    <style name="login_text">
+        <item name="android:textColor">@color/textLoginbrown</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="forget_text">
+        <item name="android:textColor">@color/textLoginbrown</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="login_pop">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@mipmap/bg_login_pop</item>
+    </style>
+
+    <style name="btn_login">
+        <item name="android:layout_width">@dimen/dp87</item>
+        <item name="android:layout_height">@dimen/dp30</item>
+    </style>
+
+    <style name="roomLimit">
+        <item name="android:textSize">7.5sp</item>
+        <item name="android:textColor">@color/textYellow</item>
+    </style>
+
 </resources>

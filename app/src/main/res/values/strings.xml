@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">推牌九</string>
+    <string name="loading_game">正在进入游戏......</string>
+    <string name="forget_pwd">忘记密码?</string>
 </resources>

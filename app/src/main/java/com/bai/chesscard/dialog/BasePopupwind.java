@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
@@ -26,8 +27,10 @@ public class BasePopupwind extends PopupWindow implements View.OnClickListener {
     public Context context;
 
     public BasePopupwind(Context context) {
-        this.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
-        this.getBackground().setAlpha(120);
+        this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        this.getBackground().setAlpha(120);
+        this.setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
+        this.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         this.context = context;
     }
 
@@ -35,6 +38,7 @@ public class BasePopupwind extends PopupWindow implements View.OnClickListener {
         this.popInterfacer = l;
         this.flag = flag;
     }
+
 
     @Override
     public boolean isOutsideTouchable() {
