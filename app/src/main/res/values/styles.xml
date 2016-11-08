@@ -36,6 +36,16 @@
     <style name="roomLimit">
         <item name="android:textSize">7.5sp</item>
         <item name="android:textColor">@color/textYellow</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="info_text">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/textInfoYellow</item>
+    </style>
+    <style name="tableCount">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/countRed</item>
     </style>
 
 </resources>

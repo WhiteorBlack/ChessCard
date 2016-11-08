@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dp100"
+        android:layout_marginTop="@dimen/dp10"
+        android:background="@mipmap/bg_table_room">
+
+        <TextView
+            android:id="@+id/txt_limit"
+            style="@style/info_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp15"
+            android:layout_marginTop="@dimen/dp12"
+            android:text="最少硬币"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/img_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@mipmap/img_gaming" />
+
+        <TextView
+            style="@style/tableCount"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dp30"
+            android:layout_alignBottom="@id/img_status"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp2"
+            android:gravity="center"
+            android:text="50人在线" />
+    </RelativeLayout>
+
+</LinearLayout>

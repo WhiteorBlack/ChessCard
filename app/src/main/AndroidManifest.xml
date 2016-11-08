@@ -12,13 +12,21 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation"
-            android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.Home"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".activity.TableList"
+            android:launchMode="standard"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

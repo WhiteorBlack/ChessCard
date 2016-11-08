@@ -83,6 +83,8 @@ public class LoginPop extends BasePopupwind {
                 login(phone, pwd);
                 break;
         }
+        if (popInterfacer!=null)
+            popInterfacer.OnConfirm(flag,bundle);
 
     }
 

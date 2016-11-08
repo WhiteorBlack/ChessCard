@@ -1,5 +1,9 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="dp2">2dp</dimen>
+    <dimen name="dp3">3dp</dimen>
+    <dimen name="dp5">5dp</dimen>
+    <dimen name="dp7">7dp</dimen>
     <dimen name="dp10">10dp</dimen>
     <dimen name="dp12">12dp</dimen>
     <dimen name="dp15">15dp</dimen>
@@ -10,6 +14,8 @@
     <dimen name="dp27">27dp</dimen>
     <dimen name="dp30">30dp</dimen>
     <dimen name="dp38">38dp</dimen>
+    <dimen name="dp60">60dp</dimen>
     <dimen name="dp70">70dp</dimen>
     <dimen name="dp87">87dp</dimen>
+    <dimen name="dp100">100dp</dimen>
 </resources>

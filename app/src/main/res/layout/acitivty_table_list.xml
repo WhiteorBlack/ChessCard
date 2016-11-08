@@ -40,84 +40,18 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp38"
+            android:layout_height="match_parent"
             android:gravity="center"
+            android:paddingLeft="@dimen/dp20"
+            android:paddingRight="@dimen/dp20"
             android:orientation="horizontal">
 
-            <FrameLayout
-                android:id="@+id/fl_pre_room"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/premiry_room"
-                android:onClick="cardClick">
-
-                <TextView
-                    android:id="@+id/txt_pre_limit"
-                    style="@style/roomLimit"
-                    android:layout_width="@dimen/dp70"
-                    android:layout_height="@dimen/dp20"
-                    android:layout_gravity="right|bottom"
-                    android:layout_margin="@dimen/dp10"
-                    android:gravity="center"
-                    android:text="10000金币" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/fl_mid_room"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/dp20"
-                android:background="@mipmap/middle_room"
-                android:onClick="cardClick">
-
-                <TextView
-                    android:id="@+id/txt_mid_limit"
-                    style="@style/roomLimit"
-                    android:layout_width="@dimen/dp70"
-                    android:layout_height="@dimen/dp20"
-                    android:layout_gravity="right|bottom"
-                    android:layout_margin="@dimen/dp10"
-                    android:gravity="center"
-                    android:text="10000金币" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/fl_hig_room"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/dp20"
-                android:background="@mipmap/high_room"
-                android:onClick="cardClick">
-
-                <TextView
-                    android:id="@+id/txt_hig_limit"
-                    style="@style/roomLimit"
-                    android:layout_width="@dimen/dp70"
-                    android:layout_height="@dimen/dp20"
-                    android:layout_gravity="right|bottom"
-                    android:layout_margin="@dimen/dp10"
-                    android:gravity="center"
-                    android:text="10000金币" />
-            </FrameLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recy_table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/txt_online_count"
-            style="@style/roomLimit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp20"
-            android:text="当前在线人数:1000"
-            android:textSize="18sp" />
-
-        <ImageView
-            android:id="@+id/img_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp12"
-            android:background="@mipmap/btn_start_soon"
-            android:onClick="cardClick" />
     </LinearLayout>
 
     <LinearLayout
