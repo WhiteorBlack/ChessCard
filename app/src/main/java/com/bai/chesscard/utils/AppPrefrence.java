@@ -16,25 +16,12 @@ public class AppPrefrence {
     private static final String ISLOGIN = "isLogin";
     private static final String USERNAME = "userName";
     private static final String USERPWD = "userPwd";
-    private static final String ISPAYPWD = "isPayPwd";
     private static final String TOKEN = "token";
-    private static final String ISREDSHOW = "isRedShow";
-    private static final String ISBOOMSHOW = "isBoomShow";
     private static final String USERPHONE = "userPhone";
     private static final String ISNOTIFY = "isNotify";
     private static final String BACKSOUND = "backSound";
     private static final String CLICKSOUND = "clickSound";
-    private static final String BOOMSOUND = "boomSound";
-
-    public static void setIsBoom(Context context, boolean isNotify) {
-        setting = getSp(context.getApplicationContext());
-        setting.edit().putBoolean(BOOMSOUND, isNotify).apply();
-    }
-
-    public static boolean getIsBoom(Context context) {
-        setting = getSp(context.getApplicationContext());
-        return setting.getBoolean(BOOMSOUND, true);
-    }
+    private static final String USERNO = "userNo";
 
     public static void setIsPush(Context context, boolean isNotify) {
         setting = getSp(context.getApplicationContext());
@@ -63,7 +50,7 @@ public class AppPrefrence {
 
     public static boolean getIsNotify(Context context) {
         setting = getSp(context.getApplicationContext());
-        return setting.getBoolean(ISNOTIFY, false);
+        return setting.getBoolean(ISNOTIFY, true);
     }
 
     public static void setUserPhone(Context context, String phone) {
@@ -76,26 +63,15 @@ public class AppPrefrence {
         return setting.getString(USERPHONE, "");
     }
 
-    public static void setIsRedShow(Context context, boolean isShow) {
+    public static void setUserNo(Context context, String token) {
         setting = getSp(context.getApplicationContext());
-        setting.edit().putBoolean(ISREDSHOW, isShow).apply();
+        setting.edit().putString(USERNO, token).apply();
     }
 
-    public static boolean getIsRedShow(Context context) {
+    public static String getUserNo(Context context) {
         setting = getSp(context.getApplicationContext());
-        return setting.getBoolean(ISREDSHOW, false);
+        return setting.getString(USERNO, "");
     }
-
-    public static void setIsBoomShow(Context context, boolean isShow) {
-        setting = getSp(context.getApplicationContext());
-        setting.edit().putBoolean(ISBOOMSHOW, isShow).apply();
-    }
-
-    public static boolean getIsBoomShow(Context context) {
-        setting = getSp(context.getApplicationContext());
-        return setting.getBoolean(ISBOOMSHOW, false);
-    }
-
 
     public static void setToken(Context context, String token) {
         setting = getSp(context.getApplicationContext());
@@ -106,23 +82,6 @@ public class AppPrefrence {
         setting = getSp(context.getApplicationContext());
         return setting.getString(TOKEN, "");
     }
-
-    /**
-     * 是否创建了支付密码
-     *
-     * @param context
-     * @param isCreate
-     */
-    public static void setIsPayPwd(Context context, boolean isCreate) {
-        setting = getSp(context.getApplicationContext());
-        setting.edit().putBoolean(ISPAYPWD, isCreate).apply();
-    }
-
-    public static boolean getIsPayPwd(Context context) {
-        setting = getSp(context.getApplicationContext());
-        return setting.getBoolean(ISPAYPWD, false);
-    }
-
 
     /**
      * 用户密码

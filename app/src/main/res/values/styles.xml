@@ -43,9 +43,21 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/textInfoYellow</item>
     </style>
+
     <style name="tableCount">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/countRed</item>
+    </style>
+
+    <style name="settingText">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/settingYellow</item>
+    </style>
+
+    <style name="switchStyle">
+        <item name="android:layout_width">@dimen/dp80</item>
+        <item name="android:layout_height">@dimen/dp30</item>
+        <item name="android:button">@drawable/switch_button</item>
     </style>
 
 </resources>

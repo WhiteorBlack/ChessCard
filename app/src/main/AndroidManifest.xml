@@ -25,7 +25,7 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".activity.TableList"
-            android:launchMode="standard"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape" />
     </application>
 

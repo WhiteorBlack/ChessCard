@@ -16,6 +16,8 @@ import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.BaseRecyAdapter;
 import com.bai.chesscard.adapter.TableAdapter;
 import com.bai.chesscard.dialog.HelpPop;
+import com.bai.chesscard.dialog.PersonalPop;
+import com.bai.chesscard.dialog.SettingPop;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,8 @@ public class TableList extends BaseActivity {
     private List tabList;
     private TableAdapter tabAdapter;
     private HelpPop helpPop;
+    private SettingPop settingPop;
+    private PersonalPop personalPop;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,6 +95,9 @@ public class TableList extends BaseActivity {
     public void cardClick(View view) {
         switch (view.getId()) {
             case R.id.img_user_photo:
+                if (personalPop==null)
+                    personalPop=new PersonalPop(context);
+                personalPop.showPop(txtHelp);
                 break;
             case R.id.txt_help:
                 if (helpPop == null)
@@ -98,6 +105,9 @@ public class TableList extends BaseActivity {
                 helpPop.showPop(recyTable);
                 break;
             case R.id.txt_setting:
+                if (settingPop==null)
+                    settingPop=new SettingPop(context);
+                settingPop.showPop(recyTable);
                 break;
         }
     }

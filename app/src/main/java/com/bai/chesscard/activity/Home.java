@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.bai.chesscard.BaseActivity;
 import com.bai.chesscard.R;
 import com.bai.chesscard.dialog.HelpPop;
+import com.bai.chesscard.dialog.PersonalPop;
+import com.bai.chesscard.dialog.SettingPop;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,6 +57,9 @@ public class Home extends BaseActivity {
     TextView txtSetting;
 
     private HelpPop helpPop;
+    private SettingPop settingPop;
+    private PersonalPop personalPop;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,13 +83,19 @@ public class Home extends BaseActivity {
             case R.id.img_start:
                 break;
             case R.id.img_user_photo:
+                if (personalPop==null)
+                    personalPop=new PersonalPop(context);
+                personalPop.showPop(txtHelp);
                 break;
             case R.id.txt_help:
-                if (helpPop==null)
-                    helpPop=new HelpPop(context);
+                if (helpPop == null)
+                    helpPop = new HelpPop(context);
                 helpPop.showPop(txtHelp);
                 break;
             case R.id.txt_setting:
+                if (settingPop == null)
+                    settingPop = new SettingPop(context);
+                settingPop.showPop(txtHelp);
                 break;
         }
     }

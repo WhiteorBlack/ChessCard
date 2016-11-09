@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.bai.chesscard.activity.Home;
 import com.bai.chesscard.dialog.LoginPop;
+import com.bai.chesscard.dialog.SettingPop;
 import com.bai.chesscard.interfacer.PopInterfacer;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.Tools;
@@ -69,6 +70,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
             @Override
             public void onFinish() {
                 startActivity(new Intent(context, Home.class));
+                finish();
             }
         }.start();
     }

@@ -57,6 +57,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp70"
+        android:visibility="gone"
         android:background="@mipmap/bg_home_bottom"
         android:gravity="center_vertical"
         android:orientation="horizontal">

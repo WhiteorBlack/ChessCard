@@ -7,4 +7,6 @@
     <color name="textLoginbrown">#82442c</color>
     <color name="textInfoYellow">#b78500</color>
     <color name="countRed">#6d0001</color>
+    <color name="settingYellow">#fdeba1</color>
+    <color name="settingName">#fdcf42</color>
 </resources>

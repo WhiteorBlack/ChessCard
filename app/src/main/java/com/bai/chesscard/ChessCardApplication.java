@@ -7,8 +7,13 @@ import android.app.Application;
  */
 
 public class ChessCardApplication extends Application {
+    private ChessCardApplication instance;
+    public ChessCardApplication getInstance(){
+        return instance;
+    }
     @Override
     public void onCreate() {
         super.onCreate();
+        instance=this;
     }
 }
