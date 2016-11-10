@@ -51,6 +51,9 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp27"
+        android:onClick="cardClick"
+        android:background="@mipmap/btn_login_game"
         android:id="@+id/img_loading"/>
     <TextView
         android:id="@+id/txt_loading"

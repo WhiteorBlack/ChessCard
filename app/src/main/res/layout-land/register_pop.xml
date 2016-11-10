@@ -25,8 +25,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-
-                    android:background="@mipmap/title_login" />
+                    android:background="@mipmap/title_register" />
             </FrameLayout>
 
             <LinearLayout
@@ -53,9 +52,9 @@
 
                     <EditText
                         android:id="@+id/edt_phone"
-                        android:layout_marginLeft="5dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
                         android:background="@mipmap/login_edit_bg"
                         android:focusable="true"
                         android:gravity="center_vertical|left"
@@ -77,16 +76,16 @@
                         style="@style/login_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="密    码:"
+                        android:text="推荐人:"
                         android:textStyle="bold" />
 
                     <EditText
                         android:id="@+id/edt_pwd"
                         android:layout_width="match_parent"
-                        android:layout_marginLeft="5dp"
                         android:layout_height="wrap_content"
                         android:background="@mipmap/login_edit_bg"
                         android:gravity="center_vertical|left"
+                        android:layout_marginLeft="5dp"
                         android:inputType="textPassword"
                         android:paddingLeft="10dp" />
                 </LinearLayout>
@@ -100,6 +99,7 @@
                     android:layout_marginRight="8.5dp"
                     android:layout_marginTop="6dp"
                     android:text="@string/forget_pwd"
+                    android:visibility="invisible"
                     android:textStyle="bold" />
 
                 <FrameLayout
@@ -109,19 +109,18 @@
                     <ImageView
                         android:id="@+id/btn_register"
                         style="@style/btn_login"
-                        android:layout_gravity="bottom|left"
-                        android:layout_marginLeft="12dp"
-                        android:background="@mipmap/btn_register" />
+                        android:layout_gravity="center"
+                        android:background="@mipmap/btn_register_big" />
 
                     <ImageView
                         android:id="@+id/btn_login"
                         style="@style/btn_login"
+                        android:visibility="invisible"
                         android:layout_gravity="bottom|right"
                         android:layout_marginRight="12dp"
                         android:background="@mipmap/btn_login" />
                 </FrameLayout>
             </LinearLayout>
-
 
         </LinearLayout>
     </LinearLayout>

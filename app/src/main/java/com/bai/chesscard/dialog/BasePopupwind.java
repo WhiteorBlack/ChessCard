@@ -74,7 +74,7 @@ public class BasePopupwind extends PopupWindow implements View.OnClickListener {
 
     @Override
     public void setFocusable(boolean focusable) {
-        super.setFocusable(true);
+        super.setFocusable(focusable);
     }
 
 

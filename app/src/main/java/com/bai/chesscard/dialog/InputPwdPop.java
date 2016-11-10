@@ -9,42 +9,27 @@ import android.os.Message;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bai.chesscard.R;
 import com.bai.chesscard.utils.Tools;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * author:${白曌勇} on 2016/11/6
  * TODO:
  */
-public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListener {
+public class InputPwdPop extends BasePopupwind implements View.OnLayoutChangeListener {
 
     EditText edtPhone;
     EditText edtPwd;
-    TextView txtForgetPwd;
-    ImageView btnRegister;
-    ImageView btnLogin;
-    private LinearLayout llContent;
-    private View parent;
     private View view;
     private InputMethodManager inputMethodManager;
 
-    public LoginPop(Context context) {
+    public InputPwdPop(Context context) {
         super(context);
         initView();
     }
@@ -52,19 +37,16 @@ public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListen
     private void initView() {
         inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.login_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.input_pwd_pop, null);
         edtPhone = (EditText) view.findViewById(R.id.edt_phone);
         edtPwd = (EditText) view.findViewById(R.id.edt_pwd);
-        view.findViewById(R.id.btn_login).setOnClickListener(this);
-        view.findViewById(R.id.txt_forget_pwd).setOnClickListener(this);
         view.findViewById(R.id.btn_register).setOnClickListener(this);
-        llContent = (LinearLayout) view.findViewById(R.id.ll_login_content);
 
         edtPhone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (b) {
-                    inputMethodManager.showSoftInput(view,InputMethodManager.SHOW_IMPLICIT,new ResultReceiver(inputHandler));
+                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT, new ResultReceiver(inputHandler));
                 }
 //                startAnimation(b);
             }
@@ -136,42 +118,34 @@ public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListen
                         }
                     });
         }
-        llContent.startAnimation(topAnimation);
     }
 
 
     public void onClick(View view) {
         Bundle bundle = new Bundle();
         switch (view.getId()) {
-            case R.id.txt_forget_pwd:
-                bundle.putInt("type", 0);
-                break;
             case R.id.btn_register:
-                bundle.putInt("type", 1);
-                break;
-            case R.id.btn_login:
-                String phone = edtPhone.getText().toString();
-                if (TextUtils.isEmpty(phone)) {
-                    Tools.toastMsg(context, "请输入手机号码");
-                    return;
-                }
-                if (!Tools.isMobileNum(phone)) {
-                    Tools.toastMsg(context, "请输入正确的手机号码");
-                    return;
-                }
-                bundle.putString("phone", phone);
-                String pwd = edtPwd.getText().toString();
+                String pwd = edtPhone.getText().toString();
                 if (TextUtils.isEmpty(pwd)) {
                     Tools.toastMsg(context, "请输入密码");
                     return;
                 }
+                String confirmPwd = edtPwd.getText().toString();
+                if (TextUtils.isEmpty(confirmPwd)) {
+                    Tools.toastMsg(context, "请输入确认密码");
+                    return;
+                }
+                if (!TextUtils.equals(pwd, confirmPwd)) {
+                    Tools.toastMsg(context, "两次输入密码不一致");
+                    return;
+                }
                 bundle.putString("pwd", pwd);
-                bundle.putInt("type", 2);
-                login(phone, pwd);
+                bundle.putInt("type", 1);
                 break;
         }
         if (popInterfacer != null)
             popInterfacer.OnConfirm(flag, bundle);
+        dismiss();
 
     }
 
@@ -181,6 +155,6 @@ public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListen
 
     @Override
     public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        Tools.debug(i+"--"+i1+"--"+i2);
+        Tools.debug(i + "--" + i1 + "--" + i2);
     }
 }

@@ -4,75 +4,61 @@ package com.bai.chesscard.dialog;/**
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bai.chesscard.R;
 import com.bai.chesscard.utils.Tools;
-
-import butterknife.BindView;
-import butterknife.OnClick;
 
 /**
  * author:${白曌勇} on 2016/11/6
  * TODO:
  */
-public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListener {
+public class GetCodePop extends BasePopupwind implements View.OnLayoutChangeListener {
 
     EditText edtPhone;
-    EditText edtPwd;
-    TextView txtForgetPwd;
-    ImageView btnRegister;
-    ImageView btnLogin;
+    Button btnGetCode;
     private LinearLayout llContent;
-    private View parent;
     private View view;
     private InputMethodManager inputMethodManager;
 
-    public LoginPop(Context context) {
+    public GetCodePop(Context context) {
         super(context);
         initView();
+        countTime();
+
     }
 
     private void initView() {
         inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.login_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.get_code_pop, null);
         edtPhone = (EditText) view.findViewById(R.id.edt_phone);
-        edtPwd = (EditText) view.findViewById(R.id.edt_pwd);
-        view.findViewById(R.id.btn_login).setOnClickListener(this);
-        view.findViewById(R.id.txt_forget_pwd).setOnClickListener(this);
         view.findViewById(R.id.btn_register).setOnClickListener(this);
+        view.findViewById(R.id.txt_notify).setOnClickListener(this);
         llContent = (LinearLayout) view.findViewById(R.id.ll_login_content);
-
+        btnGetCode = (Button) view.findViewById(R.id.btn_get_code);
+        btnGetCode.setOnClickListener(this);
         edtPhone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (b) {
-                    inputMethodManager.showSoftInput(view,InputMethodManager.SHOW_IMPLICIT,new ResultReceiver(inputHandler));
+                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT, new ResultReceiver(inputHandler));
                 }
 //                startAnimation(b);
-            }
-        });
-        edtPwd.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-
             }
         });
         view.findViewById(R.id.ll_parent).addOnLayoutChangeListener(this);
@@ -84,14 +70,9 @@ public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListen
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Tools.debug("hhhhhhhh");
         }
     };
 
-    private boolean isInputOpen() {
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        return inputMethodManager.isActive(edtPhone) || inputMethodManager.isActive(edtPwd);
-    }
 
     /**
      * 摇一摇动画
@@ -139,35 +120,30 @@ public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListen
         llContent.startAnimation(topAnimation);
     }
 
+    String phone;
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+        sendCode(phone);
+    }
 
     public void onClick(View view) {
         Bundle bundle = new Bundle();
         switch (view.getId()) {
-            case R.id.txt_forget_pwd:
-                bundle.putInt("type", 0);
-                break;
-            case R.id.btn_register:
-                bundle.putInt("type", 1);
+            case R.id.btn_get_code:
+                sendCode(phone);
+                countTime();
                 break;
             case R.id.btn_login:
                 String phone = edtPhone.getText().toString();
                 if (TextUtils.isEmpty(phone)) {
-                    Tools.toastMsg(context, "请输入手机号码");
+                    Tools.toastMsg(context, "请输入验证码");
                     return;
                 }
-                if (!Tools.isMobileNum(phone)) {
-                    Tools.toastMsg(context, "请输入正确的手机号码");
-                    return;
-                }
-                bundle.putString("phone", phone);
-                String pwd = edtPwd.getText().toString();
-                if (TextUtils.isEmpty(pwd)) {
-                    Tools.toastMsg(context, "请输入密码");
-                    return;
-                }
-                bundle.putString("pwd", pwd);
-                bundle.putInt("type", 2);
-                login(phone, pwd);
+                commitCode(phone);
+                break;
+            case R.id.txt_notify:
+                bundle.putInt("type", 1);
                 break;
         }
         if (popInterfacer != null)
@@ -175,12 +151,32 @@ public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListen
 
     }
 
-    private void login(String phone, String pwd) {
-        dismiss();
+    private void countTime() {
+        btnGetCode.setEnabled(false);
+        new CountDownTimer(1000 * 60, 1000) {
+
+            @Override
+            public void onTick(long l) {
+                btnGetCode.setText(l / 1000 + "秒后获取");
+            }
+
+            @Override
+            public void onFinish() {
+                btnGetCode.setEnabled(true);
+                btnGetCode.setText("重新获取");
+            }
+        }.start();
+    }
+
+    private void sendCode(String phone) {
+    }
+
+    private void commitCode(String phone) {
+
     }
 
     @Override
     public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        Tools.debug(i+"--"+i1+"--"+i2);
+        Tools.debug(i + "--" + i1 + "--" + i2);
     }
 }

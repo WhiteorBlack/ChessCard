@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.os.ResultReceiver;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -453,6 +454,14 @@ public class Tools {
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         // 得到InputMethodManager的实例
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    public static void openInput(View v, Context c,ResultReceiver resultReceiver) {
+        InputMethodManager imm = (InputMethodManager) c.getApplicationContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        // 得到InputMethodManager的实例
+        imm.showSoftInput(v,InputMethodManager.SHOW_IMPLICIT,resultReceiver);
+//        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     @SuppressWarnings("deprecation")
