@@ -1,7 +1,13 @@
 package com.bai.chesscard.activity;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -9,10 +15,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bai.chesscard.BaseActivity;
+import com.bai.chesscard.MainActivity;
 import com.bai.chesscard.R;
+import com.bai.chesscard.dialog.EditNamePop;
 import com.bai.chesscard.dialog.HelpPop;
 import com.bai.chesscard.dialog.PersonalPop;
 import com.bai.chesscard.dialog.SettingPop;
+import com.bai.chesscard.interfacer.PopInterfacer;
+import com.jph.takephoto.app.TakePhoto;
+import com.jph.takephoto.app.TakePhotoActivity;
+import com.jph.takephoto.model.CropOptions;
+import com.jph.takephoto.model.TResult;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,7 +37,7 @@ import butterknife.OnClick;
  * Created by Administrator on 2016/11/8.
  */
 
-public class Home extends BaseActivity {
+public class Home extends TakePhotoActivity implements PopInterfacer {
     @BindView(R.id.txt_notify)
     TextView txtNotify;
     @BindView(R.id.ll_notify_content)
@@ -59,13 +74,16 @@ public class Home extends BaseActivity {
     private HelpPop helpPop;
     private SettingPop settingPop;
     private PersonalPop personalPop;
+    private Context context;
+    private String picPath;
+    private EditNamePop editNamePop;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivty_home);
         ButterKnife.bind(this);
-
+        context = this;
     }
 
     @OnClick({R.id.fl_pre_room, R.id.fl_mid_room, R.id.fl_hig_room, R.id.img_start, R.id.img_user_photo, R.id.txt_help, R.id.txt_setting})
@@ -83,20 +101,123 @@ public class Home extends BaseActivity {
             case R.id.img_start:
                 break;
             case R.id.img_user_photo:
-                if (personalPop==null)
-                    personalPop=new PersonalPop(context);
+                if (personalPop == null)
+                    personalPop = new PersonalPop(context);
                 personalPop.showPop(txtHelp);
+                personalPop.setPopInterfacer(this, 0);
                 break;
             case R.id.txt_help:
                 if (helpPop == null)
                     helpPop = new HelpPop(context);
                 helpPop.showPop(txtHelp);
+                helpPop.setPopInterfacer(this, 1);
                 break;
             case R.id.txt_setting:
                 if (settingPop == null)
                     settingPop = new SettingPop(context);
                 settingPop.showPop(txtHelp);
+                settingPop.setPopInterfacer(this, 2);
                 break;
         }
+    }
+
+    @Override
+    public void OnDismiss(int flag) {
+        switch (flag) {
+            case 0:
+                personalPop = null;
+                break;
+            case 1:
+                helpPop = null;
+                break;
+            case 2:
+                settingPop = null;
+                break;
+            case 3:
+                editNamePop = null;
+                break;
+        }
+    }
+
+    @Override
+    public void OnConfirm(int flag, Bundle bundle) {
+        switch (flag) {
+            case 0:
+                if (bundle == null)
+                    return;
+                if (bundle.getInt("type", -1) == 0) {
+                    //更改昵称
+                    if (editNamePop == null)
+                        editNamePop = new EditNamePop(context);
+                    editNamePop.setPopInterfacer(this, 3);
+                    editNamePop.showPop(txtHelp);
+                }
+                if (bundle.getInt("type") == 1) {
+                    //更改账号
+                    logout();
+                    startActivity(new Intent(context, MainActivity.class));
+                    finish();
+                    personalPop.dismiss();
+                }
+                if (bundle.getInt("type") == 2) { //更改头像
+                    File file = new File(Environment.getExternalStorageDirectory(), "/chessCard/" + System.currentTimeMillis() + ".jpg");
+                    if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+                    final Uri imageUri = Uri.fromFile(file);
+                    CharSequence[] items = {"手机相册", "手机拍照"};
+                    final TakePhoto takePhoto = getTakePhoto();
+                    final CropOptions cropOptions = new CropOptions.Builder().setAspectX(1).setAspectY(1).setWithOwnCrop(true).create();
+                    new AlertDialog.Builder(this).setTitle("选择照片").setCancelable(true).setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0:
+                                    takePhoto.onPickFromGalleryWithCrop(imageUri, cropOptions);
+                                    break;
+                                case 1:
+                                    takePhoto.onPickFromCaptureWithCrop(imageUri, cropOptions);
+                                    break;
+                                case 2:
+                                    dialog.dismiss();
+                                    break;
+                            }
+                        }
+                    }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }).show();
+                }
+                break;
+            case 3:
+                if (bundle == null)
+                    return;
+                if (personalPop != null)
+                    personalPop.setName(bundle.getString("name"));
+
+                break;
+        }
+    }
+
+    private void logout() {
+    }
+
+    @Override
+    public void OnCancle(int flag) {
+
+    }
+
+    @Override
+    public void takeSuccess(TResult result) {
+        super.takeSuccess(result);
+        picPath = result.getImage().getPath();
+        if (!TextUtils.isEmpty(picPath))
+            if (personalPop != null)
+                personalPop.setPhoto(picPath);
+    }
+
+    @Override
+    public void takeFail(TResult result, String msg) {
+        super.takeFail(result, msg);
     }
 }

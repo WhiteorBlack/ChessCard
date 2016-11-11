@@ -60,4 +60,9 @@
         <item name="android:button">@drawable/switch_button</item>
     </style>
 
+    <style name="headPostion">
+        <item name="android:textColor">@color/postionYellow</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
 </resources>

@@ -2,6 +2,7 @@ package com.bai.chesscard.activity;/**
  * Created by Administrator on 2016/11/8.
  */
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -81,7 +82,7 @@ public class TableList extends BaseActivity {
         tabAdapter.setOnItemClickListener(new BaseRecyAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(View view, int position) {
-
+                startActivity(new Intent(context, GamingActivity.class));
             }
 
             @Override
@@ -95,8 +96,8 @@ public class TableList extends BaseActivity {
     public void cardClick(View view) {
         switch (view.getId()) {
             case R.id.img_user_photo:
-                if (personalPop==null)
-                    personalPop=new PersonalPop(context);
+                if (personalPop == null)
+                    personalPop = new PersonalPop(context);
                 personalPop.showPop(txtHelp);
                 break;
             case R.id.txt_help:
@@ -105,8 +106,8 @@ public class TableList extends BaseActivity {
                 helpPop.showPop(recyTable);
                 break;
             case R.id.txt_setting:
-                if (settingPop==null)
-                    settingPop=new SettingPop(context);
+                if (settingPop == null)
+                    settingPop = new SettingPop(context);
                 settingPop.showPop(recyTable);
                 break;
         }

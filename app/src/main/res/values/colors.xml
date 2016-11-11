@@ -9,4 +9,8 @@
     <color name="countRed">#6d0001</color>
     <color name="settingYellow">#fdeba1</color>
     <color name="settingName">#fdcf42</color>
+    <color name="editName">#f6cf59</color>
+    <color name="editNamelight">#fff3cc</color>
+    <color name="gamingMoney">#ddc081</color>
+    <color name="postionYellow">#e5c710</color>
 </resources>
