@@ -85,4 +85,14 @@ public interface GameOprateView {
      * @param pos
      */
     void hideMultiple(int pos);
+
+    /**
+     * 骰子摇动
+     */
+    void shakeDice();
+
+    /**
+     * 骰子停止
+     */
+    void endDice(int one,int two);
 }

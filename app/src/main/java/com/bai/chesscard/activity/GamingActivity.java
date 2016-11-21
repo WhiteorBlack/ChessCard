@@ -14,6 +14,7 @@ import com.bai.chesscard.BaseActivity;
 import com.bai.chesscard.R;
 import com.bai.chesscard.interfacer.GameOprateView;
 import com.bai.chesscard.presenter.GamePresenter;
+import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.StrokeTextView;
 
 import butterknife.BindView;
@@ -143,7 +144,16 @@ public class GamingActivity extends BaseActivity implements GameOprateView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gaming);
         ButterKnife.bind(this);
+        init();
+    }
+
+    private void init() {
         gamePresenter = new GamePresenter(this);
+        gamePresenter.shakeDice(this);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) llTable.getLayoutParams();
+        params.width = (int) (Tools.getScreenWide(context) * 0.6);
+        params.height = (int) (Tools.getScreenHeight(context) * 0.55);
+        llTable.setLayoutParams(params);
     }
 
     @OnClick({R.id.img_back, R.id.rel_head_left, R.id.rel_head_bottom, R.id.rel_head_right, R.id.rel_head_top, R.id.img_gameing_user, R.id.img_head, R.id.img_add, R.id.txt_money_left, R.id.txt_money_mid, R.id.txt_money_right, R.id.img_setting})
@@ -215,6 +225,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView {
         if (progressDialog == null)
             progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setMessage("游戏准备中...");
         progressDialog.setCancelable(true);
         progressDialog.show();
     }
@@ -259,6 +270,16 @@ public class GamingActivity extends BaseActivity implements GameOprateView {
 
     @Override
     public void hideMultiple(int pos) {
+
+    }
+
+    @Override
+    public void shakeDice() {
+
+    }
+
+    @Override
+    public void endDice(int one, int two) {
 
     }
 }
