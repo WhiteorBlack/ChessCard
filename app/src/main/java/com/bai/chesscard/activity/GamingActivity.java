@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import com.bai.chesscard.BaseActivity;
 import com.bai.chesscard.R;
+import com.bai.chesscard.dialog.SettingPop;
 import com.bai.chesscard.interfacer.GameOprateView;
+import com.bai.chesscard.interfacer.PopInterfacer;
 import com.bai.chesscard.presenter.GamePresenter;
 import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.StrokeTextView;
@@ -25,7 +27,7 @@ import butterknife.OnClick;
  * Created by Administrator on 2016/11/11.
  */
 
-public class GamingActivity extends BaseActivity implements GameOprateView {
+public class GamingActivity extends BaseActivity implements GameOprateView, PopInterfacer {
     @BindView(R.id.img_back)
     ImageView imgBack;
     @BindView(R.id.img_time)
@@ -138,6 +140,8 @@ public class GamingActivity extends BaseActivity implements GameOprateView {
 
     private GamePresenter gamePresenter;
     private ProgressDialog progressDialog;
+    private SettingPop settingPop;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -154,6 +158,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView {
         params.width = (int) (Tools.getScreenWide(context) * 0.6);
         params.height = (int) (Tools.getScreenHeight(context) * 0.55);
         llTable.setLayoutParams(params);
+        gamePresenter.startService(this);
     }
 
     @OnClick({R.id.img_back, R.id.rel_head_left, R.id.rel_head_bottom, R.id.rel_head_right, R.id.rel_head_top, R.id.img_gameing_user, R.id.img_head, R.id.img_add, R.id.txt_money_left, R.id.txt_money_mid, R.id.txt_money_right, R.id.img_setting})
@@ -191,6 +196,17 @@ public class GamingActivity extends BaseActivity implements GameOprateView {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        gamePresenter.onDestory();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
     public void showUserInfo(int pos) {
 
     }
@@ -207,7 +223,10 @@ public class GamingActivity extends BaseActivity implements GameOprateView {
 
     @Override
     public void showSetting() {
-
+        if (settingPop == null)
+            settingPop = new SettingPop(context);
+        settingPop.showPop(imgAdd);
+        settingPop.setPopInterfacer(this,1);
     }
 
     @Override
@@ -280,6 +299,25 @@ public class GamingActivity extends BaseActivity implements GameOprateView {
 
     @Override
     public void endDice(int one, int two) {
+
+    }
+
+    @Override
+    public void OnDismiss(int flag) {
+        switch (flag){
+            case 1:
+                settingPop=null;
+                break;
+        }
+    }
+
+    @Override
+    public void OnConfirm(int flag, Bundle bundle) {
+
+    }
+
+    @Override
+    public void OnCancle(int flag) {
 
     }
 }

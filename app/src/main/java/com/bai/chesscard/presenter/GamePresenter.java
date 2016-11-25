@@ -1,10 +1,14 @@
 package com.bai.chesscard.presenter;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.CountDownTimer;
+import android.os.IBinder;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -14,9 +18,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bai.chesscard.R;
+import com.bai.chesscard.interfacer.GameDataListener;
 import com.bai.chesscard.interfacer.GameOprateView;
+import com.bai.chesscard.mina.MinaClientHandler;
+import com.bai.chesscard.service.HeartBeatService;
 import com.bai.chesscard.utils.Tools;
 import com.bumptech.glide.Glide;
+
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
 
 import java.util.Random;
 
@@ -24,14 +34,43 @@ import java.util.Random;
  * Created by Administrator on 2016/11/16.
  */
 
-public class GamePresenter {
+public class GamePresenter implements GameDataListener {
     private GameOprateView gameOprateView;
     private ViewGroup viewGroup;
     private int[] diceRes = new int[]{R.drawable.dice_one, R.drawable.dice_two, R.drawable.dice_three, R.drawable.dice_four, R.drawable.dice_five, R.drawable.dice_six};
+    private HeartBeatService heartBeatService;
+    private IoSession gameSession;
 
     public GamePresenter(GameOprateView gameOprateView) {
         this.gameOprateView = gameOprateView;
     }
+
+    /**
+     * 启动service建立长连接
+     *
+     * @param context
+     */
+    public void startService(Context context) {
+        context.bindService(new Intent(context, HeartBeatService.class), conn, Context.BIND_AUTO_CREATE);
+    }
+
+    ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            //返回一个MsgService对象
+            heartBeatService = ((HeartBeatService.MyBinder) service).getService();
+            heartBeatService.setGameDataListener(GamePresenter.this);
+        }
+    };
+
+    public void onDestory() {
+        heartBeatService.stopSelf();
+    }
+
 
     /**
      * 返回
@@ -260,5 +299,50 @@ public class GamePresenter {
         textView.getBackground().setAlpha(180);
         toast.setView(textView);
         toast.show();
+    }
+
+    @Override
+    public void onMinaCreated(IoSession session) {
+        this.gameSession=session;
+    }
+
+    @Override
+    public void onMinaClose(IoSession session) {
+
+    }
+
+    @Override
+    public void onMinaDisconect() {
+
+    }
+
+    @Override
+    public void onMinaReconect(int time) {
+
+    }
+
+    @Override
+    public void onMinaIdle(IdleStatus status) {
+
+    }
+
+    @Override
+    public void onMessageReceive(Object msg) {
+
+    }
+
+    @Override
+    public void onContectFail() {
+        Tools.debug("hahahhahaah_zheli shi presenter");
+    }
+
+    @Override
+    public void onReContactFail() {
+        Tools.debug("hahahhahaah_zheli shi presenter");
+    }
+
+    @Override
+    public void onException(Throwable cause) {
+        Tools.debug("hahahhahaah_zheli shi presenter");
     }
 }
