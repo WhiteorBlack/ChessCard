@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -21,7 +22,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bai.chesscard.R;
+import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.interfacer.PostCallBack;
+import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * author:${白曌勇} on 2016/11/6
@@ -169,6 +176,17 @@ public class GetCodePop extends BasePopupwind implements View.OnLayoutChangeList
     }
 
     private void sendCode(String phone) {
+        Map<String,String> params=new HashMap<>();
+        params.put("phone",phone);
+        params.put("type","reg");
+        params.put("action","getcode");
+        PostTools.postData(CommonUntilities.MAIN_URL+"action=getcode",params,new PostCallBack(){
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+
+            }
+        });
     }
 
     private void commitCode(String phone) {

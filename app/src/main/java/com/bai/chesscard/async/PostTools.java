@@ -23,6 +23,7 @@ public class PostTools {
         final String signString = CommonUntilities.MD5KEY;
         if (params == null)
             params = new HashMap<>();
+        params.put("timestamp",System.currentTimeMillis()+"");
         OkHttpUtils.post().url(url).params(params).build().execute(postCallBack);
 
     }

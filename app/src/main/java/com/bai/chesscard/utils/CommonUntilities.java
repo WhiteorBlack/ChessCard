@@ -9,6 +9,6 @@ package com.bai.chesscard.utils;/**
 public class CommonUntilities {
     public static boolean WXPAY = false;
     public static String MD5KEY = "v5d6g8fldghid58fdksigmnv5249d5ft";
-    public static String MAIN_URL = "http://youxi.wfy188.com:84/api/";
+    public static String MAIN_URL = "http://122.114.91.199/api/game/?";
 
 }

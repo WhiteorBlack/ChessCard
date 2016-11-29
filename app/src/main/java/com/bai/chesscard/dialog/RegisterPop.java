@@ -25,7 +25,7 @@ import com.bai.chesscard.utils.Tools;
  * author:${白曌勇} on 2016/11/6
  * TODO:
  */
-public class RegisterPop extends BasePopupwind implements View.OnLayoutChangeListener {
+public class RegisterPop extends BasePopupwind  {
 
     EditText edtPhone;
     EditText edtPwd;
@@ -45,83 +45,16 @@ public class RegisterPop extends BasePopupwind implements View.OnLayoutChangeLis
         edtPwd = (EditText) view.findViewById(R.id.edt_pwd);
         view.findViewById(R.id.btn_register).setOnClickListener(this);
 
-        edtPhone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b) {
-                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT, new ResultReceiver(inputHandler));
-                }
-//                startAnimation(b);
-            }
-        });
         edtPwd.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
 
             }
         });
-        view.findViewById(R.id.ll_parent).addOnLayoutChangeListener(this);
         this.setFocusable(true);
         this.setContentView(view);
     }
 
-    Handler inputHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Tools.debug("hhhhhhhh");
-        }
-    };
-
-    private boolean isInputOpen() {
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        return inputMethodManager.isActive(edtPhone) || inputMethodManager.isActive(edtPwd);
-    }
-
-    /**
-     * 摇一摇动画
-     *
-     * @param isBack
-     */
-    private void startAnimation(boolean isBack) {
-        int type = TranslateAnimation.RELATIVE_TO_PARENT;
-        float topFromYValue;
-        float topToYValue;
-        if (isBack) {
-            topFromYValue = -0.4f;
-            topToYValue = 0;
-        } else {
-            topFromYValue = 0;
-            topToYValue = -0.4f;
-        }
-        TranslateAnimation topAnimation = new TranslateAnimation(type, 0, type,
-                0, type, topFromYValue, type, topToYValue);
-        topAnimation.setDuration(200);
-        topAnimation.setFillAfter(true);
-        if (isBack) {
-            topAnimation
-                    .setAnimationListener(new TranslateAnimation.AnimationListener() {
-
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            // TODO Auto-generated method stub
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-                            // TODO Auto-generated method stub
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            // TODO Auto-generated method stub
-                            edtPhone.setFocusable(true);
-                        }
-                    });
-        }
-    }
 
 
     public void onClick(View view) {
@@ -149,12 +82,4 @@ public class RegisterPop extends BasePopupwind implements View.OnLayoutChangeLis
 
     }
 
-    private void login(String phone, String pwd) {
-        dismiss();
-    }
-
-    @Override
-    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        Tools.debug(i + "--" + i1 + "--" + i2);
-    }
 }

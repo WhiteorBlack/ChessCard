@@ -40,7 +40,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity);
         ButterKnife.bind(this);
         if (AppPrefrence.getIsLogin(context)) {
             countDown();
@@ -75,7 +75,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
 //    };
 
     private void countDown() {
-        new CountDownTimer(1000, 100) {
+        new CountDownTimer(2000, 2000) {
 
             @Override
             public void onTick(long l) {

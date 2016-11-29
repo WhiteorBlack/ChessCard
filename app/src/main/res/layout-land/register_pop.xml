@@ -86,7 +86,7 @@
                         android:background="@mipmap/login_edit_bg"
                         android:gravity="center_vertical|left"
                         android:layout_marginLeft="5dp"
-                        android:inputType="textPassword"
+                        android:inputType="text"
                         android:paddingLeft="10dp" />
                 </LinearLayout>
 
