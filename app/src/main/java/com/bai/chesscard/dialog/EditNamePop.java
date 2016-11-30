@@ -70,7 +70,7 @@ public class EditNamePop extends BasePopupwind {
         Map<String, String> params = new HashMap<>();
         params.put("nick_name", name);
         params.put("token", AppPrefrence.getToken(context));
-        PostTools.postData(CommonUntilities.MAIN_URL + "useredit", params, new PostCallBack() {
+        PostTools.postData(CommonUntilities.MAIN_URL + "edituser", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);

@@ -96,10 +96,10 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     AppPrefrence.setUserPhone(context, login.data.mobile);
                     AppPrefrence.setToken(context, login.token);
                     AppPrefrence.setReferrer(context, login.data.referrer);
-                    AppPrefrence.setAvatar(context, login.data.avatar);
+                    AppPrefrence.setAvatar(context, CommonUntilities.PIC_URL + login.data.avatar);
                     AppPrefrence.setAmount(context, login.data.amount);
                     AppPrefrence.setUserNo(context, login.data.id);
-                    AppPrefrence.setUserName(context,login.data.nick_name);
+                    AppPrefrence.setUserName(context, login.data.nick_name);
                     startActivity(new Intent(context, Home.class));
                     finish();
                 } else Tools.toastMsgCenter(context, login.msg);
@@ -286,7 +286,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     AppPrefrence.setAvatar(context, login.data.avatar);
                     AppPrefrence.setAmount(context, login.data.amount);
                     AppPrefrence.setUserNo(context, login.data.id);
-                    AppPrefrence.setUserName(context,login.data.nick_name);
+                    AppPrefrence.setUserName(context, login.data.nick_name);
                     dismissPop();
                 }
                 Tools.toastMsgCenter(context, login.msg);

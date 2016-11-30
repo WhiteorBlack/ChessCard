@@ -19,6 +19,7 @@ import com.bai.chesscard.MainActivity;
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.BaseBean;
+import com.bai.chesscard.bean.Bean_Avatar;
 import com.bai.chesscard.dialog.EditNamePop;
 import com.bai.chesscard.dialog.HelpPop;
 import com.bai.chesscard.dialog.PersonalPop;
@@ -246,11 +247,12 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
                     Tools.toastMsgCenter(context, R.string.no_network);
                     return;
                 }
-                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                Bean_Avatar baseBean = new Gson().fromJson(response, Bean_Avatar.class);
                 if (baseBean.status) {
                     if (personalPop != null)
                         personalPop.setPhoto(picPath);
                     Glide.with(context).load(picPath).into(imgUserPhoto);
+                    AppPrefrence.setAvatar(context, CommonUntilities.PIC_URL + baseBean.data);
                 }
                 Tools.toastMsgCenter(context, baseBean.msg);
             }
