@@ -1,12 +1,14 @@
 package com.bai.chesscard.utils;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -20,11 +22,17 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bai.chesscard.R;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -63,6 +71,34 @@ public class Tools {
             str = str.replaceAll("\\r|\\n", "");
             Log.e(DEBUG_TAG, str + "");
         }
+    }
+
+    public static ProgressDialog getDialog(Context context,String msg){
+        ProgressDialog progressDialog=new ProgressDialog(context);
+        progressDialog.setMessage(msg);
+        progressDialog.setCancelable(true);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        return progressDialog;
+    }
+
+    public static void toastMsgCenter(Context context, String msg) {
+        Toast toast = new Toast(context);
+        View view= LayoutInflater.from(context).inflate(R.layout.toast_textview,null);
+        TextView textView = (TextView)view.findViewById(R.id.txt_toast);
+        textView.setText(msg);
+        toast.setView(view);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    public static void toastMsgCenter(Context context, int msg) {
+        Toast toast = new Toast(context);
+        View view= LayoutInflater.from(context).inflate(R.layout.toast_textview,null);
+        TextView textView = (TextView)view.findViewById(R.id.txt_toast);
+        textView.setText(context.getResources().getString(R.string.no_network));
+        toast.setView(view);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     public static <T> T[] concat(T[] first, T[] second) {

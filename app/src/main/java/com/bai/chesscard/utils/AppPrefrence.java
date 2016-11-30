@@ -22,6 +22,37 @@ public class AppPrefrence {
     private static final String BACKSOUND = "backSound";
     private static final String CLICKSOUND = "clickSound";
     private static final String USERNO = "userNo";
+    private static final String AVATAR = "avatar";
+    private static final String REFERRER = "referrer";
+    private static final String AMOUNT="amount";
+
+    public static void setAmount(Context context,int amount){
+        setting=getSp(context.getApplicationContext());
+        setting.edit().putInt(AMOUNT,amount).apply();
+    }
+
+    public static int getAmount(Context context){
+        setting=getSp(context.getApplicationContext());
+        return setting.getInt(AMOUNT,0);
+    }
+
+    public static void setAvatar(Context context,String avatar){
+        setting=getSp(context.getApplicationContext());
+        setting.edit().putString(AVATAR,avatar).apply();
+    }
+    public static String getAvatar(Context context){
+        setting=getSp(context.getApplicationContext());
+        return setting.getString(AVATAR,"");
+    }
+
+    public static void setReferrer(Context context,String refer){
+        setting=getSp(context.getApplicationContext());
+        setting.edit().putString(REFERRER,refer).apply();
+    }
+    public static String getReferrer(Context context){
+        setting=getSp(context.getApplicationContext());
+        return setting.getString(REFERRER,"");
+    }
 
     public static void setIsPush(Context context, boolean isNotify) {
         setting = getSp(context.getApplicationContext());

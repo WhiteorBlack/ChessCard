@@ -23,7 +23,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bai.chesscard.R;
+import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.Bean_Login;
+import com.bai.chesscard.interfacer.PostCallBack;
+import com.bai.chesscard.utils.AppPrefrence;
+import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -32,7 +41,7 @@ import butterknife.OnClick;
  * author:${白曌勇} on 2016/11/6
  * TODO:
  */
-public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListener {
+public class LoginPop extends BasePopupwind {
 
     EditText edtPhone;
     EditText edtPwd;
@@ -60,83 +69,14 @@ public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListen
         view.findViewById(R.id.btn_register).setOnClickListener(this);
         llContent = (LinearLayout) view.findViewById(R.id.ll_login_content);
 
-        edtPhone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b) {
-                    inputMethodManager.showSoftInput(view,InputMethodManager.SHOW_IMPLICIT,new ResultReceiver(inputHandler));
-                }
-//                startAnimation(b);
-            }
-        });
         edtPwd.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
 
             }
         });
-        view.findViewById(R.id.ll_parent).addOnLayoutChangeListener(this);
         this.setFocusable(true);
         this.setContentView(view);
-    }
-
-    Handler inputHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Tools.debug("hhhhhhhh");
-        }
-    };
-
-    private boolean isInputOpen() {
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        return inputMethodManager.isActive(edtPhone) || inputMethodManager.isActive(edtPwd);
-    }
-
-    /**
-     * 摇一摇动画
-     *
-     * @param isBack
-     */
-    private void startAnimation(boolean isBack) {
-        int type = TranslateAnimation.RELATIVE_TO_PARENT;
-        float topFromYValue;
-        float topToYValue;
-        if (isBack) {
-            topFromYValue = -0.4f;
-            topToYValue = 0;
-        } else {
-            topFromYValue = 0;
-            topToYValue = -0.4f;
-        }
-        TranslateAnimation topAnimation = new TranslateAnimation(type, 0, type,
-                0, type, topFromYValue, type, topToYValue);
-        topAnimation.setDuration(200);
-        topAnimation.setFillAfter(true);
-        if (isBack) {
-            topAnimation
-                    .setAnimationListener(new TranslateAnimation.AnimationListener() {
-
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-                            // TODO Auto-generated method stub
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-                            // TODO Auto-generated method stub
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            // TODO Auto-generated method stub
-                            edtPhone.setFocusable(true);
-                        }
-                    });
-        }
-        llContent.startAnimation(topAnimation);
     }
 
 
@@ -165,8 +105,6 @@ public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListen
                     Tools.toastMsg(context, "请输入密码");
                     return;
                 }
-                bundle.putString("pwd", pwd);
-                bundle.putInt("type", 2);
                 login(phone, pwd);
                 break;
         }
@@ -175,12 +113,37 @@ public class LoginPop extends BasePopupwind implements View.OnLayoutChangeListen
 
     }
 
-    private void login(String phone, String pwd) {
-        dismiss();
+    private void login(String phone, final String pwd) {
+        Map<String, String> params = new HashMap<>();
+        params.put("phone", phone);
+        params.put("password", pwd);
+        PostTools.postData(CommonUntilities.MAIN_URL + "login", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                Bundle bundle = new Bundle();
+                bundle.putInt("type", 2);
+                if (Tools.isEmpty(response)) {
+                    Tools.toastMsgCenter(context, R.string.no_network);
+                    return;
+                }
+                Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
+                bundle.putBoolean("statue", login.status);
+                if (login.status) {
+                    AppPrefrence.setIsLogin(context, true);
+                    AppPrefrence.setUserPhone(context, login.data.mobile);
+                    AppPrefrence.setUserPwd(context, pwd);
+                    AppPrefrence.setToken(context, login.token);
+                    AppPrefrence.setReferrer(context, login.data.referrer);
+                    AppPrefrence.setAvatar(context, login.data.avatar);
+                    AppPrefrence.setAmount(context, login.data.amount);
+                    AppPrefrence.setUserNo(context,login.data.id);
+                }
+                if (popInterfacer != null)
+                    popInterfacer.OnConfirm(flag, bundle);
+                Tools.toastMsgCenter(context, login.msg);
+            }
+        });
     }
 
-    @Override
-    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        Tools.debug(i+"--"+i1+"--"+i2);
-    }
 }

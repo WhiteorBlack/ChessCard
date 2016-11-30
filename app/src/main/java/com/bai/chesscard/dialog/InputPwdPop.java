@@ -127,16 +127,16 @@ public class InputPwdPop extends BasePopupwind implements View.OnLayoutChangeLis
             case R.id.btn_register:
                 String pwd = edtPhone.getText().toString();
                 if (TextUtils.isEmpty(pwd)) {
-                    Tools.toastMsg(context, "请输入密码");
+                    Tools.toastMsgCenter(context, "请输入密码");
                     return;
                 }
                 String confirmPwd = edtPwd.getText().toString();
                 if (TextUtils.isEmpty(confirmPwd)) {
-                    Tools.toastMsg(context, "请输入确认密码");
+                    Tools.toastMsgCenter(context, "请输入确认密码");
                     return;
                 }
                 if (!TextUtils.equals(pwd, confirmPwd)) {
-                    Tools.toastMsg(context, "两次输入密码不一致");
+                    Tools.toastMsgCenter(context, "两次输入密码不一致");
                     return;
                 }
                 bundle.putString("pwd", pwd);
@@ -145,7 +145,6 @@ public class InputPwdPop extends BasePopupwind implements View.OnLayoutChangeLis
         }
         if (popInterfacer != null)
             popInterfacer.OnConfirm(flag, bundle);
-        dismiss();
 
     }
 

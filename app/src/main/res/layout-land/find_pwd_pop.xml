@@ -54,7 +54,7 @@
                             style="@style/login_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="输入密码:"
+                            android:text=" 新 密 码 :"
                             android:textStyle="bold" />
 
                         <EditText

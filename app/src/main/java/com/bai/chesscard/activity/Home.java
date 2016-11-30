@@ -17,17 +17,27 @@ import android.widget.TextView;
 import com.bai.chesscard.BaseActivity;
 import com.bai.chesscard.MainActivity;
 import com.bai.chesscard.R;
+import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.dialog.EditNamePop;
 import com.bai.chesscard.dialog.HelpPop;
 import com.bai.chesscard.dialog.PersonalPop;
 import com.bai.chesscard.dialog.SettingPop;
 import com.bai.chesscard.interfacer.PopInterfacer;
+import com.bai.chesscard.interfacer.PostCallBack;
+import com.bai.chesscard.utils.AppPrefrence;
+import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.Tools;
+import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoActivity;
 import com.jph.takephoto.model.CropOptions;
 import com.jph.takephoto.model.TResult;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -86,6 +96,14 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
         context = this;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        txtUserName.setText("昵称: " + AppPrefrence.getUserName(context));
+        txtUserNo.setText("编号: " + AppPrefrence.getUserNo(context));
+        txtUserMoney.setText(AppPrefrence.getAmount(context) + "");
+    }
+
     @OnClick({R.id.fl_pre_room, R.id.fl_mid_room, R.id.fl_hig_room, R.id.img_start, R.id.img_user_photo, R.id.txt_help, R.id.txt_setting})
     public void cardClick(View view) {
         switch (view.getId()) {
@@ -103,6 +121,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
             case R.id.img_user_photo:
                 if (personalPop == null)
                     personalPop = new PersonalPop(context);
+                personalPop.setPhoto(AppPrefrence.getAvatar(context));
                 personalPop.showPop(txtHelp);
                 personalPop.setPopInterfacer(this, 0);
                 break;
@@ -156,25 +175,24 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
                     //更改账号
                     logout();
                     startActivity(new Intent(context, MainActivity.class));
-                    finish();
                     personalPop.dismiss();
+                    finish();
                 }
                 if (bundle.getInt("type") == 2) { //更改头像
-                    File file = new File(Environment.getExternalStorageDirectory(), "/chessCard/" + System.currentTimeMillis() + ".jpg");
+                    final File file = new File(Environment.getExternalStorageDirectory(), "/chessCard/" + System.currentTimeMillis() + ".jpg");
                     if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
                     final Uri imageUri = Uri.fromFile(file);
                     CharSequence[] items = {"手机相册", "手机拍照"};
                     final TakePhoto takePhoto = getTakePhoto();
-                    final CropOptions cropOptions = new CropOptions.Builder().setAspectX(1).setAspectY(1).setWithOwnCrop(true).create();
                     new AlertDialog.Builder(this).setTitle("选择照片").setCancelable(true).setItems(items, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {
                                 case 0:
-                                    takePhoto.onPickFromGalleryWithCrop(imageUri, cropOptions);
+                                    takePhoto.onPickFromGallery();
                                     break;
                                 case 1:
-                                    takePhoto.onPickFromCaptureWithCrop(imageUri, cropOptions);
+                                    takePhoto.onPickFromCapture(imageUri);
                                     break;
                                 case 2:
                                     dialog.dismiss();
@@ -194,7 +212,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
                     return;
                 if (personalPop != null)
                     personalPop.setName(bundle.getString("name"));
-
+                txtUserName.setText(bundle.getString("name"));
                 break;
         }
     }
@@ -212,8 +230,31 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
         super.takeSuccess(result);
         picPath = result.getImage().getPath();
         if (!TextUtils.isEmpty(picPath))
-            if (personalPop != null)
-                personalPop.setPhoto(picPath);
+            uploadPic();
+
+    }
+
+    private void uploadPic() {
+        Map<String, String> params = new HashMap<>();
+        params.put("picture", Tools.convertIconToString(picPath));
+        params.put("token", AppPrefrence.getToken(context));
+        PostTools.postData(CommonUntilities.MAIN_URL + "uploadpic", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    Tools.toastMsgCenter(context, R.string.no_network);
+                    return;
+                }
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.status) {
+                    if (personalPop != null)
+                        personalPop.setPhoto(picPath);
+                    Glide.with(context).load(picPath).into(imgUserPhoto);
+                }
+                Tools.toastMsgCenter(context, baseBean.msg);
+            }
+        });
     }
 
     @Override

@@ -45,9 +45,9 @@ public class PersonalPop extends BasePopupwind {
         txtNo = (TextView) view.findViewById(R.id.txt_user_no);
         txtAccount = (TextView) view.findViewById(R.id.txt_user_account);
         imgPhoto=(ImageView)view.findViewById(R.id.img_head);
-        txtAccount.setText(AppPrefrence.getUserPhone(context));
-        txtName.setText(AppPrefrence.getUserName(context));
-        txtNo.setText(AppPrefrence.getUserNo(context));
+        txtAccount.setText("账号: "+AppPrefrence.getUserPhone(context));
+        txtName.setText("昵称: "+AppPrefrence.getUserName(context));
+        txtNo.setText("编号: "+AppPrefrence.getUserNo(context));
 
         llParent = (LinearLayout) view.findViewById(R.id.ll_parent);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) llParent.getLayoutParams();
@@ -92,5 +92,7 @@ public class PersonalPop extends BasePopupwind {
                 bundle.putInt("type", 2);
                 break;
         }
+        if (popInterfacer!=null)
+            popInterfacer.OnConfirm(flag,bundle);
     }
 }
