@@ -1,5 +1,6 @@
 package com.bai.chesscard.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,8 +21,11 @@ import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.bean.Bean_Avatar;
+import com.bai.chesscard.bean.Bean_Notify;
+import com.bai.chesscard.bean.Bean_Room;
 import com.bai.chesscard.dialog.EditNamePop;
 import com.bai.chesscard.dialog.HelpPop;
+import com.bai.chesscard.dialog.NotifyDetialPop;
 import com.bai.chesscard.dialog.PersonalPop;
 import com.bai.chesscard.dialog.SettingPop;
 import com.bai.chesscard.interfacer.PopInterfacer;
@@ -29,6 +33,8 @@ import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
+import com.bai.chesscard.widget.BaseScollTextView;
+import com.bai.chesscard.widget.ScrollTextView;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.jph.takephoto.app.TakePhoto;
@@ -37,7 +43,9 @@ import com.jph.takephoto.model.CropOptions;
 import com.jph.takephoto.model.TResult;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -50,7 +58,7 @@ import butterknife.OnClick;
 
 public class Home extends TakePhotoActivity implements PopInterfacer {
     @BindView(R.id.txt_notify)
-    TextView txtNotify;
+    ScrollTextView txtNotify;
     @BindView(R.id.ll_notify_content)
     LinearLayout llNotifyContent;
     @BindView(R.id.txt_pre_limit)
@@ -88,6 +96,13 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
     private Context context;
     private String picPath;
     private EditNamePop editNamePop;
+    private List<String> notifyStringList;
+    private List<Bean_Notify.Notify> notifyList;
+    private List<Bean_Room.Room> roomList;
+    private NotifyDetialPop notifyDetialPop;
+
+    private int count = 0;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,6 +110,109 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
         setContentView(R.layout.acitivty_home);
         ButterKnife.bind(this);
         context = this;
+        initData();
+    }
+
+    private void initData() {
+        progressDialog = Tools.getDialog(context, "");
+        progressDialog.setMessage("正在获取房间数据...");
+        progressDialog.show();
+        notifyList = new ArrayList<>();
+        notifyStringList = new ArrayList<>();
+        roomList = new ArrayList<>();
+        txtNotify.setOnItemClickListener(new BaseScollTextView.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, TextView textView) {
+                if (notifyDetialPop == null)
+                    notifyDetialPop = new NotifyDetialPop(context);
+                notifyDetialPop.setTitle(notifyList.get(position).title);
+                notifyDetialPop.setContent(notifyList.get(position).content);
+                notifyDetialPop.showPop(txtHelp);
+                notifyDetialPop.setPopInterfacer(Home.this, 4);
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getNotify();
+        getRoomData();
+    }
+
+    /**
+     * 获取房间信息
+     */
+    private void getRoomData() {
+
+        PostTools.postData(CommonUntilities.MAIN_URL + "house", null, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    Tools.toastMsgCenter(context, R.string.no_network);
+                    return;
+                }
+                Bean_Room beanRoom = new Gson().fromJson(response, Bean_Room.class);
+                if (beanRoom != null && beanRoom.status && beanRoom.data != null && beanRoom.data.size() > 0) {
+                    roomList.clear();
+                    roomList.addAll(beanRoom.data);
+                    setData();
+                }
+            }
+
+            @Override
+            public void onAfter() {
+                super.onAfter();
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    private void setData() {
+        for (int i = 0; i < roomList.size(); i++) {
+            Bean_Room.Room room = roomList.get(i);
+            if (i == 0) {
+                txtPreLimit.setText("最低" + room.min_piont + "金币");
+            }
+            if (i == 1) {
+                txtMidLimit.setText("最低" + room.min_piont + "金币");
+            }
+            if (i == 2) {
+                txtHigLimit.setText("最低" + room.min_piont + "金币");
+            }
+            count += roomList.get(i).people_count;
+        }
+        txtOnlineCount.setText("当前在线人数: " + count + " 人");
+    }
+
+
+    /**
+     * 获取通知
+     */
+    private void getNotify() {
+        Map<String, String> params = new HashMap<>();
+        params.put("Type", "0");
+        PostTools.postData(CommonUntilities.MAIN_URL + "articlelist", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    Tools.toastMsgCenter(context, R.string.no_network);
+                    return;
+                }
+                Bean_Notify bean_notify = new Gson().fromJson(response, Bean_Notify.class);
+                if (bean_notify != null && bean_notify.data != null && bean_notify.data.size() > 0) {
+                    notifyList.clear();
+                    notifyStringList.clear();
+                    notifyList.addAll(bean_notify.data);
+                    for (int i = 0; i < notifyList.size(); i++) {
+                        notifyStringList.add(notifyList.get(i).title);
+                    }
+                    txtNotify.setData(notifyStringList);
+                }
+            }
+        });
     }
 
     @Override
@@ -109,15 +227,22 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
     public void cardClick(View view) {
         switch (view.getId()) {
             case R.id.fl_pre_room:
-                startActivityForResult(new Intent(context, TableList.class).putExtra("type", "0"), 0);
+                if (roomList.size() == 0)
+                    return;
+                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(0).id), 0);
                 break;
             case R.id.fl_mid_room:
-                startActivityForResult(new Intent(context, TableList.class).putExtra("type", "1"), 1);
+                if (roomList.size() == 0)
+                    return;
+                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(1).id), 1);
                 break;
             case R.id.fl_hig_room:
-                startActivityForResult(new Intent(context, TableList.class).putExtra("type", "2"), 2);
+                if (roomList.size() == 0)
+                    return;
+                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(2).id), 2);
                 break;
             case R.id.img_start:
+
                 break;
             case R.id.img_user_photo:
                 if (personalPop == null)
@@ -155,6 +280,9 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
                 break;
             case 3:
                 editNamePop = null;
+                break;
+            case 4:
+                notifyDetialPop = null;
                 break;
         }
     }

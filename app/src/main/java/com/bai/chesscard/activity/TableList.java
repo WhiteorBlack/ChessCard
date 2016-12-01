@@ -2,11 +2,13 @@ package com.bai.chesscard.activity;/**
  * Created by Administrator on 2016/11/8.
  */
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,12 +18,21 @@ import com.bai.chesscard.BaseActivity;
 import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.BaseRecyAdapter;
 import com.bai.chesscard.adapter.TableAdapter;
+import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.Bean_Table;
 import com.bai.chesscard.dialog.HelpPop;
 import com.bai.chesscard.dialog.PersonalPop;
 import com.bai.chesscard.dialog.SettingPop;
+import com.bai.chesscard.interfacer.PostCallBack;
+import com.bai.chesscard.utils.AppPrefrence;
+import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.Tools;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindArray;
 import butterknife.BindView;
@@ -52,26 +63,60 @@ public class TableList extends BaseActivity {
     @BindView(R.id.txt_setting)
     TextView txtSetting;
 
-    private List tabList;
+    private List<Bean_Table.Table> tabList;
     private TableAdapter tabAdapter;
     private HelpPop helpPop;
     private SettingPop settingPop;
     private PersonalPop personalPop;
-
+    private ProgressDialog progressDialog;
+    private String id;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivty_table_list);
         ButterKnife.bind(this);
         initView();
-        initData();
+         id = getIntent().getStringExtra("id");
+        progressDialog = Tools.getDialog(context, "");
+        progressDialog.setMessage("正在获取游戏数据...");
+        progressDialog.show();
     }
 
-    private void initData() {
-        for (int i = 0; i < 10; i++) {
-            tabList.add(new ArrayList<>());
-        }
-        tabAdapter.notifyDataSetChanged();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getTableData(id);
+        Tools.debug("onstart");
+    }
+
+
+    private void getTableData(String id) {
+
+        Map<String, String> params = new HashMap<>();
+        params.put("house_id", id);
+        params.put("user_id", AppPrefrence.getUserNo(context));
+        PostTools.postData(CommonUntilities.MAIN_URL + "housetable", params, new PostCallBack() {
+            @Override
+            public void onAfter() {
+                super.onAfter();
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    Tools.toastMsgCenter(context, R.string.no_network);
+                    return;
+                }
+                Bean_Table beanTable = new Gson().fromJson(response, Bean_Table.class);
+                if (beanTable != null && beanTable.status && beanTable.data != null && beanTable.data.size() > 0) {
+                    tabList.clear();
+                    tabList.addAll(beanTable.data);
+                    tabAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     private void initView() {
@@ -82,7 +127,7 @@ public class TableList extends BaseActivity {
         tabAdapter.setOnItemClickListener(new BaseRecyAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(View view, int position) {
-                startActivity(new Intent(context, GamingActivity.class));
+                startActivity(new Intent(context, GamingActivity.class).putExtra("roomId",tabList.get(position).house_id).putExtra("tableId",tabList.get(position).id));
             }
 
             @Override

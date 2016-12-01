@@ -45,6 +45,7 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="landscape"
+            android:configChanges="screenSize|orientation|keyboardHidden"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,10 +55,12 @@
         <activity
             android:name=".activity.Home"
             android:launchMode="standard"
+            android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="landscape" />
         <activity
             android:name=".activity.TableList"
             android:launchMode="singleTask"
+            android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="landscape" />
         <activity
             android:name=".activity.GamingActivity"

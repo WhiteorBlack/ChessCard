@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@mipmap/bg_home"
     android:orientation="vertical">
 
@@ -28,14 +29,20 @@
                 android:layout_height="wrap_content"
                 android:background="@mipmap/icon_noitify" />
 
-            <TextView
+            <com.bai.chesscard.widget.ScrollTextView
                 android:id="@+id/txt_notify"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_weight="1"
-                android:ellipsize="marquee"
-                android:singleLine="true" />
+                app:ellipsize="marquee"
+                app:delayTime="3000"
+                app:textColor="@android:color/white"
+                app:gravity="center"
+                app:direction="left"
+                app:paddingEnd="5dp"
+                app:paddingStart="5dp"
+                app:singleLine="true" />
         </LinearLayout>
 
         <LinearLayout
