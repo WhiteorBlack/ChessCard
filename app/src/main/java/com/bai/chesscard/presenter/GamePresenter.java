@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -18,16 +20,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bai.chesscard.R;
+import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.Bean_ChessList;
+import com.bai.chesscard.bean.Bean_TableDetial;
 import com.bai.chesscard.interfacer.GameDataListener;
 import com.bai.chesscard.interfacer.GameOprateView;
+import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.mina.MinaClientHandler;
 import com.bai.chesscard.service.HeartBeatService;
+import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -72,6 +84,59 @@ public class GamePresenter implements GameDataListener {
     }
 
 
+    public void getChessData() {
+        List<Bean_ChessList.Chess> chess = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            chess.add(new Bean_ChessList.Chess());
+        }
+        gameOprateView.setChessData(chess);
+    }
+
+    /**
+     * 下注
+     *
+     * @param userId
+     * @param point
+     */
+    public void betMoney(String userId, int point) {
+
+    }
+
+    /**
+     * 获取桌面信息
+     *
+     * @param roomId
+     * @param tableId
+     */
+    public void getTableInfo(String roomId, String tableId) {
+        gameOprateView.showDialog();
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", tableId);
+        PostTools.postData(CommonUntilities.MAIN_URL + "tabledetail", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                Tools.debug("tabledetail----" + response);
+                if (TextUtils.isEmpty(response))
+                    return;
+                Bean_TableDetial tableDetial = new Gson().fromJson(response, Bean_TableDetial.class);
+                if (tableDetial != null && tableDetial.status) {
+                    try {
+                    } catch (Exception e) {
+
+                    }
+                    gameOprateView.setTableInfo(tableDetial.data);
+                }
+            }
+
+            @Override
+            public void onAfter() {
+                super.onAfter();
+                gameOprateView.hideDialog();
+            }
+        });
+    }
+
     /**
      * 返回
      */
@@ -85,7 +150,34 @@ public class GamePresenter implements GameDataListener {
      * @param pos
      */
     public void showUserInfo(int pos) {
-        gameOprateView.showUserInfo(pos);
+        switch (pos) {
+            case 0:
+                //庄家
+
+                break;
+            case 1:
+                //初家
+
+                break;
+            case 2:
+                //天家
+
+                break;
+            case 3:
+                //尾家
+
+                break;
+        }
+        gameOprateView.showUserInfo(new Bean_TableDetial.TableUser());
+    }
+
+    /**
+     * 展示正在游戏用户的信息
+     *
+     * @param user
+     */
+    public void showUserInfo(Bean_TableDetial.TableUser user) {
+        gameOprateView.showUserInfo(user);
     }
 
     /**
@@ -136,14 +228,23 @@ public class GamePresenter implements GameDataListener {
      * 开牌
      */
     public void openChess() {
-        gameOprateView.openChess();
+        Bundle bundle=new Bundle();
+        bundle.putInt("bankerOne",1);
+        bundle.putInt("bankerTwo",2);
+        bundle.putInt("leftOne",1);
+        bundle.putInt("leftTwo",2);
+        bundle.putInt("bottomOne",1);
+        bundle.putInt("bottomTwo",2);
+        bundle.putInt("rightOne",1);
+        bundle.putInt("rightTwo",2);
+        gameOprateView.openChess(bundle);
     }
 
     /**
      * 开始计时
      */
     public void startCountTime(int time) {
-        new CountDownTimer(10 * 1000, 1000) {
+        new CountDownTimer(time, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -303,7 +404,7 @@ public class GamePresenter implements GameDataListener {
 
     @Override
     public void onMinaCreated(IoSession session) {
-        this.gameSession=session;
+        this.gameSession = session;
     }
 
     @Override

@@ -41,9 +41,10 @@
                     android:orientation="horizontal">
 
                     <FrameLayout
+                        android:id="@+id/fl_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/dp20"
+                        android:layout_marginLeft="@dimen/dp30"
                         android:background="@mipmap/bg_count_time">
 
                         <ImageView
@@ -62,23 +63,51 @@
                         android:background="@mipmap/text_start" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/ll_banker_chess"
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal">
+                    android:layout_gravity="center">
 
-                    <ImageView
-                        android:id="@+id/img_top_left"
+                    <LinearLayout
+                        android:id="@+id/ll_banker_chess"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/img_top_right"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+                        <ImageView
+                            android:id="@+id/img_top_left"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            />
+
+                        <ImageView
+                            android:id="@+id/img_top_right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                             />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/img_chess_top_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@mipmap/point_eight" />
+
+                        <ImageView
+                            android:id="@+id/img_chess_top_multiple"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@mipmap/one_multiple" />
+                    </LinearLayout>
+                </FrameLayout>
+
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recy_chess"
@@ -118,14 +147,12 @@
                         <ImageView
                             android:id="@+id/img_chess_left_one"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@mipmap/bg_chess_back" />
+                            android:layout_height="wrap_content" />
 
                         <ImageView
                             android:id="@+id/img_chess_left_two"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@mipmap/bg_chess_back" />
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -171,14 +198,12 @@
                         <ImageView
                             android:id="@+id/img_chess_mid_one"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@mipmap/bg_chess_back" />
+                            android:layout_height="wrap_content" />
 
                         <ImageView
                             android:id="@+id/img_chess_mid_two"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@mipmap/bg_chess_back" />
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -223,14 +248,12 @@
                         <ImageView
                             android:id="@+id/img_chess_right_one"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@mipmap/bg_chess_back" />
+                            android:layout_height="wrap_content" />
 
                         <ImageView
                             android:id="@+id/img_chess_right_two"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@mipmap/bg_chess_back" />
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -453,8 +476,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingTop="@dimen/dp2"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/dp2">
 
         <FrameLayout
             android:layout_width="0dp"

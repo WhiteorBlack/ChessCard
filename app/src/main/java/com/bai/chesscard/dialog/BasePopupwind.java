@@ -28,10 +28,11 @@ public class BasePopupwind extends PopupWindow implements View.OnClickListener {
 
     public BasePopupwind(Context context) {
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        this.getBackground().setAlpha(120);
-        this.setSoftInputMode(PopupWindow.INPUT_METHOD_NEEDED);
-        this.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         this.context = context;
+        this.setFocusable(true);
+        this.setOutsideTouchable(false);
+        this.setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
+        this.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
     }
 
     public void setPopInterfacer(PopInterfacer l, int flag) {
@@ -42,12 +43,12 @@ public class BasePopupwind extends PopupWindow implements View.OnClickListener {
 
     @Override
     public boolean isOutsideTouchable() {
-        return false;
+        return super.isOutsideTouchable();
     }
 
     @Override
     public void setOutsideTouchable(boolean touchable) {
-        super.setOutsideTouchable(false);
+        super.setOutsideTouchable(touchable);
     }
 
     @Override
@@ -57,12 +58,12 @@ public class BasePopupwind extends PopupWindow implements View.OnClickListener {
 
     @Override
     public void setHeight(int height) {
-        super.setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
+        super.setHeight(height);
     }
 
     @Override
     public void setWidth(int width) {
-        super.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+        super.setWidth(width);
     }
 
     @Override

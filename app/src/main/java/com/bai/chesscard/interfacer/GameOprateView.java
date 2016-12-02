@@ -1,16 +1,24 @@
 package com.bai.chesscard.interfacer;
 
+import android.os.Bundle;
+
+import com.bai.chesscard.bean.Bean_ChessList;
+import com.bai.chesscard.bean.Bean_TableDetial;
+
+import java.util.List;
+
 /**
  * Created by Administrator on 2016/11/16.
  */
 
 public interface GameOprateView {
+    void setChessData(List<Bean_ChessList.Chess> data);
     /**
      * 展示玩儿家信息
      *
-     * @param pos
+     * @param user
      */
-    void showUserInfo(int pos);
+    void showUserInfo(Bean_TableDetial.TableUser user);
 
     /**
      * 展示观众信息
@@ -52,7 +60,7 @@ public interface GameOprateView {
     /**
      * 开牌
      */
-    void openChess();
+    void openChess(Bundle bundle);
 
     /**
      * 开始计时
@@ -94,5 +102,26 @@ public interface GameOprateView {
     /**
      * 骰子停止
      */
-    void endDice(int one,int two);
+    void endDice(int one, int two);
+
+    /**
+     * 桌面详情
+     *
+     * @param tableInfo
+     */
+    void setTableInfo(Bean_TableDetial.TableDetial tableInfo);
+
+    /**
+     * 用户下注之后本地更改用户金币数量
+     *
+     * @param point
+     */
+    void rediusPoint(int point);
+
+    /**
+     * 获胜之后本地增加用户金币
+     *
+     * @param point
+     */
+    void addPoint(int point);
 }

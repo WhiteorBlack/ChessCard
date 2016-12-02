@@ -65,4 +65,9 @@
         <item name="android:textSize">10sp</item>
     </style>
 
+    <style name="audi_anim">
+        <item name="android:windowEnterAnimation">@anim/audi_left_in</item>
+        <item name="android:windowExitAnimation">@anim/audi_left_out</item>
+    </style>
+
 </resources>
