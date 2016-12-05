@@ -32,6 +32,6 @@ public class Bean_TableDetial extends BaseBean {
         public int point;
         public int exp;
         public int status;
-        public int reffer_tel;
+        public String reffer_tel;
     }
 }

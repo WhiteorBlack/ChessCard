@@ -28,10 +28,16 @@ import com.bai.chesscard.interfacer.GameOprateView;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.mina.MinaClientHandler;
 import com.bai.chesscard.service.HeartBeatService;
+import com.bai.chesscard.service.MessageEvent;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.tencent.TIMConversation;
+import com.tencent.TIMConversationType;
+import com.tencent.TIMManager;
+import com.tencent.TIMMessage;
+import com.tencent.TIMMessageListener;
 
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
@@ -40,21 +46,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Random;
 
 /**
  * Created by Administrator on 2016/11/16.
  */
 
-public class GamePresenter implements GameDataListener {
+public class GamePresenter implements Observer, GameDataListener{
     private GameOprateView gameOprateView;
     private ViewGroup viewGroup;
     private int[] diceRes = new int[]{R.drawable.dice_one, R.drawable.dice_two, R.drawable.dice_three, R.drawable.dice_four, R.drawable.dice_five, R.drawable.dice_six};
     private HeartBeatService heartBeatService;
     private IoSession gameSession;
+    private TIMConversation conversation;
 
-    public GamePresenter(GameOprateView gameOprateView) {
+    public GamePresenter(GameOprateView gameOprateView,String groupId,TIMConversationType type) {
         this.gameOprateView = gameOprateView;
+        conversation= TIMManager.getInstance().getConversation(type,groupId);
     }
 
     /**
@@ -63,7 +73,8 @@ public class GamePresenter implements GameDataListener {
      * @param context
      */
     public void startService(Context context) {
-        context.bindService(new Intent(context, HeartBeatService.class), conn, Context.BIND_AUTO_CREATE);
+//        context.bindService(new Intent(context, HeartBeatService.class), conn, Context.BIND_AUTO_CREATE);
+        MessageEvent.getInstance().addObserver(this);
     }
 
     ServiceConnection conn = new ServiceConnection() {
@@ -80,7 +91,8 @@ public class GamePresenter implements GameDataListener {
     };
 
     public void onDestory() {
-        heartBeatService.stopSelf();
+//        heartBeatService.stopSelf();
+        MessageEvent.getInstance().clear();
     }
 
 
@@ -98,8 +110,26 @@ public class GamePresenter implements GameDataListener {
      * @param userId
      * @param point
      */
-    public void betMoney(String userId, int point) {
+    public void betMoney(String userId, int point,String tableId,String houseId,String num) {
+        Map<String,String> params=new HashMap<>();
+    }
 
+    /**
+     * 观众进入房间进行观战或者游戏
+     *
+     * @param roomId
+     * @param userId
+     */
+    public void getIn(String roomId, String userId) {
+        Map<String, String> params = new HashMap<>();
+        params.put("user_id", userId);
+        params.put("table_id", roomId);
+        PostTools.postData(CommonUntilities.MAIN_URL + "addgz", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+            }
+        });
     }
 
     /**
@@ -228,15 +258,15 @@ public class GamePresenter implements GameDataListener {
      * 开牌
      */
     public void openChess() {
-        Bundle bundle=new Bundle();
-        bundle.putInt("bankerOne",1);
-        bundle.putInt("bankerTwo",2);
-        bundle.putInt("leftOne",1);
-        bundle.putInt("leftTwo",2);
-        bundle.putInt("bottomOne",1);
-        bundle.putInt("bottomTwo",2);
-        bundle.putInt("rightOne",1);
-        bundle.putInt("rightTwo",2);
+        Bundle bundle = new Bundle();
+        bundle.putInt("bankerOne", 1);
+        bundle.putInt("bankerTwo", 2);
+        bundle.putInt("leftOne", 1);
+        bundle.putInt("leftTwo", 2);
+        bundle.putInt("bottomOne", 1);
+        bundle.putInt("bottomTwo", 2);
+        bundle.putInt("rightOne", 1);
+        bundle.putInt("rightTwo", 2);
         gameOprateView.openChess(bundle);
     }
 
@@ -402,6 +432,10 @@ public class GamePresenter implements GameDataListener {
         toast.show();
     }
 
+    public void showExitPop(){
+        gameOprateView.showExitPop();
+    }
+
     @Override
     public void onMinaCreated(IoSession session) {
         this.gameSession = session;
@@ -445,5 +479,20 @@ public class GamePresenter implements GameDataListener {
     @Override
     public void onException(Throwable cause) {
         Tools.debug("hahahhahaah_zheli shi presenter");
+    }
+
+
+    /**
+     * IM 接收消息
+     * @return
+     */
+    @Override
+    public void update(Observable observable, Object data) {
+        if (observable instanceof MessageEvent){
+            TIMMessage msg = (TIMMessage) data;
+            if (msg==null||msg.getConversation().getPeer().equals(conversation.getPeer())&&msg.getConversation().getType()==conversation.getType()){
+
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ import com.bai.chesscard.adapter.GameChessAdapter;
 import com.bai.chesscard.bean.Bean_ChessList;
 import com.bai.chesscard.bean.Bean_TableDetial;
 import com.bai.chesscard.dialog.AudiencelPop;
+import com.bai.chesscard.dialog.ExitNotifyPop;
 import com.bai.chesscard.dialog.PersonalPopInfo;
 import com.bai.chesscard.dialog.SettingPop;
 import com.bai.chesscard.interfacer.GameOprateView;
@@ -28,6 +29,7 @@ import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.StrokeTextView;
 import com.bumptech.glide.Glide;
+import com.tencent.TIMConversationType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,10 +164,22 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private SettingPop settingPop;
     private PersonalPopInfo personalPopInfo;
     private AudiencelPop audiencePop;
+    private ExitNotifyPop exitNotifyPop;
+
     private int[] pointList = new int[]{100, 500, 1000};
     private List chessList;
     private GameChessAdapter gameChessAdapter;
     private int wide;
+
+    /**
+     * 标识用户的身份,
+     * 0 为观众
+     * 1 为庄家
+     * 2 为初
+     * 3 为天
+     * 4 为尾
+     */
+    private int identify=0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -178,7 +192,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     private void initView() {
-        wide = (int) Tools.getScreenWide(context);
+        wide = (int) ((int) Tools.getScreenWide(context) * 0.05);
         invisTime();
         invisChess();
         invisPoint();
@@ -210,17 +224,26 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
      */
     private void invisChess() {
         //桌面牌控件隐藏
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(wide, (int) (wide * 1.51));
         imgTopLeft.setVisibility(View.GONE);
+        imgTopLeft.setLayoutParams(params);
         imgTopRight.setVisibility(View.GONE);
+        imgTopRight.setLayoutParams(params);
 
         imgChessLeftOne.setVisibility(View.GONE);
+        imgChessLeftOne.setLayoutParams(params);
         imgChessLeftTwo.setVisibility(View.GONE);
+        imgChessLeftTwo.setLayoutParams(params);
 
         imgChessMidOne.setVisibility(View.GONE);
+        imgChessMidOne.setLayoutParams(params);
         imgChessMidTwo.setVisibility(View.GONE);
+        imgChessMidTwo.setLayoutParams(params);
 
         imgChessRightOne.setVisibility(View.GONE);
+        imgChessRightOne.setLayoutParams(params);
         imgChessRightTwo.setVisibility(View.GONE);
+        imgChessRightTwo.setLayoutParams(params);
     }
 
     /**
@@ -281,18 +304,21 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         imgTimeStatus.setVisibility(View.VISIBLE);
     }
 
+    private String tableId = "", roomId = "";
+
     private void initData() {
-        String roomId = getIntent().getStringExtra("roomId");
-        String tableId = getIntent().getStringExtra("tableId");
+        roomId = getIntent().getStringExtra("roomId");
+        tableId = getIntent().getStringExtra("tableId");
         gamePresenter.getTableInfo(roomId, tableId);
         Glide.with(context).load(AppPrefrence.getAvatar(context)).error(R.mipmap.icon_default_head).into(imgHead);
         gamePresenter.getChessData();
-        gamePresenter.startCountTime(10 * 1000);
+        gamePresenter.startCountTime(2 * 1000);
+        gamePresenter.getIn(tableId, AppPrefrence.getUserNo(context));
     }
 
     private void init() {
         chessList = new ArrayList();
-        gamePresenter = new GamePresenter(this);
+        gamePresenter = new GamePresenter(this,tableId, TIMConversationType.Group);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) llTable.getLayoutParams();
         params.width = (int) (Tools.getScreenWide(context) * 0.6);
         params.height = (int) (Tools.getScreenHeight(context) * 0.55);
@@ -309,7 +335,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         super.cardClick(view);
         switch (view.getId()) {
             case R.id.img_back:
-                gamePresenter.back();
+                gamePresenter.showExitPop();
                 break;
             case R.id.rel_head_left:
                 gamePresenter.showUserInfo(1);
@@ -359,6 +385,19 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     @Override
+    public void showExitPop() {
+        extiPop();
+    }
+
+    private void extiPop() {
+        if (exitNotifyPop == null)
+            exitNotifyPop = new ExitNotifyPop(context);
+        exitNotifyPop.setIds(tableId, roomId, AppPrefrence.getUserNo(context),identify+"");
+        exitNotifyPop.setPopInterfacer(this, 5);
+        exitNotifyPop.showPop(txtHeadBottom);
+    }
+
+    @Override
     public void setChessData(List<Bean_ChessList.Chess> data) {
         chessList.clear();
         chessList.addAll(data);
@@ -382,6 +421,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         }
         if (audiencePop == null)
             audiencePop = new AudiencelPop(context);
+        audiencePop.setId(tableId);
         audiencePop.showPop(txtHeadBottom);
         audiencePop.setPresenter(gamePresenter);
         audiencePop.setPopInterfacer(this, 3);
@@ -460,7 +500,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     private void glideImg(int path, ImageView imageView) {
-        Glide.with(this).load(path).override((int) (wide * 0.1), (int) (wide * 0.1 * 1.51)).into(imageView);
+        Glide.with(this).load(path).into(imageView);
     }
 
     @Override
@@ -591,16 +631,34 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             case 3:
                 audiencePop = null;
                 break;
+            case 5:
+                exitNotifyPop = null;
+                break;
         }
     }
 
     @Override
     public void OnConfirm(int flag, Bundle bundle) {
-
+        switch (flag) {
+            case 5:
+                gamePresenter.back();
+                break;
+        }
     }
 
     @Override
     public void OnCancle(int flag) {
+        switch (flag) {
+            case 5:
+                exitNotifyPop.dismiss();
+                break;
+        }
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        showExitPop();
+        return;
     }
 }

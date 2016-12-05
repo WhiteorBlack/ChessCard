@@ -12,7 +12,13 @@ import java.util.List;
  */
 
 public interface GameOprateView {
+    /**
+     * 退出房间时弹窗提示
+     */
+    void showExitPop();
+
     void setChessData(List<Bean_ChessList.Chess> data);
+
     /**
      * 展示玩儿家信息
      *

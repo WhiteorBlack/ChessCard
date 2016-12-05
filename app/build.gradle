@@ -45,4 +45,11 @@ dependencies {
     compile project(':takephoto_library')
     compile files('libs/mina-core-2.0.16.jar')
     compile files('libs/slf4j-api-1.7.21.jar')
+    compile files('libs/bugly_1.3.0_imsdk_release.jar')
+    compile files('libs/imsdk.jar')
+    compile files('libs/mobilepb.jar')
+    compile files('libs/qalsdk.jar')
+    compile files('libs/soload.jar')
+    compile files('libs/wup-1.0.0-SNAPSHOT.jar')
+    compile files('libs/tls_sdk.jar')
 }

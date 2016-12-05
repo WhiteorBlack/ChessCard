@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.BaseAdapter;
 
 import com.bai.chesscard.R;
+import com.bai.chesscard.bean.Bean_Audience;
+import com.bai.chesscard.utils.CommonUntilities;
 
 import java.util.List;
 
@@ -20,7 +22,8 @@ public class AudienceAdapter extends BaseRecyAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         ViewHolder mHolder= (ViewHolder) holder;
-
+        Bean_Audience.Audience audience= (Bean_Audience.Audience) dataList.get(position);
+        mHolder.setImage(R.id.img_head, CommonUntilities.PIC_URL+audience.userinfo.avatar);
     }
 
     @Override

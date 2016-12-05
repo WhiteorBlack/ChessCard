@@ -19,7 +19,7 @@ public class Bean_Login extends BaseBean {
         public String msn;
         public int amount;
         public String referrer;
-        public String point;
+        public int point;
         public int back_music;
         public int game_music;
         public int status;

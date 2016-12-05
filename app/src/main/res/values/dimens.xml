@@ -37,4 +37,6 @@
     <dimen name="dp250">250dp</dimen>
     <dimen name="dp342">342dp</dimen>
     <dimen name="dp352">352dp</dimen>
+
+    <dimen name="textandiconmargin">10dp</dimen>
 </resources>

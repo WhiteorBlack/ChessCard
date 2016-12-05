@@ -33,6 +33,8 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.bai.chesscard.utils.AppPrefrence.setAmount;
+
 public class MainActivity extends BaseActivity implements PopInterfacer {
 
 
@@ -97,7 +99,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     AppPrefrence.setToken(context, login.token);
                     AppPrefrence.setReferrer(context, login.data.referrer);
                     AppPrefrence.setAvatar(context, CommonUntilities.PIC_URL + login.data.avatar);
-                    AppPrefrence.setAmount(context, login.data.amount);
+                    setAmount(context, login.data.point);
                     AppPrefrence.setUserNo(context, login.data.id);
                     AppPrefrence.setUserName(context, login.data.nick_name);
                     startActivity(new Intent(context, Home.class));
@@ -284,7 +286,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     AppPrefrence.setToken(context, login.token);
                     AppPrefrence.setReferrer(context, login.data.referrer);
                     AppPrefrence.setAvatar(context, login.data.avatar);
-                    AppPrefrence.setAmount(context, login.data.amount);
+                    setAmount(context, login.data.amount);
                     AppPrefrence.setUserNo(context, login.data.id);
                     AppPrefrence.setUserName(context, login.data.nick_name);
                     dismissPop();
