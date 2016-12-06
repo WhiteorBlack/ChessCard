@@ -11,5 +11,7 @@ public class CommonUntilities {
     public static String MD5KEY = "v5d6g8fldghid58fdksigmnv5249d5ft";
     public static String MAIN_URL = "http://122.114.91.199/api/game/?action=";
     public static String PIC_URL="http://122.114.91.199:8080";
-
+    public static String SDKAPPID="3283627085";
+    public static String ACCOUNTTYPE="9087";
+    public static String USERSIG="";
 }

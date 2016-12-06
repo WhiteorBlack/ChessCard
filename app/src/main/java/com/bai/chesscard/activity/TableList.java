@@ -70,6 +70,7 @@ public class TableList extends BaseActivity {
     private PersonalPop personalPop;
     private ProgressDialog progressDialog;
     private String id;
+    private int minPoint=0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +121,7 @@ public class TableList extends BaseActivity {
     }
 
     private void initView() {
+        minPoint=getIntent().getIntExtra("point",0);
         tabList = new ArrayList();
         tabAdapter = new TableAdapter(tabList);
         recyTable.setLayoutManager(new GridLayoutManager(context, 2, LinearLayoutManager.HORIZONTAL, false));
@@ -127,7 +129,8 @@ public class TableList extends BaseActivity {
         tabAdapter.setOnItemClickListener(new BaseRecyAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(View view, int position) {
-                startActivity(new Intent(context, GamingActivity.class).putExtra("roomId",tabList.get(position).house_id).putExtra("tableId",tabList.get(position).id));
+                startActivity(new Intent(context, GamingActivity.class).putExtra("roomId",tabList.get(position).house_id).
+                        putExtra("tableId",tabList.get(position).id).putExtra("point",minPoint));
             }
 
             @Override

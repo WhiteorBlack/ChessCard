@@ -229,17 +229,17 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
             case R.id.fl_pre_room:
                 if (roomList.size() == 0)
                     return;
-                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(0).id), 0);
+                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(0).id).putExtra("point",roomList.get(0).min_piont), 0);
                 break;
             case R.id.fl_mid_room:
                 if (roomList.size() == 0)
                     return;
-                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(1).id), 1);
+                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(1).id).putExtra("point",roomList.get(1).min_piont), 1);
                 break;
             case R.id.fl_hig_room:
                 if (roomList.size() == 0)
                     return;
-                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(2).id), 2);
+                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(2).id).putExtra("point",roomList.get(2).min_piont), 2);
                 break;
             case R.id.img_start:
 

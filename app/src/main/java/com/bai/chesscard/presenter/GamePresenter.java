@@ -61,6 +61,7 @@ public class GamePresenter implements Observer, GameDataListener{
     private HeartBeatService heartBeatService;
     private IoSession gameSession;
     private TIMConversation conversation;
+    private String roundId;  //游戏局的ID
 
     public GamePresenter(GameOprateView gameOprateView,String groupId,TIMConversationType type) {
         this.gameOprateView = gameOprateView;
@@ -110,7 +111,7 @@ public class GamePresenter implements Observer, GameDataListener{
      * @param userId
      * @param point
      */
-    public void betMoney(String userId, int point,String tableId,String houseId,String num) {
+    public void betMoney(String userId, int point,String tableId,String houseId) {
         Map<String,String> params=new HashMap<>();
     }
 

@@ -170,6 +170,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private List chessList;
     private GameChessAdapter gameChessAdapter;
     private int wide;
+    private int minPoint=0; //房间最低分限制,当用户进入房间时带入最低限制的金币数
 
     /**
      * 标识用户的身份,
@@ -309,11 +310,13 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private void initData() {
         roomId = getIntent().getStringExtra("roomId");
         tableId = getIntent().getStringExtra("tableId");
+        minPoint=getIntent().getIntExtra("point",0);
         gamePresenter.getTableInfo(roomId, tableId);
         Glide.with(context).load(AppPrefrence.getAvatar(context)).error(R.mipmap.icon_default_head).into(imgHead);
         gamePresenter.getChessData();
         gamePresenter.startCountTime(2 * 1000);
         gamePresenter.getIn(tableId, AppPrefrence.getUserNo(context));
+        txtMoney.setText(minPoint+"");
     }
 
     private void init() {
@@ -338,6 +341,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
                 gamePresenter.showExitPop();
                 break;
             case R.id.rel_head_left:
+
                 gamePresenter.showUserInfo(1);
                 break;
             case R.id.rel_head_bottom:
@@ -360,13 +364,13 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             case R.id.txt_money_left:
                 if (pointList == null || pointList.length == 0)
                     return;
-                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[0]);
+                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[0],tableId,roomId);
                 break;
             case R.id.txt_money_mid:
-                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[1]);
+                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[1],tableId,roomId);
                 break;
             case R.id.txt_money_right:
-                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[2]);
+                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[2],tableId,roomId);
                 break;
             case R.id.img_setting:
                 break;
