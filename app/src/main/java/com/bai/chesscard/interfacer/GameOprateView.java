@@ -130,4 +130,25 @@ public interface GameOprateView {
      * @param point
      */
     void addPoint(int point);
+
+    /**
+     * toast 信息
+     *
+     * @param msg 信息文字
+     */
+    void toastMsg(String msg);
+
+    /**
+     * toast 信息
+     *
+     * @param msg 信息stringid
+     */
+    void toastMsg(int msg);
+
+    /**
+     * 投注按钮是否可以点击
+     *
+     * @param isClickable
+     */
+    void moneyClickable(boolean isClickable);
 }

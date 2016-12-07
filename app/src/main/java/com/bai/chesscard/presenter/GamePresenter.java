@@ -30,6 +30,7 @@ import com.bai.chesscard.mina.MinaClientHandler;
 import com.bai.chesscard.service.HeartBeatService;
 import com.bai.chesscard.service.MessageEvent;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.Tools;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
@@ -54,18 +55,18 @@ import java.util.Random;
  * Created by Administrator on 2016/11/16.
  */
 
-public class GamePresenter implements Observer, GameDataListener{
+public class GamePresenter implements Observer, GameDataListener {
     private GameOprateView gameOprateView;
     private ViewGroup viewGroup;
     private int[] diceRes = new int[]{R.drawable.dice_one, R.drawable.dice_two, R.drawable.dice_three, R.drawable.dice_four, R.drawable.dice_five, R.drawable.dice_six};
     private HeartBeatService heartBeatService;
     private IoSession gameSession;
     private TIMConversation conversation;
-    private String roundId;  //游戏局的ID
+    private boolean[] isHasUser = new boolean[]{false, false, false, false}; //标识该位置是否有人坐下
 
-    public GamePresenter(GameOprateView gameOprateView,String groupId,TIMConversationType type) {
+    public GamePresenter(GameOprateView gameOprateView, String groupId, TIMConversationType type) {
         this.gameOprateView = gameOprateView;
-        conversation= TIMManager.getInstance().getConversation(type,groupId);
+        conversation = TIMManager.getInstance().getConversation(type, groupId);
     }
 
     /**
@@ -111,8 +112,35 @@ public class GamePresenter implements Observer, GameDataListener{
      * @param userId
      * @param point
      */
-    public void betMoney(String userId, int point,String tableId,String houseId) {
-        Map<String,String> params=new HashMap<>();
+    public void betMoney(String userId, int point, String tableId, String houseId) {
+        if (Constent.SELECTPOS < 0 && !Constent.ISGAMER) {
+            gameOprateView.toastMsg("请选择要投注的玩儿家");
+            return;
+        }
+        gameOprateView.moneyClickable(false);
+        Map<String, String> params = new HashMap<>();
+        params.put("user_id", userId);
+        params.put("mid", "");
+        params.put("num", "" + Constent.SELECTPOS);
+        params.put("point", point + "");
+        params.put("house_id", houseId);
+        params.put("table_id", tableId);
+        PostTools.postData(CommonUntilities.MAIN_URL + "yazhu", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    gameOprateView.toastMsg(R.string.no_network);
+                    return;
+                }
+            }
+
+            @Override
+            public void onAfter() {
+                super.onAfter();
+                gameOprateView.moneyClickable(true);
+            }
+        });
     }
 
     /**
@@ -148,14 +176,16 @@ public class GamePresenter implements Observer, GameDataListener{
             public void onResponse(String response) {
                 super.onResponse(response);
                 Tools.debug("tabledetail----" + response);
-                if (TextUtils.isEmpty(response))
+                if (TextUtils.isEmpty(response)) {
+                    gameOprateView.toastMsg(R.string.no_network);
                     return;
+                }
                 Bean_TableDetial tableDetial = new Gson().fromJson(response, Bean_TableDetial.class);
                 if (tableDetial != null && tableDetial.status) {
-                    try {
-                    } catch (Exception e) {
-
-                    }
+                    isHasUser[0] = !(tableDetial.data.first_user == null);
+                    isHasUser[1] = !(tableDetial.data.second_user == null);
+                    isHasUser[2] = !(tableDetial.data.third_user == null);
+                    isHasUser[3] = !(tableDetial.data.four_user == null);
                     gameOprateView.setTableInfo(tableDetial.data);
                 }
             }
@@ -176,11 +206,13 @@ public class GamePresenter implements Observer, GameDataListener{
     }
 
     /**
-     * 展示正在游戏用户的信息
+     * 如果该作为上有人则展示正在游戏用户的信息
+     * 如果没人则视为抢座位
      *
      * @param pos
+     * @param userId 用户id,如果抢座位的话就传进去
      */
-    public void showUserInfo(int pos) {
+    public void showUserInfo(int pos, String userId) {
         switch (pos) {
             case 0:
                 //庄家
@@ -199,7 +231,59 @@ public class GamePresenter implements Observer, GameDataListener{
 
                 break;
         }
-        gameOprateView.showUserInfo(new Bean_TableDetial.TableUser());
+        if (isHasUser[pos])
+            gameOprateView.showUserInfo(new Bean_TableDetial.TableUser());
+        else {
+            capturePosition(pos + 1, userId);
+        }
+    }
+
+    /**
+     * 选择座位坐下
+     *
+     * @param pos
+     * @param userId
+     */
+    private void capturePosition(final int pos, String userId) {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", Constent.TABLEID);
+        params.put("num", pos + "");
+        params.put("user_id", Constent.USERID);
+        PostTools.postData(CommonUntilities.MAIN_URL + "checktable", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    gameOprateView.toastMsg(R.string.no_network);
+                    isHasUser[pos - 1] = false;
+                    return;
+                }
+                isHasUser[pos - 1] = true;
+                Bean_TableDetial tableDetial = new Gson().fromJson(response, Bean_TableDetial.class);
+                if (tableDetial != null) {
+                    isHasUser[0] = !(tableDetial.data.first_user == null);
+                    isHasUser[1] = !(tableDetial.data.second_user == null);
+                    isHasUser[2] = !(tableDetial.data.third_user == null);
+                    isHasUser[3] = !(tableDetial.data.four_user == null);
+                    gameOprateView.setTableInfo(tableDetial.data);
+                }
+                if (tableDetial.status) {
+                    if (pos == 1) {
+                        Constent.ISBANKER = true;
+                        Constent.ISGAMER = true;
+                    } else {
+                        Constent.ISBANKER = false;
+                        Constent.ISGAMER = true;
+                    }
+                    Constent.SELECTPOS = pos;
+                    gameOprateView.moneyClickable(false);
+                } else {
+                    Constent.ISGAMER = false;
+                    Constent.ISBANKER = false;
+                    gameOprateView.moneyClickable(true);
+                }
+            }
+        });
     }
 
     /**
@@ -433,7 +517,7 @@ public class GamePresenter implements Observer, GameDataListener{
         toast.show();
     }
 
-    public void showExitPop(){
+    public void showExitPop() {
         gameOprateView.showExitPop();
     }
 
@@ -485,13 +569,14 @@ public class GamePresenter implements Observer, GameDataListener{
 
     /**
      * IM 接收消息
+     *
      * @return
      */
     @Override
     public void update(Observable observable, Object data) {
-        if (observable instanceof MessageEvent){
+        if (observable instanceof MessageEvent) {
             TIMMessage msg = (TIMMessage) data;
-            if (msg==null||msg.getConversation().getPeer().equals(conversation.getPeer())&&msg.getConversation().getType()==conversation.getType()){
+            if (msg == null || msg.getConversation().getPeer().equals(conversation.getPeer()) && msg.getConversation().getType() == conversation.getType()) {
 
             }
         }

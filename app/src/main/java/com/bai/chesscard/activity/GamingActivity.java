@@ -26,6 +26,7 @@ import com.bai.chesscard.interfacer.PopInterfacer;
 import com.bai.chesscard.presenter.GamePresenter;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.StrokeTextView;
 import com.bumptech.glide.Glide;
@@ -153,6 +154,12 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     ImageView imgChessTopCount;
     @BindView(R.id.img_chess_top_multiple)
     ImageView imgChessTopMultiple;
+    @BindView(R.id.fl_user_left)
+    FrameLayout flUserLeft;
+    @BindView(R.id.fl_user_mid)
+    FrameLayout flUserMid;
+    @BindView(R.id.fl_user_right)
+    FrameLayout flUserRight;
 
     private int[] timeRes = new int[]{R.mipmap.num_zero, R.mipmap.num_one, R.mipmap.num_two, R.mipmap.num_three, R.mipmap.num_four, R.mipmap.num_five, R.mipmap.num_six,
             R.mipmap.num_seven, R.mipmap.num_eight, R.mipmap.num_nine, R.mipmap.num_ten};
@@ -170,7 +177,6 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private List chessList;
     private GameChessAdapter gameChessAdapter;
     private int wide;
-    private int minPoint=0; //房间最低分限制,当用户进入房间时带入最低限制的金币数
 
     /**
      * 标识用户的身份,
@@ -180,7 +186,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
      * 3 为天
      * 4 为尾
      */
-    private int identify=0;
+    private int identify = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -198,6 +204,25 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         invisChess();
         invisPoint();
         inVisMul();
+        clearSelectBg();
+    }
+
+    private void clearSelectBg() {
+        flUserLeft.setBackgroundResource(0);
+        flUserMid.setBackgroundResource(0);
+        flUserRight.setBackgroundResource(0);
+    }
+
+    /**
+     * 为了防止多次投注出现错误,所以做出限制,投注过程中投注按钮不可用,
+     * 投注完成之后置为可用
+     *
+     * @param clickable
+     */
+    private void moneyCickable(boolean clickable) {
+        txtMoneyLeft.setClickable(clickable);
+        txtMoneyMid.setClickable(clickable);
+        txtMoneyRight.setClickable(clickable);
     }
 
     /**
@@ -310,18 +335,24 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private void initData() {
         roomId = getIntent().getStringExtra("roomId");
         tableId = getIntent().getStringExtra("tableId");
-        minPoint=getIntent().getIntExtra("point",0);
+        Constent.USERMONEY = getIntent().getIntExtra("point", 0);
+        Constent.MINCOUNT = getIntent().getIntExtra("point", 0);
+
+        Constent.USERID = AppPrefrence.getUserNo(context);
+        Constent.ROOMID = roomId;
+        Constent.TABLEID = tableId;
+
         gamePresenter.getTableInfo(roomId, tableId);
         Glide.with(context).load(AppPrefrence.getAvatar(context)).error(R.mipmap.icon_default_head).into(imgHead);
         gamePresenter.getChessData();
         gamePresenter.startCountTime(2 * 1000);
         gamePresenter.getIn(tableId, AppPrefrence.getUserNo(context));
-        txtMoney.setText(minPoint+"");
+        txtMoney.setText(Constent.MINCOUNT + "");
     }
 
     private void init() {
         chessList = new ArrayList();
-        gamePresenter = new GamePresenter(this,tableId, TIMConversationType.Group);
+        gamePresenter = new GamePresenter(this, tableId, TIMConversationType.Group);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) llTable.getLayoutParams();
         params.width = (int) (Tools.getScreenWide(context) * 0.6);
         params.height = (int) (Tools.getScreenHeight(context) * 0.55);
@@ -333,46 +364,95 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         recyChess.setAdapter(gameChessAdapter);
     }
 
-    @OnClick({R.id.img_back, R.id.rel_head_left, R.id.rel_head_bottom, R.id.rel_head_right, R.id.rel_head_top, R.id.img_gameing_user, R.id.img_head, R.id.img_add, R.id.txt_money_left, R.id.txt_money_mid, R.id.txt_money_right, R.id.img_setting})
+    @OnClick({R.id.img_back, R.id.rel_head_left, R.id.rel_head_bottom, R.id.rel_head_right, R.id.rel_head_top, R.id.img_gameing_user,
+            R.id.img_head, R.id.img_add, R.id.txt_money_left, R.id.txt_money_mid, R.id.txt_money_right, R.id.img_setting,
+            R.id.fl_user_left, R.id.fl_user_mid, R.id.fl_user_right})
     public void cardClick(View view) {
         super.cardClick(view);
         switch (view.getId()) {
-            case R.id.img_back:
+            case R.id.img_back: //返回
                 gamePresenter.showExitPop();
                 break;
             case R.id.rel_head_left:
-
-                gamePresenter.showUserInfo(1);
+                //初家信息
+                gamePresenter.showUserInfo(1, AppPrefrence.getUserNo(context));
                 break;
             case R.id.rel_head_bottom:
-                gamePresenter.showUserInfo(2);
+                //天家信息
+                gamePresenter.showUserInfo(2, AppPrefrence.getUserNo(context));
                 break;
             case R.id.rel_head_right:
-                gamePresenter.showUserInfo(3);
+                //尾家信息
+                gamePresenter.showUserInfo(3, AppPrefrence.getUserNo(context));
                 break;
             case R.id.rel_head_top:
-                gamePresenter.showUserInfo(0);
+                //庄家信息
+                gamePresenter.showUserInfo(0, AppPrefrence.getUserNo(context));
                 break;
             case R.id.img_gameing_user:
+                //观众信息
                 gamePresenter.showAudience();
                 break;
             case R.id.img_head:
 
                 break;
             case R.id.img_add:
+                //追加金币
+
                 break;
             case R.id.txt_money_left:
+                //投注
                 if (pointList == null || pointList.length == 0)
                     return;
-                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[0],tableId,roomId);
+                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[0], tableId, roomId);
                 break;
             case R.id.txt_money_mid:
-                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[1],tableId,roomId);
+                //投注
+                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[1], tableId, roomId);
                 break;
             case R.id.txt_money_right:
-                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[2],tableId,roomId);
+                //投注
+                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[2], tableId, roomId);
                 break;
             case R.id.img_setting:
+                //设置选项
+
+                break;
+            case R.id.fl_user_left:
+                //选择初家进行投注
+                if (Constent.ISGAMER)
+                    return;
+                Constent.SELECTPOS = 1;
+                setChoice(1);
+                break;
+            case R.id.fl_user_mid:
+                //选择天家进行投注
+                if (Constent.ISGAMER)
+                    return;
+                Constent.SELECTPOS = 2;
+                setChoice(2);
+                break;
+            case R.id.fl_user_right:
+                //选择尾家进行投注
+                if (Constent.ISGAMER)
+                    return;
+                Constent.SELECTPOS = 3;
+                setChoice(3);
+                break;
+        }
+    }
+
+    private void setChoice(int pos) {
+        clearSelectBg();
+        switch (pos) {
+            case 1:
+                flUserLeft.setBackgroundResource(R.drawable.bg_select_user);
+                break;
+            case 2:
+                flUserMid.setBackgroundResource(R.drawable.bg_select_user);
+                break;
+            case 3:
+                flUserRight.setBackgroundResource(R.drawable.bg_select_user);
                 break;
         }
     }
@@ -396,7 +476,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private void extiPop() {
         if (exitNotifyPop == null)
             exitNotifyPop = new ExitNotifyPop(context);
-        exitNotifyPop.setIds(tableId, roomId, AppPrefrence.getUserNo(context),identify+"");
+        exitNotifyPop.setIds(tableId, roomId, AppPrefrence.getUserNo(context), identify + "");
         exitNotifyPop.setPopInterfacer(this, 5);
         exitNotifyPop.showPop(txtHeadBottom);
     }
@@ -624,6 +704,21 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     @Override
+    public void toastMsg(String msg) {
+        Tools.toastMsgCenter(context, msg);
+    }
+
+    @Override
+    public void toastMsg(int msg) {
+        Tools.toastMsgCenter(context, msg);
+    }
+
+    @Override
+    public void moneyClickable(boolean isClickable) {
+        moneyClickable(isClickable);
+    }
+
+    @Override
     public void OnDismiss(int flag) {
         switch (flag) {
             case 1:
@@ -661,8 +756,8 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         showExitPop();
-        return;
+        return ;
     }
+
 }

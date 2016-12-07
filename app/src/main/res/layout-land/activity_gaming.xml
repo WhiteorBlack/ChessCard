@@ -78,14 +78,12 @@
                         <ImageView
                             android:id="@+id/img_top_left"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            />
+                            android:layout_height="wrap_content" />
 
                         <ImageView
                             android:id="@+id/img_top_right"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                             />
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -126,9 +124,11 @@
                 android:paddingRight="@dimen/dp25">
 
                 <FrameLayout
+                    android:id="@+id/fl_user_left"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:onClick="cardClick">
 
                     <ImageView
                         android:id="@+id/img_bg_left"
@@ -177,9 +177,11 @@
                 </FrameLayout>
 
                 <FrameLayout
+                    android:id="@+id/fl_user_mid"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:onClick="cardClick">
 
                     <ImageView
                         android:id="@+id/img_bg_mid"
@@ -227,9 +229,12 @@
                 </FrameLayout>
 
                 <FrameLayout
+                    android:id="@+id/fl_user_right"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_select_user"
+                    android:onClick="cardClick">
 
                     <ImageView
                         android:id="@+id/img_bg_right"
@@ -344,8 +349,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_margin="2dp"
-                    android:background="@mipmap/icon_default_head"
-                    android:onClick="cardClick" />
+                    android:background="@mipmap/icon_default_head" />
             </FrameLayout>
 
             <TextView
@@ -381,8 +385,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_margin="2dp"
-                    android:background="@mipmap/icon_default_head"
-                    android:onClick="cardClick" />
+                    android:background="@mipmap/icon_default_head" />
             </FrameLayout>
 
             <TextView
@@ -418,8 +421,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_margin="2dp"
-                    android:background="@mipmap/icon_default_head"
-                    android:onClick="cardClick" />
+                    android:background="@mipmap/icon_default_head" />
             </FrameLayout>
 
             <TextView
@@ -455,8 +457,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_margin="2dp"
-                    android:background="@mipmap/icon_default_head"
-                    android:onClick="cardClick" />
+                    android:background="@mipmap/icon_default_head" />
             </FrameLayout>
 
             <TextView
