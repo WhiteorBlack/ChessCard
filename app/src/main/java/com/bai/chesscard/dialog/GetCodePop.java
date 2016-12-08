@@ -123,7 +123,7 @@ public class GetCodePop extends BasePopupwind {
                     bundle.putString("code", phone1);
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
-                }else  Tools.toastMsgCenter(context, baseBean.msg);
+                } else Tools.toastMsgCenter(context, baseBean.msg);
             }
         });
     }
