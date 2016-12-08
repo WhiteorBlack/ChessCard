@@ -21,6 +21,7 @@ import com.bai.chesscard.presenter.GamePresenter;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.widget.xrecycleview.XRecyclerView;
 import com.google.gson.Gson;
+import com.tencent.TIMGroupManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,10 +64,10 @@ public class ExitNotifyPop extends BasePopupwind {
         txtContent.setText(notify);
     }
 
-    public void setIds(String tableId, String roomId, String userId,String num) {
+    public void setIds(String tableId, String roomId, String userId, String num) {
         this.tableId = tableId;
         this.houseId = roomId;
-        this.num=num;
+        this.num = num;
         this.userId = userId;
     }
 
@@ -75,6 +76,7 @@ public class ExitNotifyPop extends BasePopupwind {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.btn_confirm:
+//                TIMGroupManager.getInstance().deleteGroup(tableId, null);
                 getAudiunce();
                 if (popInterfacer != null)
                     popInterfacer.OnConfirm(flag, null);

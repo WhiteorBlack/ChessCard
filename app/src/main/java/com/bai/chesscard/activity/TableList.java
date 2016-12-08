@@ -26,8 +26,11 @@ import com.bai.chesscard.dialog.SettingPop;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.Tools;
 import com.google.gson.Gson;
+import com.tencent.TIMCallBack;
+import com.tencent.TIMGroupManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,14 +73,15 @@ public class TableList extends BaseActivity {
     private PersonalPop personalPop;
     private ProgressDialog progressDialog;
     private String id;
-    private int minPoint=0;
+    private int minPoint = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivty_table_list);
         ButterKnife.bind(this);
         initView();
-         id = getIntent().getStringExtra("id");
+        id = getIntent().getStringExtra("id");
         progressDialog = Tools.getDialog(context, "");
         progressDialog.setMessage("正在获取游戏数据...");
         progressDialog.show();
@@ -121,16 +125,31 @@ public class TableList extends BaseActivity {
     }
 
     private void initView() {
-        minPoint=getIntent().getIntExtra("point",0);
+        minPoint = getIntent().getIntExtra("point", 0);
         tabList = new ArrayList();
         tabAdapter = new TableAdapter(tabList);
         recyTable.setLayoutManager(new GridLayoutManager(context, 2, LinearLayoutManager.HORIZONTAL, false));
         recyTable.setAdapter(tabAdapter);
         tabAdapter.setOnItemClickListener(new BaseRecyAdapter.OnItemClickListener() {
             @Override
-            public void onItemClickListener(View view, int position) {
-                startActivity(new Intent(context, GamingActivity.class).putExtra("roomId",tabList.get(position).house_id).
-                        putExtra("tableId",tabList.get(position).id).putExtra("point",minPoint));
+            public void onItemClickListener(View view, final int position) {
+                TIMGroupManager.getInstance().applyJoinGroup(tabList.get(position).id, "", new TIMCallBack() {
+                    @Override
+                    public void onError(int i, String s) {
+                        Tools.debug("onError--"+s);
+                        Constent.GROUPID=tabList.get(position).id;
+                        startActivity(new Intent(context, GamingActivity.class).putExtra("roomId", tabList.get(position).house_id).
+                                putExtra("tableId", tabList.get(position).id).putExtra("point", minPoint));
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        Constent.GROUPID=tabList.get(position).id;
+                        startActivity(new Intent(context, GamingActivity.class).putExtra("roomId", tabList.get(position).house_id).
+                                putExtra("tableId", tabList.get(position).id).putExtra("point", minPoint));
+                    }
+                });
+
             }
 
             @Override

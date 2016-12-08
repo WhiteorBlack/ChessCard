@@ -26,6 +26,11 @@ import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
 import com.google.gson.Gson;
+import com.tencent.TIMCallBack;
+import com.tencent.TIMFriendMetaInfo;
+import com.tencent.TIMFriendshipManager;
+import com.tencent.TIMManager;
+import com.tencent.TIMUser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -92,8 +97,24 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     Tools.toastMsgCenter(context, R.string.no_network);
                     return;
                 }
-                Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
+                final Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
                 if (login.status) {
+                    TIMUser user = new TIMUser();
+                    user.setAccountType(CommonUntilities.ACCOUNTTYPE);
+                    user.setAppIdAt3rd(CommonUntilities.SDKAPPID + "");
+                    user.setIdentifier(login.data.user_name);
+                    TIMManager.getInstance().login(CommonUntilities.SDKAPPID, user, login.msg, new TIMCallBack() {
+                        @Override
+                        public void onError(int i, String s) {
+                        }
+
+                        @Override
+                        public void onSuccess() {
+                            TIMFriendshipManager.getInstance().setNickName(TextUtils.isEmpty(login.data.nick_name) ? login.data.user_name : login.data.nick_name, null);
+                            if (!TextUtils.isEmpty(login.data.avatar))
+                                TIMFriendshipManager.getInstance().setFaceUrl(CommonUntilities.PIC_URL + login.data.avatar, null);
+                        }
+                    });
                     AppPrefrence.setIsLogin(context, true);
                     AppPrefrence.setUserPhone(context, login.data.mobile);
                     AppPrefrence.setToken(context, login.token);

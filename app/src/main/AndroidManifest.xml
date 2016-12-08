@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bai.chesscard">
     <!-- Required  一些系统要求的权限，如访问网络等-->
+    <uses-permission android:name="com.tencent.qcloud.timchat.permission.MIPUSH_RECEIVE" />
     <uses-permission android:name="findboom.android.com.findboom.permission.JPUSH_MESSAGE" />
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -68,7 +69,6 @@
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="landscape" />
 
-        <meta-data android:name="com.tencent.rdm.uuid" android:value="26cd91aa-b596-45af-a02a-a0dbab4e58fe" />
 
         <!--  消息收发service -->
         <service

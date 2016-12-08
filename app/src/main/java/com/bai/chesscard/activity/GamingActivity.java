@@ -199,6 +199,14 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     private void initView() {
+        roomId = getIntent().getStringExtra("roomId");
+        tableId = getIntent().getStringExtra("tableId");
+        Constent.USERMONEY = getIntent().getIntExtra("point", 0);
+        Constent.MINCOUNT = getIntent().getIntExtra("point", 0);
+
+        Constent.USERID = AppPrefrence.getUserNo(context);
+        Constent.ROOMID = roomId;
+        Constent.TABLEID = tableId;
         wide = (int) ((int) Tools.getScreenWide(context) * 0.05);
         invisTime();
         invisChess();
@@ -219,7 +227,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
      *
      * @param clickable
      */
-    private void moneyCickable(boolean clickable) {
+    private void moneyViewClickable(boolean clickable) {
         txtMoneyLeft.setClickable(clickable);
         txtMoneyMid.setClickable(clickable);
         txtMoneyRight.setClickable(clickable);
@@ -333,19 +341,10 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private String tableId = "", roomId = "";
 
     private void initData() {
-        roomId = getIntent().getStringExtra("roomId");
-        tableId = getIntent().getStringExtra("tableId");
-        Constent.USERMONEY = getIntent().getIntExtra("point", 0);
-        Constent.MINCOUNT = getIntent().getIntExtra("point", 0);
-
-        Constent.USERID = AppPrefrence.getUserNo(context);
-        Constent.ROOMID = roomId;
-        Constent.TABLEID = tableId;
-
         gamePresenter.getTableInfo(roomId, tableId);
         Glide.with(context).load(AppPrefrence.getAvatar(context)).error(R.mipmap.icon_default_head).into(imgHead);
         gamePresenter.getChessData();
-        gamePresenter.startCountTime(2 * 1000);
+        gamePresenter.startCountTime(5 * 1000);
         gamePresenter.getIn(tableId, AppPrefrence.getUserNo(context));
         txtMoney.setText(Constent.MINCOUNT + "");
     }
@@ -715,7 +714,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void moneyClickable(boolean isClickable) {
-        moneyClickable(isClickable);
+        moneyViewClickable(isClickable);
     }
 
     @Override
@@ -757,7 +756,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     @Override
     public void onBackPressed() {
         showExitPop();
-        return ;
+        return;
     }
 
 }

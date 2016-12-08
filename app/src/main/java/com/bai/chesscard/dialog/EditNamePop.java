@@ -15,6 +15,7 @@ import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
 import com.google.gson.Gson;
+import com.tencent.TIMFriendshipManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,6 +83,7 @@ public class EditNamePop extends BasePopupwind {
                 if (baseBean.status) {
                     Bundle bundle = new Bundle();
                     bundle.putString("name", name);
+                    TIMFriendshipManager.getInstance().setNickName(name, null);
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
                     dismiss();

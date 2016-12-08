@@ -2,6 +2,8 @@ package com.bai.chesscard;
 
 import android.app.Application;
 
+import com.tencent.TIMManager;
+
 /**
  * Created by Administrator on 2016/11/3.
  */
@@ -15,5 +17,6 @@ public class ChessCardApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance=this;
+        TIMManager.getInstance().init(this);
     }
 }

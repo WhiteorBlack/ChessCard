@@ -41,6 +41,7 @@ import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoActivity;
 import com.jph.takephoto.model.CropOptions;
 import com.jph.takephoto.model.TResult;
+import com.tencent.TIMFriendshipManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -229,17 +230,17 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
             case R.id.fl_pre_room:
                 if (roomList.size() == 0)
                     return;
-                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(0).id).putExtra("point",roomList.get(0).min_piont), 0);
+                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(0).id).putExtra("point", roomList.get(0).min_piont), 0);
                 break;
             case R.id.fl_mid_room:
                 if (roomList.size() == 0)
                     return;
-                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(1).id).putExtra("point",roomList.get(1).min_piont), 1);
+                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(1).id).putExtra("point", roomList.get(1).min_piont), 1);
                 break;
             case R.id.fl_hig_room:
                 if (roomList.size() == 0)
                     return;
-                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(2).id).putExtra("point",roomList.get(2).min_piont), 2);
+                startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(2).id).putExtra("point", roomList.get(2).min_piont), 2);
                 break;
             case R.id.img_start:
 
@@ -347,6 +348,11 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
     }
 
     private void logout() {
+        AppPrefrence.setAvatar(context, "");
+        AppPrefrence.setIsLogin(context, false);
+        AppPrefrence.setUserName(context, "");
+        AppPrefrence.setUserNo(context, "");
+        AppPrefrence.setUserPwd(context, "");
     }
 
     @Override
@@ -381,6 +387,8 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
                         personalPop.setPhoto(picPath);
                     Glide.with(context).load(picPath).into(imgUserPhoto);
                     AppPrefrence.setAvatar(context, CommonUntilities.PIC_URL + baseBean.data);
+
+                    TIMFriendshipManager.getInstance().setFaceUrl(CommonUntilities.PIC_URL + baseBean.data, null);
                 }
                 Tools.toastMsgCenter(context, baseBean.msg);
             }
