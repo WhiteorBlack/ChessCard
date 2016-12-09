@@ -30,6 +30,7 @@ import com.bai.chesscard.dialog.PersonalPop;
 import com.bai.chesscard.dialog.SettingPop;
 import com.bai.chesscard.interfacer.PopInterfacer;
 import com.bai.chesscard.interfacer.PostCallBack;
+import com.bai.chesscard.service.MessageEvent;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
@@ -42,12 +43,15 @@ import com.jph.takephoto.app.TakePhotoActivity;
 import com.jph.takephoto.model.CropOptions;
 import com.jph.takephoto.model.TResult;
 import com.tencent.TIMFriendshipManager;
+import com.tencent.TIMMessage;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,7 +61,7 @@ import butterknife.OnClick;
  * Created by Administrator on 2016/11/8.
  */
 
-public class Home extends TakePhotoActivity implements PopInterfacer {
+public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
     @BindView(R.id.txt_notify)
     ScrollTextView txtNotify;
     @BindView(R.id.ll_notify_content)
@@ -112,6 +116,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
         ButterKnife.bind(this);
         context = this;
         initData();
+        MessageEvent.getInstance().addObserver(this);
     }
 
     private void initData() {
@@ -222,6 +227,12 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
         txtUserName.setText("昵称: " + AppPrefrence.getUserName(context));
         txtUserNo.setText("编号: " + AppPrefrence.getUserNo(context));
         txtUserMoney.setText(AppPrefrence.getAmount(context) + "");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MessageEvent.getInstance().clear();
     }
 
     @OnClick({R.id.fl_pre_room, R.id.fl_mid_room, R.id.fl_hig_room, R.id.img_start, R.id.img_user_photo, R.id.txt_help, R.id.txt_setting})
@@ -398,5 +409,13 @@ public class Home extends TakePhotoActivity implements PopInterfacer {
     @Override
     public void takeFail(TResult result, String msg) {
         super.takeFail(result, msg);
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        if (observable instanceof MessageEvent) {
+            TIMMessage msg = (TIMMessage) data;
+            Tools.debug("home receive");
+        }
     }
 }

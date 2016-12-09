@@ -73,8 +73,8 @@ public class Tools {
         }
     }
 
-    public static ProgressDialog getDialog(Context context,String msg){
-        ProgressDialog progressDialog=new ProgressDialog(context);
+    public static ProgressDialog getDialog(Context context, String msg) {
+        ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setMessage(msg);
         progressDialog.setCancelable(true);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -83,21 +83,23 @@ public class Tools {
 
     public static void toastMsgCenter(Context context, String msg) {
         Toast toast = new Toast(context);
-        View view= LayoutInflater.from(context).inflate(R.layout.toast_textview,null);
-        TextView textView = (TextView)view.findViewById(R.id.txt_toast);
+        View view = LayoutInflater.from(context).inflate(R.layout.toast_textview, null);
+        TextView textView = (TextView) view.findViewById(R.id.txt_toast);
         textView.setText(msg);
         toast.setView(view);
         toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
 
     public static void toastMsgCenter(Context context, int msg) {
         Toast toast = new Toast(context);
-        View view= LayoutInflater.from(context).inflate(R.layout.toast_textview,null);
-        TextView textView = (TextView)view.findViewById(R.id.txt_toast);
+        View view = LayoutInflater.from(context).inflate(R.layout.toast_textview, null);
+        TextView textView = (TextView) view.findViewById(R.id.txt_toast);
         textView.setText(context.getResources().getString(R.string.no_network));
         toast.setView(view);
         toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
 
@@ -280,7 +282,6 @@ public class Tools {
 
     static List<String> list_big = Arrays.asList(months_big);
     static List<String> list_little = Arrays.asList(months_little);
-
 
 
     // 获得今天日期
@@ -492,11 +493,11 @@ public class Tools {
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    public static void openInput(View v, Context c,ResultReceiver resultReceiver) {
+    public static void openInput(View v, Context c, ResultReceiver resultReceiver) {
         InputMethodManager imm = (InputMethodManager) c.getApplicationContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         // 得到InputMethodManager的实例
-        imm.showSoftInput(v,InputMethodManager.SHOW_IMPLICIT,resultReceiver);
+        imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT, resultReceiver);
 //        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
     }
 

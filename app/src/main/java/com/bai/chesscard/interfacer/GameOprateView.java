@@ -81,7 +81,7 @@ public interface GameOprateView {
     /**
      * 显示点数
      */
-    void showPoint();
+    void showPoint(int pos, int point);
 
     /**
      * 隐藏点数
@@ -91,7 +91,7 @@ public interface GameOprateView {
     /**
      * 显示倍数
      */
-    void showMultiple(int pos);
+    void showMultiple(int pos, int multi);
 
     /**
      * 隐藏倍数
@@ -109,6 +109,8 @@ public interface GameOprateView {
      * 骰子停止
      */
     void endDice(int one, int two);
+
+    void endDice(int pos);
 
     /**
      * 桌面详情
@@ -151,4 +153,23 @@ public interface GameOprateView {
      * @param isClickable
      */
     void moneyClickable(boolean isClickable);
+
+    /**
+     * 隐藏桌面上面的码牌
+     */
+    void hidePointCard();
+
+    /**
+     * 显示桌面上面的码牌
+     *
+     * @param pos 对应玩儿家的码牌
+     */
+    void showPointCard(int pos,int point);
+
+    /**
+     * 发牌
+     *
+     * @param pos
+     */
+    void dealChess(int pos);
 }

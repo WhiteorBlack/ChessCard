@@ -165,7 +165,10 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             R.mipmap.num_seven, R.mipmap.num_eight, R.mipmap.num_nine, R.mipmap.num_ten};
     private int[] chessRes = new int[]{R.mipmap.chess_one, R.mipmap.chess_two, R.mipmap.chess_three, R.mipmap.chess_four, R.mipmap.chess_five, R.mipmap.chess_six, R.mipmap.chess_seven,
             R.mipmap.chess_eight, R.mipmap.chess_nine};
+    private int[] pointRes = new int[]{R.mipmap.point_zero, R.mipmap.point_one, R.mipmap.point_two, R.mipmap.point_three, R.mipmap.point_four, R.mipmap.point_five,
+            R.mipmap.point_six, R.mipmap.point_seven, R.mipmap.point_eight, R.mipmap.point_nine};
 
+    private int[] mutilRes = new int[]{R.mipmap.one_multiple, R.mipmap.double_multiple, R.mipmap.trable_multiple};
     private GamePresenter gamePresenter;
     private ProgressDialog progressDialog;
     private SettingPop settingPop;
@@ -212,7 +215,14 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         invisChess();
         invisPoint();
         inVisMul();
+        inVisPointCard();
         clearSelectBg();
+    }
+
+    private void inVisPointCard() {
+        imgBgLeft.setVisibility(View.INVISIBLE);
+        imgBgMid.setVisibility(View.INVISIBLE);
+        imgBgRight.setVisibility(View.INVISIBLE);
     }
 
     private void clearSelectBg() {
@@ -344,7 +354,6 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         gamePresenter.getTableInfo(roomId, tableId);
         Glide.with(context).load(AppPrefrence.getAvatar(context)).error(R.mipmap.icon_default_head).into(imgHead);
         gamePresenter.getChessData();
-        gamePresenter.startCountTime(5 * 1000);
         gamePresenter.getIn(tableId, AppPrefrence.getUserNo(context));
         txtMoney.setText(Constent.MINCOUNT + "");
     }
@@ -548,34 +557,31 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void openChess(Bundle bundle) {
-        visChess();
+
         //庄家
         glideImg(chessRes[bundle.getInt("bankerOne")], imgTopLeft);
         glideImg(chessRes[bundle.getInt("bankerTwo")], imgTopRight);
-        try {
-            Thread.currentThread().sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        imgTopLeft.setVisibility(View.VISIBLE);
+        imgTopRight.setVisibility(View.VISIBLE);
+        gamePresenter.showPoint(0, bundle.getInt("bankerOne"), bundle.getInt("bankerTwo"));
         //初家的牌
         glideImg(chessRes[bundle.getInt("leftOne")], imgChessLeftOne);
         glideImg(chessRes[bundle.getInt("leftTwo")], imgChessLeftTwo);
-        try {
-            Thread.currentThread().sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        imgChessLeftOne.setVisibility(View.VISIBLE);
+        imgChessLeftTwo.setVisibility(View.VISIBLE);
+        gamePresenter.showPoint(1, bundle.getInt("leftOne"), bundle.getInt("leftTwo"));
         //天家
         glideImg(chessRes[bundle.getInt("bottomOne")], imgChessMidOne);
         glideImg(chessRes[bundle.getInt("bottomTwo")], imgChessMidTwo);
-        try {
-            Thread.currentThread().sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        imgChessMidOne.setVisibility(View.VISIBLE);
+        imgChessMidTwo.setVisibility(View.VISIBLE);
+        gamePresenter.showPoint(2, bundle.getInt("bottomOne"), bundle.getInt("bottomTwo"));
         //尾家
         glideImg(chessRes[bundle.getInt("rightOne")], imgChessRightOne);
         glideImg(chessRes[bundle.getInt("rightTwo")], imgChessRightTwo);
+        imgChessRightOne.setVisibility(View.VISIBLE);
+        imgChessLeftTwo.setVisibility(View.VISIBLE);
+        gamePresenter.showPoint(3, bundle.getInt("rightOne"), bundle.getInt("rightTwo"));
     }
 
     private void glideImg(String path, ImageView imageView) {
@@ -603,8 +609,25 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     @Override
-    public void showPoint() {
-
+    public void showPoint(int pos, int point) {
+        switch (pos) {
+            case 0:
+                glideImg(pointRes[point], imgChessTopCount);
+                imgChessTopCount.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                glideImg(pointRes[point], imgChessLeftCount);
+                imgChessLeftCount.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                glideImg(pointRes[point], imgChessMidCount);
+                imgChessMidCount.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                glideImg(pointRes[point], imgChessRightCount);
+                imgChessRightCount.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     @Override
@@ -613,8 +636,25 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     @Override
-    public void showMultiple(int pos) {
-
+    public void showMultiple(int pos, int mutil) {
+        switch (pos) {
+            case 0:
+                glideImg(mutilRes[mutil], imgChessTopMultiple);
+                imgChessTopMultiple.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                glideImg(mutilRes[mutil], imgChessLeftMultiple);
+                imgChessLeftMultiple.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                glideImg(mutilRes[mutil], imgChessMidMultiple);
+                imgChessMidMultiple.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                glideImg(mutilRes[mutil], imgChessRightMultiple);
+                imgChessRightMultiple.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     @Override
@@ -624,11 +664,16 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void shakeDice() {
-
+        gamePresenter.shakeDice(this);
     }
 
     @Override
     public void endDice(int one, int two) {
+
+    }
+
+    @Override
+    public void endDice(int pos) {
 
     }
 
@@ -715,6 +760,69 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     @Override
     public void moneyClickable(boolean isClickable) {
         moneyViewClickable(isClickable);
+    }
+
+    @Override
+    public void hidePointCard() {
+        hidePointCard();
+    }
+
+    @Override
+    public void showPointCard(int pos, int count) {
+        switch (pos) {
+            case 1:
+                Constent.BETLEDTPOINT += count;
+                txtMoneyLeft.setText(Constent.BETLEDTPOINT + "");
+                imgBgLeft.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                Constent.BETMIDPOINT += count;
+                txtMoneyMid.setText(Constent.BETMIDPOINT + "");
+                imgBgMid.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                Constent.BETRIGHTPOINT += count;
+                txtMoneyRight.setText(Constent.BETRIGHTPOINT + "");
+                imgBgRight.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    @Override
+    public void dealChess(int pos) {
+        for (int i = 0; i < 4; i++) {
+            if (pos > 3)
+                pos = 0;
+            switch (pos) {
+                case 0:
+                    glideImg(R.mipmap.bg_chess_back, imgTopLeft);
+                    glideImg(R.mipmap.bg_chess_back, imgTopRight);
+                    imgTopLeft.setVisibility(View.VISIBLE);
+                    imgTopRight.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    glideImg(R.mipmap.bg_chess_back, imgChessLeftOne);
+                    glideImg(R.mipmap.bg_chess_back, imgChessLeftTwo);
+                    imgChessLeftOne.setVisibility(View.VISIBLE);
+                    imgChessLeftTwo.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    glideImg(R.mipmap.bg_chess_back, imgChessMidOne);
+                    glideImg(R.mipmap.bg_chess_back, imgChessMidTwo);
+                    imgChessMidOne.setVisibility(View.VISIBLE);
+                    imgChessMidTwo.setVisibility(View.VISIBLE);
+                    break;
+                case 3:
+                    glideImg(R.mipmap.bg_chess_back, imgChessRightOne);
+                    glideImg(R.mipmap.bg_chess_back, imgChessRightTwo);
+                    imgChessRightOne.setVisibility(View.VISIBLE);
+                    imgChessRightTwo.setVisibility(View.VISIBLE);
+                    break;
+            }
+
+            pos++;
+        }
+        gamePresenter.startCountTime(10 * 1000);
     }
 
     @Override

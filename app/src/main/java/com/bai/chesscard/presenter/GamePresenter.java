@@ -21,8 +21,11 @@ import android.widget.Toast;
 
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.Bean_BetMoney;
 import com.bai.chesscard.bean.Bean_ChessList;
 import com.bai.chesscard.bean.Bean_Login;
+import com.bai.chesscard.bean.Bean_Message;
+import com.bai.chesscard.bean.Bean_ShakeDice;
 import com.bai.chesscard.bean.Bean_TableDetial;
 import com.bai.chesscard.interfacer.GameDataListener;
 import com.bai.chesscard.interfacer.GameOprateView;
@@ -35,6 +38,7 @@ import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.Tools;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.tencent.TIMConversation;
 import com.tencent.TIMConversationType;
 import com.tencent.TIMCustomElem;
@@ -67,12 +71,13 @@ import static android.R.attr.readPermission;
  * Created by Administrator on 2016/11/16.
  */
 
-public class GamePresenter implements TIMMessageListener {
+public class GamePresenter implements Observer {
     private GameOprateView gameOprateView;
     private ViewGroup viewGroup;
     private int[] diceRes = new int[]{R.drawable.dice_one, R.drawable.dice_two, R.drawable.dice_three, R.drawable.dice_four, R.drawable.dice_five, R.drawable.dice_six};
     private IoSession gameSession;
     private TIMConversation conversation;
+    private Bean_TableDetial bean_tableDetial;
 
     public GamePresenter(GameOprateView gameOprateView, String groupId, TIMConversationType type) {
         this.gameOprateView = gameOprateView;
@@ -87,8 +92,8 @@ public class GamePresenter implements TIMMessageListener {
      * @param context
      */
     public void startService(Context context) {
-//        MessageEvent.getInstance().addObserver(this);
-        TIMManager.getInstance().addMessageListener(this);
+        MessageEvent.getInstance().addObserver(this);
+//        TIMManager.getInstance().addMessageListener(this);
     }
 
     public void onDestory() {
@@ -118,7 +123,7 @@ public class GamePresenter implements TIMMessageListener {
         gameOprateView.moneyClickable(false);
         Map<String, String> params = new HashMap<>();
         params.put("user_id", userId);
-        params.put("mid", "");
+        params.put("mid", Constent.ROUNDID);
         params.put("num", "" + Constent.SELECTPOS);
         params.put("point", point + "");
         params.put("house_id", houseId);
@@ -127,11 +132,20 @@ public class GamePresenter implements TIMMessageListener {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
+                Tools.debug("betMoney:" + response);
                 if (TextUtils.isEmpty(response)) {
                     gameOprateView.toastMsg(R.string.no_network);
                     return;
                 }
-
+                Bean_BetMoney bean_betMoney = new Gson().fromJson(response, Bean_BetMoney.class);
+                if (bean_betMoney == null && bean_betMoney.status) {
+                    gameOprateView.showPointCard(bean_betMoney.data.num, bean_betMoney.data.totalPoint);
+                    Bean_Message message = new Bean_Message();
+                    message.type = Constent.BET_MONEY;
+                    message.betNum = bean_betMoney.data.num;
+                    message.betPoint = bean_betMoney.data.totalPoint;
+                    setMessage(message);
+                }
             }
 
             @Override
@@ -156,9 +170,9 @@ public class GamePresenter implements TIMMessageListener {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("data", "测试信息");
-                params.put("type", "0");
+                Bean_Message params = new Bean_Message();
+                params.type = 0;
+                params.data = "测试信息json";
                 setMessage(params);
 
             }
@@ -184,13 +198,13 @@ public class GamePresenter implements TIMMessageListener {
                     gameOprateView.toastMsg(R.string.no_network);
                     return;
                 }
-                Bean_TableDetial tableDetial = new Gson().fromJson(response, Bean_TableDetial.class);
-                if (tableDetial != null && tableDetial.status) {
-                    Constent.isHasUser[0] = !(tableDetial.data.first_user == null);
-                    Constent.isHasUser[1] = !(tableDetial.data.second_user == null);
-                    Constent.isHasUser[2] = !(tableDetial.data.third_user == null);
-                    Constent.isHasUser[3] = !(tableDetial.data.four_user == null);
-                    gameOprateView.setTableInfo(tableDetial.data);
+                bean_tableDetial = new Gson().fromJson(response, Bean_TableDetial.class);
+                if (bean_tableDetial != null && bean_tableDetial.status) {
+                    Constent.isHasUser[0] = !(bean_tableDetial.data.first_user == null);
+                    Constent.isHasUser[1] = !(bean_tableDetial.data.second_user == null);
+                    Constent.isHasUser[2] = !(bean_tableDetial.data.third_user == null);
+                    Constent.isHasUser[3] = !(bean_tableDetial.data.four_user == null);
+                    gameOprateView.setTableInfo(bean_tableDetial.data);
                 }
             }
 
@@ -217,27 +231,27 @@ public class GamePresenter implements TIMMessageListener {
      * @param userId 用户id,如果抢座位的话就传进去
      */
     public void showUserInfo(int pos, String userId) {
-        switch (pos) {
-            case 0:
-                //庄家
 
-                break;
-            case 1:
-                //初家
-
-                break;
-            case 2:
-                //天家
-
-                break;
-            case 3:
-                //尾家
-
-                break;
-        }
-        if (Constent.isHasUser[pos])
-            gameOprateView.showUserInfo(new Bean_TableDetial.TableUser());
-        else {
+        if (Constent.isHasUser[pos]) {
+            switch (pos) {
+                case 0:
+                    //庄家
+                    gameOprateView.showUserInfo(bean_tableDetial.data.first_user);
+                    break;
+                case 1:
+                    //初家
+                    gameOprateView.showUserInfo(bean_tableDetial.data.second_user);
+                    break;
+                case 2:
+                    //天家
+                    gameOprateView.showUserInfo(bean_tableDetial.data.third_user);
+                    break;
+                case 3:
+                    //尾家
+                    gameOprateView.showUserInfo(bean_tableDetial.data.four_user);
+                    break;
+            }
+        } else {
             capturePosition(pos + 1, userId);
         }
     }
@@ -263,15 +277,15 @@ public class GamePresenter implements TIMMessageListener {
                     return;
                 }
                 Constent.isHasUser[pos - 1] = true;
-                Bean_TableDetial tableDetial = new Gson().fromJson(response, Bean_TableDetial.class);
-                if (tableDetial != null) {
-                    Constent.isHasUser[0] = !(tableDetial.data.first_user == null);
-                    Constent.isHasUser[1] = !(tableDetial.data.second_user == null);
-                    Constent.isHasUser[2] = !(tableDetial.data.third_user == null);
-                    Constent.isHasUser[3] = !(tableDetial.data.four_user == null);
-                    gameOprateView.setTableInfo(tableDetial.data);
+                bean_tableDetial = new Gson().fromJson(response, Bean_TableDetial.class);
+                if (bean_tableDetial != null) {
+                    Constent.isHasUser[0] = !(bean_tableDetial.data.first_user == null);
+                    Constent.isHasUser[1] = !(bean_tableDetial.data.second_user == null);
+                    Constent.isHasUser[2] = !(bean_tableDetial.data.third_user == null);
+                    Constent.isHasUser[3] = !(bean_tableDetial.data.four_user == null);
+                    gameOprateView.setTableInfo(bean_tableDetial.data);
                 }
-                if (tableDetial.status) {
+                if (bean_tableDetial.status) {
 
                     if (pos == 1) {
                         Constent.ISBANKER = true;
@@ -349,15 +363,36 @@ public class GamePresenter implements TIMMessageListener {
      */
     public void openChess() {
         Bundle bundle = new Bundle();
-        bundle.putInt("bankerOne", 1);
-        bundle.putInt("bankerTwo", 2);
-        bundle.putInt("leftOne", 1);
-        bundle.putInt("leftTwo", 2);
-        bundle.putInt("bottomOne", 1);
-        bundle.putInt("bottomTwo", 2);
-        bundle.putInt("rightOne", 1);
-        bundle.putInt("rightTwo", 2);
+        bundle.putInt("bankerOne", getChessPoint(bean_shakeDice.data.first)[0]);
+        bundle.putInt("bankerTwo", getChessPoint(bean_shakeDice.data.first)[1]);
+        bundle.putInt("leftOne", getChessPoint(bean_shakeDice.data.second)[0]);
+        bundle.putInt("leftTwo", getChessPoint(bean_shakeDice.data.second)[1]);
+        bundle.putInt("bottomOne", getChessPoint(bean_shakeDice.data.third)[0]);
+        bundle.putInt("bottomTwo", getChessPoint(bean_shakeDice.data.third)[1]);
+        bundle.putInt("rightOne", getChessPoint(bean_shakeDice.data.four)[0]);
+        bundle.putInt("rightTwo", getChessPoint(bean_shakeDice.data.four)[1]);
         gameOprateView.openChess(bundle);
+        Constent.BETLEDTPOINT=0;
+        Constent.BETMIDPOINT=0;
+        Constent.BETRIGHTPOINT=0;
+    }
+
+    /**
+     * 将String[] 转换为int[] 由于数组从0开始,这里减一
+     *
+     * @param chess
+     * @return
+     */
+    private int[] getChessPoint(String chess) {
+        int[] chessPoint = new int[]{-1, -1};
+        try {
+            chessPoint[0] = Integer.parseInt(chess.split(",")[0]) - 1;
+            chessPoint[1] = Integer.parseInt(chess.split(",")[1]) - 1;
+        } catch (Exception e) {
+
+        }
+
+        return chessPoint;
     }
 
     /**
@@ -368,15 +403,13 @@ public class GamePresenter implements TIMMessageListener {
             @Override
             public void onTick(long millisUntilFinished) {
                 gameOprateView.startCountTime((int) (millisUntilFinished / 1000));
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("data", "测试信息" + millisUntilFinished);
-                params.put("type", "0");
-                setMessage(params);
+
             }
 
             @Override
             public void onFinish() {
                 endCountTime();
+                openChess();
             }
         }.start();
     }
@@ -391,8 +424,15 @@ public class GamePresenter implements TIMMessageListener {
     /**
      * 显示点数
      */
-    public void showPoint() {
-        gameOprateView.showPoint();
+    public void showPoint(int pos, int one, int two) {
+        int point = one + two + 2;
+        int mutil = -1;
+        if (point > 9)
+            point = 0;
+        else if (one == two)
+            mutil = 1;
+        showMultiple(pos, mutil);
+        gameOprateView.showPoint(pos, point);
     }
 
     /**
@@ -405,8 +445,9 @@ public class GamePresenter implements TIMMessageListener {
     /**
      * 显示倍数
      */
-    public void showMultiple(int pos) {
-        gameOprateView.showMultiple(pos);
+    public void showMultiple(int pos, int mutil) {
+        if (mutil > 0)
+            gameOprateView.showMultiple(pos, mutil);
     }
 
     /**
@@ -422,8 +463,31 @@ public class GamePresenter implements TIMMessageListener {
      * 摇动骰子
      */
     public void shakeDice(Activity context) {
-        gameOprateView.shakeDice();
+        Constent.ISSHAKING = true;
         startDice(context);
+        getDiceData();
+    }
+
+    private Bean_ShakeDice bean_shakeDice;
+
+    private void getDiceData() {
+        Map<String, String> params = new HashMap<>();
+        params.put("house_id", Constent.ROOMID);
+        params.put("table_id", Constent.TABLEID);
+        PostTools.postData(CommonUntilities.MAIN_URL + "setscreen", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                Tools.debug("shakeDice--" + response);
+                if (TextUtils.isEmpty(response))
+                    return;
+                bean_shakeDice = new Gson().fromJson(response, Bean_ShakeDice.class);
+                Constent.ROUNDID = bean_shakeDice.data.id;
+                if (bean_shakeDice != null && bean_shakeDice.status && !Constent.ISSHAKING) {
+                    endDice(bean_shakeDice.data.scount, bean_shakeDice.data.scount1);
+                }
+            }
+        });
     }
 
     private int onePoint, twoPoint;
@@ -449,7 +513,7 @@ public class GamePresenter implements TIMMessageListener {
         viewGroup.getBackground().setAlpha(120);
         ((AnimationDrawable) imgOne.getBackground()).start();
         ((AnimationDrawable) imgTwo.getBackground()).start();
-        new CountDownTimer(1500, 1500) {
+        new CountDownTimer(2000, 2000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -458,16 +522,14 @@ public class GamePresenter implements TIMMessageListener {
 
             @Override
             public void onFinish() {
-                ((AnimationDrawable) imgOne.getBackground()).stop();
-                ((AnimationDrawable) imgTwo.getBackground()).stop();
-                onePoint = new Random().nextInt(6);
-                twoPoint = new Random().nextInt(6);
-                Tools.debug("one" + onePoint + "two" + twoPoint);
-//                imgOne.clearAnimation();
-//                imgTwo.clearAnimation();
-                imgOne.setBackgroundResource(diceRes[onePoint]);
-                imgTwo.setBackgroundResource(diceRes[twoPoint]);
-                endDice(onePoint, twoPoint);
+                Constent.ISSHAKING = false;
+                if (bean_shakeDice != null && bean_shakeDice.status) {
+                    ((AnimationDrawable) imgOne.getBackground()).stop();
+                    ((AnimationDrawable) imgTwo.getBackground()).stop();
+                    imgOne.setBackgroundResource(diceRes[bean_shakeDice.data.scount]);
+                    imgTwo.setBackgroundResource(diceRes[bean_shakeDice.data.scount1]);
+                    endDice(bean_shakeDice.data.scount, bean_shakeDice.data.scount1);
+                }
             }
         }.start();
     }
@@ -491,9 +553,27 @@ public class GamePresenter implements TIMMessageListener {
     /**
      * 骰子停止摇动
      */
-    public void endDice(int one, int two) {
-        gameOprateView.endDice(one, two);
-        new CountDownTimer(1000, 1000) {
+    public void endDice(final int one, final int two) {
+        Constent.ISSHAKING = false;
+
+        final int pos = (one + two) % 4;
+        String toast = null;
+        switch (pos) {
+            case 0:
+                toast = "庄家开";
+                break;
+            case 1:
+                toast = "初家开";
+                break;
+            case 2:
+                toast = "天家开";
+                break;
+            case 3:
+                toast = "尾家开";
+                break;
+        }
+        gameOprateView.toastMsg(toast);
+        new CountDownTimer(500, 500) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -504,72 +584,20 @@ public class GamePresenter implements TIMMessageListener {
             public void onFinish() {
                 viewGroup.removeAllViews();
                 viewGroup.setBackgroundColor(Color.TRANSPARENT);
-                showToast(viewGroup.getContext(), "庄家开");
+                gameOprateView.dealChess(pos);
             }
         }.start();
 
-    }
-
-    private void showToast(Context context, String text) {
-        Toast toast = new Toast(context);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        TextView textView = new TextView(context);
-        textView.setLayoutParams(new FrameLayout.LayoutParams(Tools.dip2px(context, 200), Tools.dip2px(context, 200)));
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextSize(16);
-        textView.setTextColor(Color.WHITE);
-        textView.setText(text);
-        textView.setBackgroundResource(R.drawable.toast_bg);
-        textView.getBackground().setAlpha(180);
-        toast.setView(textView);
-        toast.show();
     }
 
     public void showExitPop() {
         gameOprateView.showExitPop();
     }
 
-    @Override
-    public boolean onNewMessages(List<TIMMessage> list) {
-        if (list != null && list.size() > 0) {
-            for (TIMMessage item : list) {
-                for (int i = 0; i < item.getElementCount(); i++) {
-                    TIMElem elem = item.getElement(i);
-                    TIMElemType elemType = elem.getType();
-                    Tools.debug("elemType--" + elemType.name());
-                    if (elemType == TIMElemType.Text) {
-                        TIMTextElem elemText = (TIMTextElem) elem;
-                        Tools.debug("收到的消息:" + elemText.getText());
-                    }
-
-                }
-            }
-        }
-        return false;
-    }
-
-
-    private void setMessage(Map<String, String> params) {
-        int index = 0;
-        String content = "";
+    private void setMessage(Bean_Message bean_message) {
         TIMMessage message = new TIMMessage();
         TIMTextElem elem = new TIMTextElem();
-
-        Set entries = null;
-        if (params != null && params.size() > 0) {
-            entries = params.entrySet();
-        }
-        if (entries != null) {
-            Iterator<Map.Entry<String, String>> iterator = entries.iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, String> entry = iterator.next();
-                if (index == 0)
-                    content += entry.getKey() + ":" + entry.getValue();
-                else content += "," + entry.getKey() + ":" + entry.getValue();
-                index++;
-            }
-        }
-        elem.setText("这里是测试消息啊a");
+        elem.setText(new Gson().toJson(bean_message));
         if (message.addElement(elem) != 0) {
             Tools.debug("添加失败啦啊啊啊啊啊");
             return;
@@ -588,4 +616,45 @@ public class GamePresenter implements TIMMessageListener {
     }
 
 
+    @Override
+    public void update(Observable observable, Object data) {
+        if (observable instanceof MessageEvent) {
+            TIMMessage msg = (TIMMessage) data;
+            Tools.debug("elemType--" + "--" + msg.getConversation().getType() + "--" + msg.getConversation().getPeer());
+            //群内用户发送的消息
+            if (msg == null || msg.getConversation().getPeer().equals(conversation.getPeer()) && msg.getConversation().getType() == conversation.getType()) {
+                for (int i = 0; i < msg.getElementCount(); i++) {
+                    TIMElem elem = msg.getElement(i);
+                    TIMElemType elemType = elem.getType();
+
+                    if (elemType == TIMElemType.Text) {
+                        Bean_Message bean_message = null;
+                        TIMTextElem elemText = (TIMTextElem) elem;
+                        try {
+                            bean_message = new Gson().fromJson(elemText.getText(), Bean_Message.class);
+                        } catch (JsonSyntaxException e) {
+                            if (TextUtils.equals(elemText.getText(), "0"))
+                                gameOprateView.shakeDice();
+                        }
+
+                        if (bean_message == null)
+                            return;
+                        switch (bean_message.type) {
+                            case 0:
+                                //开始摇色子
+                                gameOprateView.shakeDice();
+                                break;
+                            case 2:
+                                //用户投注信息
+                                gameOprateView.showPointCard(bean_message.betNum, bean_message.betPoint);
+                                break;
+                        }
+                    }
+                }
+            }
+            if (msg == null) {
+                Tools.debug("elemType--" + "--" + msg.getConversation().getType() + "--" + msg.getConversation().getPeer());
+            }
+        }
+    }
 }
