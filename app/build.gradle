@@ -21,15 +21,6 @@ android {
     sourceSets { main { jniLibs.srcDirs = ['libs'] } }
 }
 
-//buildscript {
-//    repositories {
-//        jcenter()
-//        mavenCentral()
-//    }
-//    dependencies {
-//        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-//    }
-//}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
