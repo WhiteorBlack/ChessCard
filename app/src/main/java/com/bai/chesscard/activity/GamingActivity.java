@@ -199,6 +199,20 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         initView();
         init();
         initData();
+        resetData();
+    }
+
+    /**
+     * 重置桌面上面的数据
+     */
+    private void resetData() {
+        txtMoney.setText(Constent.MINCOUNT + "");
+        txtTotalLeft.setText("");
+        Constent.BETLEDTPOINT=0;
+        txtTotalMid.setText("");
+        Constent.BETMIDPOINT=0;
+        txtTotalRight.setText("");
+        Constent.BETRIGHTPOINT=0;
     }
 
     private void initView() {
@@ -353,9 +367,8 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private void initData() {
         gamePresenter.getTableInfo(roomId, tableId);
         Glide.with(context).load(AppPrefrence.getAvatar(context)).error(R.mipmap.icon_default_head).into(imgHead);
-        gamePresenter.getChessData();
         gamePresenter.getIn(tableId, AppPrefrence.getUserNo(context));
-        txtMoney.setText(Constent.MINCOUNT + "");
+
     }
 
     private void init() {
@@ -412,19 +425,25 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
                 //投注
                 if (pointList == null || pointList.length == 0)
                     return;
-                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[0], tableId, roomId);
+                int[] start_location = new int[]{(int) (Tools.getScreenWide(this)/2+Tools.dip2px(this,50)), (int) (Tools.getScreenHeight(this)-Tools.dip2px(this,25))};
+
+                gamePresenter.betMoney(this,AppPrefrence.getUserNo(context), pointList[0], tableId, roomId,start_location);
                 break;
             case R.id.txt_money_mid:
                 //投注
-                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[1], tableId, roomId);
+                int[] start_location1 = new int[]{(int) (Tools.getScreenWide(this)*3/5), (int) (Tools.getScreenHeight(this)-Tools.dip2px(this,25))};
+
+                gamePresenter.betMoney(this,AppPrefrence.getUserNo(context), pointList[1], tableId, roomId,start_location1);
                 break;
             case R.id.txt_money_right:
                 //投注
-                gamePresenter.betMoney(AppPrefrence.getUserNo(context), pointList[2], tableId, roomId);
+                int[] start_location2 = new int[]{(int) (Tools.getScreenWide(this)*3/5+Tools.dip2px(this,50)), (int) (Tools.getScreenHeight(this)-Tools.dip2px(this,25))};
+
+                gamePresenter.betMoney(this,AppPrefrence.getUserNo(context), pointList[2], tableId, roomId,start_location2);
                 break;
             case R.id.img_setting:
                 //设置选项
-
+                gamePresenter.showSetting();
                 break;
             case R.id.fl_user_left:
                 //选择初家进行投注
@@ -598,6 +617,24 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         imgTime.setVisibility(View.VISIBLE);
         imgTime.setBackgroundResource(timeRes[time]);
         flTime.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void openCountTime(int time) {
+        imgTimeStatus.setVisibility(View.VISIBLE);
+        imgTime.setVisibility(View.VISIBLE);
+        imgTime.setBackgroundResource(timeRes[time]);
+        flTime.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void resetStatue() {
+        invisChess();
+        invisPoint();
+        invisTime();
+        inVisMul();
+        inVisPointCard();
+        resetData();
     }
 
     @Override
@@ -821,6 +858,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             }
 
             pos++;
+           gamePresenter.getChessData(gameChessAdapter.getItemCount()-1);
         }
         gamePresenter.startCountTime(10 * 1000);
     }

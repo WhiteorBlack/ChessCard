@@ -12,7 +12,14 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -65,6 +72,9 @@ import java.util.Random;
 import java.util.Set;
 
 import static android.R.attr.data;
+import static android.R.attr.end;
+import static android.R.attr.height;
+import static android.R.attr.priority;
 import static android.R.attr.readPermission;
 
 /**
@@ -101,13 +111,14 @@ public class GamePresenter implements Observer {
         conversation = null;
     }
 
-    public void getChessData() {
+    public void getChessData(int count) {
         List<Bean_ChessList.Chess> chess = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < count; i++) {
             chess.add(new Bean_ChessList.Chess());
         }
         gameOprateView.setChessData(chess);
     }
+
 
     /**
      * 下注
@@ -115,11 +126,16 @@ public class GamePresenter implements Observer {
      * @param userId
      * @param point
      */
-    public void betMoney(String userId, int point, String tableId, String houseId) {
+    public void betMoney(Activity activity, String userId, int point, String tableId, String houseId, int[] startPoint) {
         if (Constent.SELECTPOS < 0 && !Constent.ISGAMER) {
             gameOprateView.toastMsg("请选择要投注的玩儿家");
             return;
         }
+        if (Constent.USERMONEY < point) {
+            gameOprateView.toastMsg("账号余额不足,请及时充值");
+            return;
+        }
+        betMoneyAnim(activity, startPoint);
         gameOprateView.moneyClickable(false);
         Map<String, String> params = new HashMap<>();
         params.put("user_id", userId);
@@ -372,9 +388,7 @@ public class GamePresenter implements Observer {
         bundle.putInt("rightOne", getChessPoint(bean_shakeDice.data.four)[0]);
         bundle.putInt("rightTwo", getChessPoint(bean_shakeDice.data.four)[1]);
         gameOprateView.openChess(bundle);
-        Constent.BETLEDTPOINT=0;
-        Constent.BETMIDPOINT=0;
-        Constent.BETRIGHTPOINT=0;
+        openCountTime(2*1000);
     }
 
     /**
@@ -396,6 +410,23 @@ public class GamePresenter implements Observer {
     }
 
     /**
+     * 开牌展示时间开始计时
+     */
+    public void openCountTime(int time) {
+        new CountDownTimer(time, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                gameOprateView.resetStatue();
+            }
+        }.start();
+    }
+
+    /**
      * 开始计时
      */
     public void startCountTime(int time) {
@@ -410,6 +441,7 @@ public class GamePresenter implements Observer {
             public void onFinish() {
                 endCountTime();
                 openChess();
+                gameOprateView.moneyClickable(false);
             }
         }.start();
     }
@@ -490,7 +522,57 @@ public class GamePresenter implements Observer {
         });
     }
 
-    private int onePoint, twoPoint;
+    public void betMoneyAnim(final Activity activity, int[] startPoint) {
+        int height = Tools.dip2px(activity, 50);
+        float mutil = 1.34f;
+        int width = (int) (height * mutil);
+
+        final int[] endPoint = new int[]{(int) (Tools.getScreenWide(activity) / 2), (int) (Tools.getScreenHeight(activity) / 2)};
+
+        final ImageView imgBet = new ImageView(activity);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, height);
+        imgBet.setLayoutParams(params);
+        imgBet.setBackgroundResource(R.mipmap.bg_gold);
+        if (viewGroup == null)
+            viewGroup = createAnimLayout(activity);
+        viewGroup.removeAllViews();
+        startPoint[0] -= width * 2.5;
+        startPoint[1] -= height * 3;
+        endPoint[0] -= width / 2;
+        endPoint[1] -= height / 2;
+        imgBet.setX(startPoint[0]);
+        imgBet.setY(startPoint[1]);
+        viewGroup.addView(imgBet);
+        viewGroup.setBackgroundColor(Color.TRANSPARENT);
+
+        TranslateAnimation translateAnimation = new TranslateAnimation(startPoint[0], endPoint[0] - startPoint[0], startPoint[1], endPoint[1] - startPoint[1]);
+        translateAnimation.setDuration(500);
+        translateAnimation.setRepeatCount(0);
+        translateAnimation.setInterpolator(new LinearInterpolator());
+        translateAnimation.setFillAfter(true);
+        imgBet.setAnimation(translateAnimation);
+        translateAnimation.start();
+        translateAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                imgBet.clearAnimation();
+                imgBet.setX(endPoint[0]);
+                imgBet.setY(endPoint[1]);
+                imgBet.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
 
     private void startDice(final Activity context) {
         final ImageView imgOne = new ImageView(context);
@@ -585,6 +667,7 @@ public class GamePresenter implements Observer {
                 viewGroup.removeAllViews();
                 viewGroup.setBackgroundColor(Color.TRANSPARENT);
                 gameOprateView.dealChess(pos);
+                gameOprateView.moneyClickable(true);
             }
         }.start();
 

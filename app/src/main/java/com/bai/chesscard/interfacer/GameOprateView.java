@@ -74,6 +74,16 @@ public interface GameOprateView {
     void startCountTime(int time);
 
     /**
+     * 发牌后计时
+     */
+    void openCountTime(int time);
+
+    /**
+     * 开牌后重置所有状态
+     */
+    void resetStatue();
+
+    /**
      * 结束计时
      */
     void endCountTime();
@@ -164,7 +174,7 @@ public interface GameOprateView {
      *
      * @param pos 对应玩儿家的码牌
      */
-    void showPointCard(int pos,int point);
+    void showPointCard(int pos, int point);
 
     /**
      * 发牌
