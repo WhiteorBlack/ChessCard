@@ -63,6 +63,7 @@
                             android:layout_height="wrap_content"
                             android:background="@mipmap/login_edit_bg"
                             android:focusable="true"
+                            android:imeOptions="flagNoExtractUi|flagNoFullscreen"
                             android:gravity="center_vertical|left"
                             android:inputType="phone"
                             android:maxLength="11"
@@ -91,6 +92,7 @@
                             android:layout_height="wrap_content"
                             android:background="@mipmap/login_edit_bg"
                             android:gravity="center_vertical|left"
+                            android:imeOptions="flagNoExtractUi|flagNoFullscreen"
                             android:inputType="textPassword"
                             android:paddingLeft="10dp" />
                     </LinearLayout>

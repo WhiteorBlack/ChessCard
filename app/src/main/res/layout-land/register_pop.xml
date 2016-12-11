@@ -59,6 +59,7 @@
                         android:focusable="true"
                         android:gravity="center_vertical|left"
                         android:inputType="phone"
+                        android:imeOptions="flagNoExtractUi|flagNoFullscreen"
                         android:maxLength="11"
                         android:paddingLeft="10dp" />
                 </LinearLayout>
@@ -86,6 +87,7 @@
                         android:background="@mipmap/login_edit_bg"
                         android:gravity="center_vertical|left"
                         android:layout_marginLeft="5dp"
+                        android:imeOptions="flagNoExtractUi|flagNoFullscreen"
                         android:inputType="text"
                         android:paddingLeft="10dp" />
                 </LinearLayout>

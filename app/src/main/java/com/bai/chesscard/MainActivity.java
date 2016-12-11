@@ -4,11 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bai.chesscard.activity.Home;
@@ -27,7 +28,6 @@ import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
 import com.google.gson.Gson;
 import com.tencent.TIMCallBack;
-import com.tencent.TIMFriendMetaInfo;
 import com.tencent.TIMFriendshipManager;
 import com.tencent.TIMManager;
 import com.tencent.TIMUser;
@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 
 import static com.bai.chesscard.utils.AppPrefrence.setAmount;
 
-public class MainActivity extends BaseActivity implements PopInterfacer {
+public class MainActivity extends BaseActivity implements PopInterfacer, View.OnLayoutChangeListener {
 
 
     @BindView(R.id.img_chess_left)
@@ -53,12 +53,17 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
     ImageView imgLoading;
     @BindView(R.id.txt_loading)
     TextView txtLoading;
+    @BindView(R.id.activity_main)
+    LinearLayout activityMain;
+    @BindView(R.id.fl_parent)
+    FrameLayout flParent;
     private LoginPop loginPop;
     private RegisterPop registerPop;
     private InputPwdPop inputPwdPop;
     private GetCodePop getCode;
     private ProgressDialog progressDilaog;
     private FindPwdPop findPwdPop;
+    private FrameLayout flTEst;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +86,9 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
         if (AppPrefrence.getIsLogin(context)) {
             login();
         }
+        activityMain.addOnLayoutChangeListener(this);
     }
+
 
     private void login() {
         progressDilaog.setMessage("登录中...");
@@ -343,5 +350,10 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                 //登录失败
                 break;
         }
+    }
+
+    @Override
+    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        Tools.debug("left" + left + "--" + top + "--" + right + "--" + bottom + "--" + oldTop + "--" + oldBottom);
     }
 }

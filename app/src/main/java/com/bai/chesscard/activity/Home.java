@@ -1,5 +1,6 @@
 package com.bai.chesscard.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,7 +10,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -118,6 +123,9 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
         initData();
         MessageEvent.getInstance().addObserver(this);
     }
+
+
+
 
     private void initData() {
         progressDialog = Tools.getDialog(context, "");

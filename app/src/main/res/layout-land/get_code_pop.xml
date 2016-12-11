@@ -55,6 +55,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
+                        android:imeOptions="flagNoExtractUi|flagNoFullscreen"
                         android:background="@mipmap/bg_edit_code"
                         android:focusable="true"
                         android:gravity="center_vertical|left"

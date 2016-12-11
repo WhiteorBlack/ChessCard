@@ -65,7 +65,7 @@ public class LoginPop extends BasePopupwind {
     private void initView() {
         inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.login_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.login_pop_new, null);
         edtPhone = (EditText) view.findViewById(R.id.edt_phone);
         edtPwd = (EditText) view.findViewById(R.id.edt_pwd);
         view.findViewById(R.id.btn_login).setOnClickListener(this);
