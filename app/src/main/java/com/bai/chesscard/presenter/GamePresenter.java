@@ -1,49 +1,34 @@
 package com.bai.chesscard.presenter;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.IBinder;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.Bean_BetMoney;
 import com.bai.chesscard.bean.Bean_ChessList;
-import com.bai.chesscard.bean.Bean_Login;
 import com.bai.chesscard.bean.Bean_Message;
 import com.bai.chesscard.bean.Bean_ShakeDice;
 import com.bai.chesscard.bean.Bean_TableDetial;
-import com.bai.chesscard.interfacer.GameDataListener;
 import com.bai.chesscard.interfacer.GameOprateView;
 import com.bai.chesscard.interfacer.PostCallBack;
-import com.bai.chesscard.mina.MinaClientHandler;
-import com.bai.chesscard.service.HeartBeatService;
 import com.bai.chesscard.service.MessageEvent;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.Tools;
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.tencent.TIMConversation;
@@ -54,28 +39,15 @@ import com.tencent.TIMElemType;
 import com.tencent.TIMGroupSystemElem;
 import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
-import com.tencent.TIMMessageListener;
 import com.tencent.TIMTextElem;
 import com.tencent.TIMValueCallBack;
 
-import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.core.session.IoSession;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Random;
-import java.util.Set;
-
-import static android.R.attr.data;
-import static android.R.attr.end;
-import static android.R.attr.height;
-import static android.R.attr.priority;
-import static android.R.attr.readPermission;
 
 /**
  * Created by Administrator on 2016/11/16.
@@ -85,7 +57,6 @@ public class GamePresenter implements Observer {
     private GameOprateView gameOprateView;
     private ViewGroup viewGroup;
     private int[] diceRes = new int[]{R.drawable.dice_one, R.drawable.dice_two, R.drawable.dice_three, R.drawable.dice_four, R.drawable.dice_five, R.drawable.dice_six};
-    private IoSession gameSession;
     private TIMConversation conversation;
     private Bean_TableDetial bean_tableDetial;
 
@@ -103,11 +74,11 @@ public class GamePresenter implements Observer {
      */
     public void startService(Context context) {
         MessageEvent.getInstance().addObserver(this);
-//        TIMManager.getInstance().addMessageListener(this);
     }
 
     public void onDestory() {
         MessageEvent.getInstance().clear();
+
         conversation = null;
     }
 
@@ -126,7 +97,7 @@ public class GamePresenter implements Observer {
      * @param userId
      * @param point
      */
-    public void betMoney(Activity activity, String userId, int point, String tableId, String houseId, int[] startPoint) {
+    public void betMoney(Activity activity, String userId, final int point, String tableId, String houseId, int[] startPoint) {
         if (Constent.SELECTPOS < 0 && !Constent.ISGAMER) {
             gameOprateView.toastMsg("请选择要投注的玩儿家");
             return;
@@ -154,8 +125,10 @@ public class GamePresenter implements Observer {
                     return;
                 }
                 Bean_BetMoney bean_betMoney = new Gson().fromJson(response, Bean_BetMoney.class);
-                if (bean_betMoney == null && bean_betMoney.status) {
+                if (bean_betMoney != null && bean_betMoney.status) {
                     gameOprateView.showPointCard(bean_betMoney.data.num, bean_betMoney.data.totalPoint);
+                    Constent.USERMONEY = Constent.USERMONEY - point;
+                    gameOprateView.resetUserMoney(Constent.USERMONEY);
                     Bean_Message message = new Bean_Message();
                     message.type = Constent.BET_MONEY;
                     message.betNum = bean_betMoney.data.num;
@@ -388,7 +361,28 @@ public class GamePresenter implements Observer {
         bundle.putInt("rightOne", getChessPoint(bean_shakeDice.data.four)[0]);
         bundle.putInt("rightTwo", getChessPoint(bean_shakeDice.data.four)[1]);
         gameOprateView.openChess(bundle);
-        openCountTime(2*1000);
+        getResult();
+        openCountTime(2 * 1000);
+    }
+
+    /**
+     * 结算结果
+     */
+    private void getResult() {
+        Map<String, String> params = new HashMap<>();
+        params.put("mh_id", Constent.ROUNDID);
+        params.put("house_id", Constent.ROOMID);
+        params.put("table_id", Constent.TABLEID);
+        PostTools.postData(CommonUntilities.MAIN_URL + "judgepoint", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    return;
+                }
+                Tools.debug("result" + response);
+            }
+        });
     }
 
     /**
@@ -405,7 +399,6 @@ public class GamePresenter implements Observer {
         } catch (Exception e) {
 
         }
-
         return chessPoint;
     }
 
@@ -416,7 +409,7 @@ public class GamePresenter implements Observer {
         new CountDownTimer(time, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-
+                gameOprateView.openCountTime((int) (millisUntilFinished / 1000));
             }
 
             @Override
@@ -439,9 +432,9 @@ public class GamePresenter implements Observer {
 
             @Override
             public void onFinish() {
+                gameOprateView.moneyClickable(false);
                 endCountTime();
                 openChess();
-                gameOprateView.moneyClickable(false);
             }
         }.start();
     }
@@ -655,7 +648,7 @@ public class GamePresenter implements Observer {
                 break;
         }
         gameOprateView.toastMsg(toast);
-        new CountDownTimer(500, 500) {
+        new CountDownTimer(1000, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -735,8 +728,18 @@ public class GamePresenter implements Observer {
                     }
                 }
             }
-            if (msg == null) {
-                Tools.debug("elemType--" + "--" + msg.getConversation().getType() + "--" + msg.getConversation().getPeer());
+            if (msg != null && TextUtils.equals(msg.getConversation().getType().toString(), "System")) {
+                for (int i = 0; i < msg.getElementCount(); i++) {
+                    TIMElem elem = msg.getElement(i);
+                    TIMElemType elemType = elem.getType();
+                    if (elemType == TIMElemType.GroupSystem) {
+                        TIMGroupSystemElem elemText = (TIMGroupSystemElem) elem;
+//                        TIMCustomElem elemText=(TIMCustomElem)elem;
+//                        Tools.debug("openChess" + elemText.get + "--" + elemText.getPlatform()+"--"+elemText.getUserData()+"--"+elemText.getSubtype());
+                        Tools.debug("data"+new String(elemText.getUserData()));
+                    }
+                }
+
             }
         }
     }

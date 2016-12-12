@@ -127,7 +127,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer, View.On
                     AppPrefrence.setToken(context, login.token);
                     AppPrefrence.setReferrer(context, login.data.referrer);
                     AppPrefrence.setAvatar(context, CommonUntilities.PIC_URL + login.data.avatar);
-                    setAmount(context, login.data.point);
+                    AppPrefrence.setAmount(context, login.data.point);
                     AppPrefrence.setUserNo(context, login.data.id);
                     AppPrefrence.setUserName(context, login.data.nick_name);
                     startActivity(new Intent(context, Home.class));
@@ -192,7 +192,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer, View.On
         switch (flag) {
             case 0:
                 if (bundle == null) return;
-                if (bundle.getInt("type") == 0) {
+                if (bundle.getInt("type",-1) == 0) {
                     //忘记密码
                     if (getCode == null)
                         getCode = new GetCodePop(context);
@@ -200,14 +200,14 @@ public class MainActivity extends BaseActivity implements PopInterfacer, View.On
                     getCode.showPop(txtLoading);
                     getCode.setPopInterfacer(this, 2);
                 }
-                if (bundle.getInt("type") == 1) {
+                if (bundle.getInt("type",-1) == 1) {
                     //注册
                     if (registerPop == null)
                         registerPop = new RegisterPop(context);
                     registerPop.showPop(txtLoading);
                     registerPop.setPopInterfacer(this, 1);
                 }
-                if (bundle.getInt("type") == 2) {
+                if (bundle.getInt("type",-1) == 2) {
                     //登录成功
                     if (bundle.getBoolean("statue")) {
                         dismissPop();

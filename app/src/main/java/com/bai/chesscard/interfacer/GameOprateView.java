@@ -182,4 +182,11 @@ public interface GameOprateView {
      * @param pos
      */
     void dealChess(int pos);
+
+    /**
+     * 如果用户投注成功那么将用户的桌面金币减少
+     *
+     * @param point
+     */
+    void resetUserMoney(int point);
 }

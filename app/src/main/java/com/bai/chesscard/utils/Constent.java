@@ -16,10 +16,6 @@ public class Constent {
     public static int MINCOUNT = 0;  //房间最低限额
     public static int USERMONEY = 0;  //用户在游戏中的金币
     public static int IDENTIFY = 0;  //标识用户身份信息
-    public static boolean HASBANKER = false; //庄家是否有人坐
-    public static boolean HASLEFT = false; //初家是否有人坐
-    public static boolean hasMid = false; //天家是否有人坐
-    public static boolean hasRight = false; //尾家是否有人坐
     public static boolean[] isHasUser = new boolean[]{false, false, false, false}; //标识该位置是否有人坐下
     public static String GROUPID = "";  //房间id对应的是腾讯IM群id
     public static boolean ISSHAKING = false;  //标识是否在摇色子

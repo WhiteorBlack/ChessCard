@@ -25,7 +25,7 @@ public class PersonalPop extends BasePopupwind {
     private View view;
     private LinearLayout llParent;
     private TextView txtName;
-    private TextView txtNo, txtAccount;
+    private TextView txtNo, txtAccount,txtMoney;
     private FrameLayout flTop;
     private ImageView imgTitle,imgPhoto;
 
@@ -45,9 +45,11 @@ public class PersonalPop extends BasePopupwind {
         txtNo = (TextView) view.findViewById(R.id.txt_user_no);
         txtAccount = (TextView) view.findViewById(R.id.txt_user_account);
         imgPhoto=(ImageView)view.findViewById(R.id.img_head);
+        txtMoney=(TextView)view.findViewById(R.id.txt_user_money);
         txtAccount.setText("账号: "+AppPrefrence.getUserPhone(context));
         txtName.setText("昵称: "+AppPrefrence.getUserName(context));
         txtNo.setText("编号: "+AppPrefrence.getUserNo(context));
+        txtMoney.setText(AppPrefrence.getAmount(context)+"");
 
         llParent = (LinearLayout) view.findViewById(R.id.ll_parent);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) llParent.getLayoutParams();

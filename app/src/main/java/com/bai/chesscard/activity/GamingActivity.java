@@ -17,6 +17,7 @@ import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.GameChessAdapter;
 import com.bai.chesscard.bean.Bean_ChessList;
 import com.bai.chesscard.bean.Bean_TableDetial;
+import com.bai.chesscard.dialog.AddMoney;
 import com.bai.chesscard.dialog.AudiencelPop;
 import com.bai.chesscard.dialog.ExitNotifyPop;
 import com.bai.chesscard.dialog.PersonalPopInfo;
@@ -175,6 +176,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private PersonalPopInfo personalPopInfo;
     private AudiencelPop audiencePop;
     private ExitNotifyPop exitNotifyPop;
+    private AddMoney addMoney;
 
     private int[] pointList = new int[]{100, 500, 1000};
     private List chessList;
@@ -196,29 +198,44 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gaming);
         ButterKnife.bind(this);
+        clearData();
         initView();
         init();
         initData();
         resetData();
     }
 
+    private void clearData() {
+        Constent.USERMONEY = 0;
+        Constent.ISSHAKING = false;
+        Constent.BETLEDTPOINT = 0;
+        Constent.BETMIDPOINT = 0;
+        Constent.BETRIGHTPOINT = 0;
+        Constent.ISBANKER = false;
+        Constent.ISGAMER = false;
+        for (int i = 0; i < 4; i++) {
+            Constent.isHasUser[i] = false;
+        }
+    }
+
     /**
      * 重置桌面上面的数据
      */
     private void resetData() {
-        txtMoney.setText(Constent.MINCOUNT + "");
+        txtMoney.setText(Constent.USERMONEY + "");
         txtTotalLeft.setText("");
-        Constent.BETLEDTPOINT=0;
+        Constent.BETLEDTPOINT = 0;
         txtTotalMid.setText("");
-        Constent.BETMIDPOINT=0;
+        Constent.BETMIDPOINT = 0;
         txtTotalRight.setText("");
-        Constent.BETRIGHTPOINT=0;
+        Constent.BETRIGHTPOINT = 0;
     }
 
     private void initView() {
         roomId = getIntent().getStringExtra("roomId");
         tableId = getIntent().getStringExtra("tableId");
         Constent.USERMONEY = getIntent().getIntExtra("point", 0);
+        AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - Constent.USERMONEY);
         Constent.MINCOUNT = getIntent().getIntExtra("point", 0);
 
         Constent.USERID = AppPrefrence.getUserNo(context);
@@ -255,6 +272,9 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         txtMoneyLeft.setClickable(clickable);
         txtMoneyMid.setClickable(clickable);
         txtMoneyRight.setClickable(clickable);
+        flUserLeft.setClickable(clickable);
+        flUserMid.setClickable(clickable);
+        flUserRight.setClickable(clickable);
     }
 
     /**
@@ -368,7 +388,6 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         gamePresenter.getTableInfo(roomId, tableId);
         Glide.with(context).load(AppPrefrence.getAvatar(context)).error(R.mipmap.icon_default_head).into(imgHead);
         gamePresenter.getIn(tableId, AppPrefrence.getUserNo(context));
-
     }
 
     private void init() {
@@ -419,27 +438,24 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
                 break;
             case R.id.img_add:
                 //追加金币
-
+                gamePresenter.addMoney();
                 break;
             case R.id.txt_money_left:
                 //投注
                 if (pointList == null || pointList.length == 0)
                     return;
-                int[] start_location = new int[]{(int) (Tools.getScreenWide(this)/2+Tools.dip2px(this,50)), (int) (Tools.getScreenHeight(this)-Tools.dip2px(this,25))};
-
-                gamePresenter.betMoney(this,AppPrefrence.getUserNo(context), pointList[0], tableId, roomId,start_location);
+                int[] start_location = new int[]{(int) (Tools.getScreenWide(this) / 2 + Tools.dip2px(this, 50)), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 25))};
+                gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), pointList[0], tableId, roomId, start_location);
                 break;
             case R.id.txt_money_mid:
                 //投注
-                int[] start_location1 = new int[]{(int) (Tools.getScreenWide(this)*3/5), (int) (Tools.getScreenHeight(this)-Tools.dip2px(this,25))};
-
-                gamePresenter.betMoney(this,AppPrefrence.getUserNo(context), pointList[1], tableId, roomId,start_location1);
+                int[] start_location1 = new int[]{(int) (Tools.getScreenWide(this) * 3 / 5), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 25))};
+                gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), pointList[1], tableId, roomId, start_location1);
                 break;
             case R.id.txt_money_right:
                 //投注
-                int[] start_location2 = new int[]{(int) (Tools.getScreenWide(this)*3/5+Tools.dip2px(this,50)), (int) (Tools.getScreenHeight(this)-Tools.dip2px(this,25))};
-
-                gamePresenter.betMoney(this,AppPrefrence.getUserNo(context), pointList[2], tableId, roomId,start_location2);
+                int[] start_location2 = new int[]{(int) (Tools.getScreenWide(this) * 3 / 5 + Tools.dip2px(this, 50)), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 25))};
+                gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), pointList[2], tableId, roomId, start_location2);
                 break;
             case R.id.img_setting:
                 //设置选项
@@ -488,6 +504,8 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     protected void onDestroy() {
         super.onDestroy();
         gamePresenter.onDestory();
+        AppPrefrence.setAmount(this, AppPrefrence.getAmount(context) + Constent.USERMONEY);
+        Constent.USERMONEY = 0;
     }
 
     @Override
@@ -553,7 +571,10 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void addMoney() {
-
+        if (addMoney == null)
+            addMoney = new AddMoney(context);
+        addMoney.setPopInterfacer(this, 6);
+        addMoney.showPop(txtHeadBottom);
     }
 
     @Override
@@ -576,7 +597,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void openChess(Bundle bundle) {
-
+        clearSelectBg();
         //庄家
         glideImg(chessRes[bundle.getInt("bankerOne")], imgTopLeft);
         glideImg(chessRes[bundle.getInt("bankerTwo")], imgTopRight);
@@ -808,18 +829,18 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     public void showPointCard(int pos, int count) {
         switch (pos) {
             case 1:
-                Constent.BETLEDTPOINT += count;
-                txtMoneyLeft.setText(Constent.BETLEDTPOINT + "");
+                Constent.BETLEDTPOINT = count;
+                txtTotalLeft.setText(Constent.BETLEDTPOINT + "");
                 imgBgLeft.setVisibility(View.VISIBLE);
                 break;
             case 2:
-                Constent.BETMIDPOINT += count;
-                txtMoneyMid.setText(Constent.BETMIDPOINT + "");
+                Constent.BETMIDPOINT = count;
+                txtTotalMid.setText(Constent.BETMIDPOINT + "");
                 imgBgMid.setVisibility(View.VISIBLE);
                 break;
             case 3:
-                Constent.BETRIGHTPOINT += count;
-                txtMoneyRight.setText(Constent.BETRIGHTPOINT + "");
+                Constent.BETRIGHTPOINT = count;
+                txtTotalRight.setText(Constent.BETRIGHTPOINT + "");
                 imgBgRight.setVisibility(View.VISIBLE);
                 break;
         }
@@ -858,9 +879,14 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             }
 
             pos++;
-           gamePresenter.getChessData(gameChessAdapter.getItemCount()-1);
+            gamePresenter.getChessData(gameChessAdapter.getItemCount() - 1);
         }
         gamePresenter.startCountTime(10 * 1000);
+    }
+
+    @Override
+    public void resetUserMoney(int point) {
+        txtMoney.setText(point + "");
     }
 
     @Override
@@ -878,6 +904,9 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             case 5:
                 exitNotifyPop = null;
                 break;
+            case 6:
+                addMoney = null;
+                break;
         }
     }
 
@@ -886,6 +915,12 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         switch (flag) {
             case 5:
                 gamePresenter.back();
+                break;
+            case 6:
+                if (bundle == null)
+                    return;
+                Constent.USERMONEY += bundle.getInt("money");
+                txtMoney.setText(Constent.USERMONEY + "");
                 break;
         }
     }
