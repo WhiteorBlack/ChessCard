@@ -31,6 +31,7 @@ import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.Tools;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.tencent.TIMConnListener;
 import com.tencent.TIMConversation;
 import com.tencent.TIMConversationType;
 import com.tencent.TIMCustomElem;
@@ -53,7 +54,7 @@ import java.util.Observer;
  * Created by Administrator on 2016/11/16.
  */
 
-public class GamePresenter implements Observer {
+public class GamePresenter implements Observer, TIMConnListener {
     private GameOprateView gameOprateView;
     private ViewGroup viewGroup;
     private int[] diceRes = new int[]{R.drawable.dice_one, R.drawable.dice_two, R.drawable.dice_three, R.drawable.dice_four, R.drawable.dice_five, R.drawable.dice_six};
@@ -73,23 +74,34 @@ public class GamePresenter implements Observer {
      * @param context
      */
     public void startService(Context context) {
+        TIMManager.getInstance().setConnectionListener(this);
         MessageEvent.getInstance().addObserver(this);
     }
 
     public void onDestory() {
         MessageEvent.getInstance().clear();
-
         conversation = null;
     }
 
     public void getChessData(int count) {
         List<Bean_ChessList.Chess> chess = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            chess.add(new Bean_ChessList.Chess());
+        for (int i = 0; i < 16; i++) {
+            Bean_ChessList.Chess chess1 = new Bean_ChessList.Chess();
+            if (i < 16 - count)
+                chess1.isVisiable = false;
+            else chess1.isVisiable = true;
+            chess.add(chess1);
         }
         gameOprateView.setChessData(chess);
     }
 
+    public void gamerExit(int pos) {
+        gameOprateView.gamerEixt(pos);
+        Bean_Message bean_message = new Bean_Message();
+        bean_message.type = Constent.GAMER_EXIT;
+        bean_message.gamerPos = pos;
+        setMessage(bean_message);
+    }
 
     /**
      * 下注
@@ -193,6 +205,30 @@ public class GamePresenter implements Observer {
                     Constent.isHasUser[1] = !(bean_tableDetial.data.second_user == null);
                     Constent.isHasUser[2] = !(bean_tableDetial.data.third_user == null);
                     Constent.isHasUser[3] = !(bean_tableDetial.data.four_user == null);
+                    if (bean_tableDetial.data.first_user != null && TextUtils.equals(bean_tableDetial.data.first_user.id, Constent.USERID)) {
+                        Constent.SELECT_SITE_POS = 0;
+                        Constent.SELECTPOS = 0;
+                        Constent.ISBANKER = true;
+                        Constent.ISGAMER = true;
+                    }
+                    if (bean_tableDetial.data.second_user != null && TextUtils.equals(bean_tableDetial.data.second_user.id, Constent.USERID)) {
+                        Constent.SELECT_SITE_POS = 1;
+                        Constent.SELECTPOS = 1;
+                        Constent.ISBANKER = false;
+                        Constent.ISGAMER = true;
+                    }
+                    if (bean_tableDetial.data.third_user != null && TextUtils.equals(bean_tableDetial.data.third_user.id, Constent.USERID)) {
+                        Constent.SELECT_SITE_POS = 2;
+                        Constent.SELECTPOS = 2;
+                        Constent.ISBANKER = false;
+                        Constent.ISGAMER = true;
+                    }
+                    if (bean_tableDetial.data.four_user != null && TextUtils.equals(bean_tableDetial.data.four_user.id, Constent.USERID)) {
+                        Constent.SELECT_SITE_POS = 3;
+                        Constent.SELECTPOS = 3;
+                        Constent.ISBANKER = false;
+                        Constent.ISGAMER = true;
+                    }
                     gameOprateView.setTableInfo(bean_tableDetial.data);
                 }
             }
@@ -203,6 +239,7 @@ public class GamePresenter implements Observer {
                 gameOprateView.hideDialog();
             }
         });
+        getChessData(16);
     }
 
     /**
@@ -284,10 +321,12 @@ public class GamePresenter implements Observer {
                         Constent.ISGAMER = true;
                     }
                     Constent.SELECTPOS = pos;
+                    Constent.SELECT_SITE_POS = pos;
                     gameOprateView.moneyClickable(false);
                 } else {
                     Constent.ISGAMER = false;
                     Constent.ISBANKER = false;
+                    Constent.SELECTPOS = -1;
                     gameOprateView.moneyClickable(true);
                 }
             }
@@ -362,7 +401,7 @@ public class GamePresenter implements Observer {
         bundle.putInt("rightTwo", getChessPoint(bean_shakeDice.data.four)[1]);
         gameOprateView.openChess(bundle);
         getResult();
-        openCountTime(2 * 1000);
+        openCountTime(10 * 1000);
     }
 
     /**
@@ -415,6 +454,7 @@ public class GamePresenter implements Observer {
             @Override
             public void onFinish() {
                 gameOprateView.resetStatue();
+                gameOprateView.shakeDice();
             }
         }.start();
     }
@@ -452,12 +492,33 @@ public class GamePresenter implements Observer {
     public void showPoint(int pos, int one, int two) {
         int point = one + two + 2;
         int mutil = -1;
+        boolean isGray = false;
         if (point > 9)
             point = 0;
         else if (one == two)
             mutil = 1;
         showMultiple(pos, mutil);
-        gameOprateView.showPoint(pos, point);
+        if (pos == 0) {
+            Constent.BANKERPOINT = point;
+            Constent.ISBANKERDOUBLE = mutil > 0;
+            gameOprateView.showPoint(pos, (mutil > 0) ? 10 : point, false);
+        }
+        if (mutil > 0) {
+            if (Constent.ISBANKERDOUBLE) {
+                if (point > Constent.BANKERPOINT)
+                    isGray = false;
+                else isGray = true;
+            } else isGray = false;
+        } else {
+            if (Constent.ISBANKERDOUBLE)
+                isGray = true;
+            else {
+                if (point > Constent.BANKERPOINT)
+                    isGray = false;
+                else isGray = true;
+            }
+        }
+        gameOprateView.showPoint(pos, (mutil > 0) ? 10 : point, isGray);
     }
 
     /**
@@ -717,12 +778,15 @@ public class GamePresenter implements Observer {
                             return;
                         switch (bean_message.type) {
                             case 0:
-                                //开始摇色子
-                                gameOprateView.shakeDice();
+
                                 break;
                             case 2:
                                 //用户投注信息
                                 gameOprateView.showPointCard(bean_message.betNum, bean_message.betPoint);
+                                break;
+                            case 5:
+                                //玩儿家退出游戏
+                                gameOprateView.gamerEixt(bean_message.gamerPos);
                                 break;
                         }
                     }
@@ -734,13 +798,37 @@ public class GamePresenter implements Observer {
                     TIMElemType elemType = elem.getType();
                     if (elemType == TIMElemType.GroupSystem) {
                         TIMGroupSystemElem elemText = (TIMGroupSystemElem) elem;
-//                        TIMCustomElem elemText=(TIMCustomElem)elem;
-//                        Tools.debug("openChess" + elemText.get + "--" + elemText.getPlatform()+"--"+elemText.getUserData()+"--"+elemText.getSubtype());
-                        Tools.debug("data"+new String(elemText.getUserData()));
+                        Bean_Message bean_message = new Gson().fromJson(new String(elemText.getUserData()), Bean_Message.class);
+                        if (bean_message == null)
+                            return;
+                        switch (bean_message.type) {
+                            case 1:
+                                //开始摇色子
+                                gameOprateView.shakeDice();
+                                break;
+                            case 5:
+                                gameOprateView.gamerEixt(bean_message.gamerPos);
+                                break;
+                        }
                     }
                 }
 
             }
         }
+    }
+
+    @Override
+    public void onConnected() {
+        gameOprateView.contect();
+    }
+
+    @Override
+    public void onDisconnected(int i, String s) {
+        gameOprateView.disContect();
+    }
+
+    @Override
+    public void onWifiNeedAuth(String s) {
+
     }
 }

@@ -3,49 +3,37 @@ package com.bai.chesscard.dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bai.chesscard.R;
-import com.bai.chesscard.adapter.AudienceAdapter;
-import com.bai.chesscard.adapter.BaseRecyAdapter;
 import com.bai.chesscard.async.PostTools;
-import com.bai.chesscard.bean.Bean_Audience;
 import com.bai.chesscard.interfacer.PostCallBack;
-import com.bai.chesscard.presenter.GamePresenter;
 import com.bai.chesscard.utils.CommonUntilities;
-import com.bai.chesscard.widget.xrecycleview.XRecyclerView;
-import com.google.gson.Gson;
 import com.tencent.TIMGroupManager;
-import com.tencent.TIMManager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Administrator on 2016/11/9.
  */
 
-public class ExitNotifyPop extends BasePopupwind {
+public class GamerExitNotifyPop extends BasePopupwind {
     private View view;
     private TextView txtContent;
     private String userId = "", tableId = "", houseId = "", num = "";
 
-    public ExitNotifyPop(Context context) {
+    public GamerExitNotifyPop(Context context) {
         super(context);
         initView();
     }
 
     private void initView() {
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.exit_notify_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.gamer_exit_notify_pop, null);
         view.findViewById(R.id.btn_confirm).setOnClickListener(this);
         view.findViewById(R.id.img_cancle).setOnClickListener(this);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
@@ -76,12 +64,15 @@ public class ExitNotifyPop extends BasePopupwind {
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case R.id.btn_confirm:
-                getAudiunce();
+            case R.id.btn_cancel:
+                //下桌
                 if (popInterfacer != null)
                     popInterfacer.OnConfirm(flag, null);
                 break;
-            case R.id.btn_cancel:
+            case R.id.btn_confirm:
+                //直接退出游戏
+                TIMGroupManager.getInstance().quitGroup(tableId, null);
+                getAudiunce();
                 if (popInterfacer != null)
                     popInterfacer.OnCancle(flag);
                 break;
@@ -90,7 +81,6 @@ public class ExitNotifyPop extends BasePopupwind {
     }
 
     private void getAudiunce() {
-        TIMGroupManager.getInstance().quitGroup(tableId,null);
         Map<String, String> params = new HashMap<>();
         params.put("table_id", tableId);
         params.put("house_id", houseId);

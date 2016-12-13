@@ -91,7 +91,7 @@ public interface GameOprateView {
     /**
      * 显示点数
      */
-    void showPoint(int pos, int point);
+    void showPoint(int pos, int point,boolean isGray);
 
     /**
      * 隐藏点数
@@ -189,4 +189,26 @@ public interface GameOprateView {
      * @param point
      */
     void resetUserMoney(int point);
+
+    /**
+     * 用户断开连接
+     */
+    void disContect();
+
+    /**
+     * 用户重连成功
+     */
+    void contect();
+
+    /**
+     * 用户桌面金币不够
+     * 每次结算完之后判断用户桌面金币数量是否足够
+     */
+    void lackMoney();
+
+    /**
+     * 玩儿家下桌
+     * @param pos
+     */
+    void gamerEixt(int pos);
 }

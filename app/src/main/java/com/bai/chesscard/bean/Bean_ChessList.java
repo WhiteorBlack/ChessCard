@@ -9,6 +9,6 @@ import java.util.List;
 public class Bean_ChessList {
     public List<Chess> data;
     public static class Chess{
-
+        public boolean isVisiable=true;
     }
 }

@@ -39,4 +39,8 @@
     <dimen name="dp352">352dp</dimen>
 
     <dimen name="textandiconmargin">10dp</dimen>
+    <dimen name="point_width">48dp</dimen>
+    <dimen name="point_height">30dp</dimen>
+    <dimen name="mutil_width">30dp</dimen>
+    <dimen name="mutil_height">20dp</dimen>
 </resources>

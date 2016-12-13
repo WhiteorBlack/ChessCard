@@ -19,6 +19,8 @@ public class Constent {
     public static boolean[] isHasUser = new boolean[]{false, false, false, false}; //标识该位置是否有人坐下
     public static String GROUPID = "";  //房间id对应的是腾讯IM群id
     public static boolean ISSHAKING = false;  //标识是否在摇色子
+    public static int BANKERPOINT=-1;  //庄家点数
+    public static boolean ISBANKERDOUBLE=false; //庄家是否为对子
 
     //根据message的类型做相应的操作
     /**
