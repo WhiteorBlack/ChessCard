@@ -1,6 +1,7 @@
 package com.bai.chesscard.dialog;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.BaseBean;
@@ -52,8 +54,13 @@ public class SettingPop extends BasePopupwind {
         chbBgMic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                ChessCardApplication.getInstance().playBtnSound();
                 AppPrefrence.setIsBack(context, b);
                 setMic(1, b);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("type", b);
+                if (popInterfacer != null)
+                    popInterfacer.OnConfirm(flag, bundle);
             }
         });
 
@@ -62,8 +69,10 @@ public class SettingPop extends BasePopupwind {
         chbMic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                ChessCardApplication.getInstance().playBtnSound();
                 AppPrefrence.setIsNotify(context, b);
                 setMic(2, b);
+
             }
         });
         txtName = (TextView) view.findViewById(R.id.txt_current_name);

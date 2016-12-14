@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bai.chesscard.BaseActivity;
+import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.MainActivity;
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
@@ -122,10 +123,8 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
         context = this;
         initData();
         MessageEvent.getInstance().addObserver(this);
+        ChessCardApplication.getInstance().playBack();
     }
-
-
-
 
     private void initData() {
         progressDialog = Tools.getDialog(context, "");
@@ -245,6 +244,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
 
     @OnClick({R.id.fl_pre_room, R.id.fl_mid_room, R.id.fl_hig_room, R.id.img_start, R.id.img_user_photo, R.id.txt_help, R.id.txt_setting})
     public void cardClick(View view) {
+        ChessCardApplication.getInstance().playBtnSound();
         switch (view.getId()) {
             case R.id.fl_pre_room:
                 if (roomList.size() == 0)
@@ -355,6 +355,13 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                         }
                     }).show();
                 }
+                break;
+            case 2:
+                if (bundle == null)
+                    return;
+                if (bundle.getBoolean("type")) {
+                    ChessCardApplication.getInstance().playBack();
+                } else ChessCardApplication.getInstance().stopBack();
                 break;
             case 3:
                 if (bundle == null)

@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bai.chesscard.BaseActivity;
+import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.BaseRecyAdapter;
 import com.bai.chesscard.adapter.TableAdapter;
@@ -133,6 +134,7 @@ public class TableList extends BaseActivity {
         tabAdapter.setOnItemClickListener(new BaseRecyAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(View view, final int position) {
+                ChessCardApplication.getInstance().playBtnSound();
                 TIMGroupManager.getInstance().applyJoinGroup(tabList.get(position).id, "", new TIMCallBack() {
                     @Override
                     public void onError(int i, String s) {

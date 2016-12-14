@@ -19,39 +19,60 @@ public class Constent {
     public static boolean[] isHasUser = new boolean[]{false, false, false, false}; //标识该位置是否有人坐下
     public static String GROUPID = "";  //房间id对应的是腾讯IM群id
     public static boolean ISSHAKING = false;  //标识是否在摇色子
-    public static int BANKERPOINT=-1;  //庄家点数
-    public static boolean ISBANKERDOUBLE=false; //庄家是否为对子
-
-    //根据message的类型做相应的操作
-    /**
-     * 摇动色子
-     */
-    public static int SHAKE_DICE = 0;
+    public static int BANKERPOINT = -1;  //庄家点数
+    public static boolean ISBANKERDOUBLE = false; //庄家是否为对子
     /**
      * 用户选择座位
      */
-    public static int SELECT_SITE_POS = 1;
-    /**
-     * 投注
-     */
-    public static int BET_MONEY = 2;
+    public static int SELECT_SITE_POS = -1;
+
+    //根据message的类型做相应的操作
 
     /**
-     * 玩儿家掉线
+     * 码牌,一共16张牌,每码一次可以进行4轮游戏
      */
-    public static int GAMER_OFF_LINE = 3;
+    public static final int RESET_CHESS = 0;
+
     /**
-     * 玩儿家重连
+     * 摇色子
      */
-    public static int GAMER_RECONTECT = 4;
+    public static final int SHAKE_DICE = 1;
+
+    /**
+     * 发牌
+     */
+    public static final int DEAL_CHESS = 2;
+
+    /**
+     * 摇色子
+     */
+    public static final int BET_MONEY = 3;
+
+    /**
+     * 开牌
+     */
+    public static final int OPEN_CHESS = 4;
     /**
      * 玩儿家退出游戏
      */
-    public static int GAMER_EXIT = 5;
+    public static final int GAMER_EXIT = 5;
     /**
-     * 玩儿家从账户中加钱
+     * 有空闲座位
      */
-    public static int ADD_MONEY = 6;
+    public static final int FREE_SITE = 6;
+    /**
+     * 当前游戏状态
+     */
+    public static final int GAME_STATUE=7;
+    /**
+     * 询问庄家是否续庄
+     */
+    public static final int RENEW_BANKER=8;
+
+    /**
+     * 续费时间
+     */
+    public static final int RENEW_GOLD=9;
 
     /**
      * 押注总金额

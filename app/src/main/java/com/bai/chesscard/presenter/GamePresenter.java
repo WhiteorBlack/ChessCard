@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.Bean_BetMoney;
@@ -29,6 +30,7 @@ import com.bai.chesscard.service.MessageEvent;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.Tools;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.tencent.TIMConnListener;
@@ -109,7 +111,7 @@ public class GamePresenter implements Observer, TIMConnListener {
      * @param userId
      * @param point
      */
-    public void betMoney(Activity activity, String userId, final int point, String tableId, String houseId, int[] startPoint) {
+    public void betMoney(Activity activity, String userId, final int point, String tableId, String houseId, int[] startPoint, int pos) {
         if (Constent.SELECTPOS < 0 && !Constent.ISGAMER) {
             gameOprateView.toastMsg("请选择要投注的玩儿家");
             return;
@@ -118,8 +120,9 @@ public class GamePresenter implements Observer, TIMConnListener {
             gameOprateView.toastMsg("账号余额不足,请及时充值");
             return;
         }
-        betMoneyAnim(activity, startPoint);
-        gameOprateView.moneyClickable(false);
+
+        betMoneyAnim(activity, startPoint, pos);
+
         Map<String, String> params = new HashMap<>();
         params.put("user_id", userId);
         params.put("mid", Constent.ROUNDID);
@@ -576,22 +579,35 @@ public class GamePresenter implements Observer, TIMConnListener {
         });
     }
 
-    public void betMoneyAnim(final Activity activity, int[] startPoint) {
-        int height = Tools.dip2px(activity, 50);
+    public void betMoneyAnim(final Activity activity, int[] startPoint, int pos) {
+        Constent.SELECTPOS=1;
+        ChessCardApplication.getInstance().playGoldSound();
+        int height = Tools.dip2px(activity, 30);
         float mutil = 1.34f;
         int width = (int) (height * mutil);
-
-        final int[] endPoint = new int[]{(int) (Tools.getScreenWide(activity) / 2), (int) (Tools.getScreenHeight(activity) / 2)};
+        int centerX = (int) (Tools.getScreenWide(activity) / 2);
+        int centerY = (int) (Tools.getScreenHeight(activity) / 2);
+        if (Constent.SELECTPOS == 1)
+            centerX -= centerY *2/ 5;
+        if (Constent.SELECTPOS == 3)
+            centerX += centerY / 3;
+        final int[] endPoint = new int[]{centerX, centerY};
 
         final ImageView imgBet = new ImageView(activity);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, height);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(height, height);
         imgBet.setLayoutParams(params);
-        imgBet.setBackgroundResource(R.mipmap.bg_gold);
+        imgBet.setVisibility(View.GONE);
+        if (pos == 0)
+            Glide.with(activity).load(R.mipmap.bg_money_left).into(imgBet);
+        if (pos == 1)
+            Glide.with(activity).load(R.mipmap.bg_money_mid).into(imgBet);
+        if (pos == 2)
+            Glide.with(activity).load(R.mipmap.bg_money_right).into(imgBet);
         if (viewGroup == null)
             viewGroup = createAnimLayout(activity);
         viewGroup.removeAllViews();
-        startPoint[0] -= width * 2.5;
-        startPoint[1] -= height * 3;
+//        startPoint[0] -= width * 2.5;
+//        startPoint[1] -= height * 3;
         endPoint[0] -= width / 2;
         endPoint[1] -= height / 2;
         imgBet.setX(startPoint[0]);
@@ -609,15 +625,18 @@ public class GamePresenter implements Observer, TIMConnListener {
         translateAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
+                imgBet.setVisibility(View.INVISIBLE);
+                gameOprateView.moneyClickable(false);
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 imgBet.clearAnimation();
-                imgBet.setX(endPoint[0]);
-                imgBet.setY(endPoint[1]);
+//                imgBet.setX(endPoint[0]);
+//                imgBet.setY(endPoint[1]);
                 imgBet.setVisibility(View.GONE);
+                imgBet.setBackgroundResource(0);
+                viewGroup.removeAllViews();
             }
 
             @Override
@@ -780,11 +799,11 @@ public class GamePresenter implements Observer, TIMConnListener {
                             case 0:
 
                                 break;
-                            case 2:
+                            case Constent.BET_MONEY:
                                 //用户投注信息
                                 gameOprateView.showPointCard(bean_message.betNum, bean_message.betPoint);
                                 break;
-                            case 5:
+                            case Constent.GAMER_EXIT:
                                 //玩儿家退出游戏
                                 gameOprateView.gamerEixt(bean_message.gamerPos);
                                 break;
@@ -799,15 +818,44 @@ public class GamePresenter implements Observer, TIMConnListener {
                     if (elemType == TIMElemType.GroupSystem) {
                         TIMGroupSystemElem elemText = (TIMGroupSystemElem) elem;
                         Bean_Message bean_message = new Gson().fromJson(new String(elemText.getUserData()), Bean_Message.class);
+                        Tools.debug("message" + new String(elemText.getUserData()));
                         if (bean_message == null)
                             return;
                         switch (bean_message.type) {
-                            case 1:
+                            case Constent.RESET_CHESS:
+                                //重新洗牌
+
+                                break;
+                            case Constent.SHAKE_DICE:
                                 //开始摇色子
                                 gameOprateView.shakeDice();
                                 break;
-                            case 5:
+                            case Constent.DEAL_CHESS:
+                                //发牌
+
+                                break;
+                            case Constent.OPEN_CHESS:
+                                //开牌
+
+                                break;
+
+                            case Constent.GAMER_EXIT:
+                                //玩儿家退出游戏
                                 gameOprateView.gamerEixt(bean_message.gamerPos);
+                                break;
+                            case Constent.FREE_SITE:
+                                //座位空闲
+                                break;
+                            case Constent.GAME_STATUE:
+                                //游戏状态,刚进入或者重连
+
+                                break;
+                            case Constent.RENEW_BANKER:
+                                //询问庄家是否续庄
+
+                                break;
+                            case Constent.RENEW_GOLD:
+                                //玩儿家续费
                                 break;
                         }
                     }

@@ -68,7 +68,8 @@
             android:configChanges="screenSize|orientation|keyboardHidden"
             android:screenOrientation="landscape" />
 
-
+        <service android:name=".service.BackgroundService"
+            android:exported="false"/>
         <!--  消息收发service -->
         <service
             android:name="com.tencent.qalsdk.service.QalService"

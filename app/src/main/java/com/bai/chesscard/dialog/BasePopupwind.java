@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
+import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.interfacer.PopInterfacer;
 
@@ -81,6 +82,7 @@ public class BasePopupwind extends PopupWindow implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        ChessCardApplication.getInstance().playBtnSound();
         switch (v.getId()) {
             case R.id.img_close:
                 dismiss();

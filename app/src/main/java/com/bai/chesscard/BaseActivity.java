@@ -19,17 +19,19 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void cardClick(View v) {
-
+        ChessCardApplication.getInstance().playBtnSound();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        ChessCardApplication.getInstance().playBack();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        ChessCardApplication.getInstance().stopBack();
     }
 
     @Override

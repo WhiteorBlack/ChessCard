@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bai.chesscard.BaseActivity;
+import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.GameChessAdapter;
 import com.bai.chesscard.bean.Bean_ChessList;
@@ -457,18 +458,18 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
                 //投注
                 if (pointList == null || pointList.length == 0)
                     return;
-                int[] start_location = new int[]{(int) (Tools.getScreenWide(this) / 2 + Tools.dip2px(this, 50)), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 25))};
-                gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), pointList[0], tableId, roomId, start_location);
+                int[] start_location = new int[]{(int) (Tools.getScreenWide(this) / 2-Tools.dip2px(this,20)), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 50))};
+                gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), pointList[0], tableId, roomId, start_location,0);
                 break;
             case R.id.txt_money_mid:
                 //投注
-                int[] start_location1 = new int[]{(int) (Tools.getScreenWide(this) * 3 / 5), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 25))};
-                gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), pointList[1], tableId, roomId, start_location1);
+                int[] start_location1 = new int[]{(int) (Tools.getScreenWide(this) * 3 / 5), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 50))};
+                gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), pointList[1], tableId, roomId, start_location1,1);
                 break;
             case R.id.txt_money_right:
                 //投注
-                int[] start_location2 = new int[]{(int) (Tools.getScreenWide(this) * 3 / 5 + Tools.dip2px(this, 50)), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 25))};
-                gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), pointList[2], tableId, roomId, start_location2);
+                int[] start_location2 = new int[]{(int) (Tools.getScreenWide(this) * 4 / 5 - Tools.dip2px(this, 40)), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 50))};
+                gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), pointList[2], tableId, roomId, start_location2,2);
                 break;
             case R.id.img_setting:
                 //设置选项
@@ -519,7 +520,6 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         gamePresenter.onDestory();
         AppPrefrence.setAmount(this, AppPrefrence.getAmount(context) + Constent.USERMONEY);
         Constent.USERMONEY = 0;
-        Glide.with(this).pauseRequests();
     }
 
     @Override
@@ -677,11 +677,11 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     private void glideImg(String path, ImageView imageView) {
-        Glide.with(this).load(path).into(imageView);
+        Glide.with(this).load(path).skipMemoryCache(true).into(imageView);
     }
 
     private void glideImg(int path, ImageView imageView) {
-        Glide.with(this).load(path).into(imageView);
+        Glide.with(this).load(path).skipMemoryCache(true).into(imageView);
     }
 
     @Override
@@ -784,16 +784,17 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     @Override
     public void shakeDice() {
         gamePresenter.shakeDice(this);
+        ChessCardApplication.getInstance().playDiceSound();
     }
 
     @Override
     public void endDice(int one, int two) {
-
+        ChessCardApplication.getInstance().stopDiecSound();
     }
 
     @Override
     public void endDice(int pos) {
-
+        ChessCardApplication.getInstance().stopDiecSound();
     }
 
     @Override
@@ -1078,6 +1079,13 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     @Override
     public void OnConfirm(int flag, Bundle bundle) {
         switch (flag) {
+            case 1:
+                if (bundle == null)
+                    return;
+                if (bundle.getBoolean("type")) {
+                    ChessCardApplication.getInstance().playBack();
+                } else ChessCardApplication.getInstance().stopBack();
+                break;
             case 5:
                 gamePresenter.back();
                 break;
