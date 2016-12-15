@@ -2,6 +2,7 @@ package com.bai.chesscard.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -709,8 +710,23 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         }
         imgTimeStatus.setVisibility(View.VISIBLE);
         imgTime.setVisibility(View.VISIBLE);
-        imgTime.setBackgroundResource(timeRes[time]);
         flTime.setVisibility(View.VISIBLE);
+
+        CountDownTimer countDownTimer = new CountDownTimer(time, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                if (isFinishing())
+                    cancel();
+                imgTime.setBackgroundResource(timeRes[(int) (millisUntilFinished / 1000)]);
+            }
+
+            @Override
+            public void onFinish() {
+            }
+        };
+        if (countDownTimer != null)
+            countDownTimer.cancel();
+        countDownTimer.start();
     }
 
     @Override

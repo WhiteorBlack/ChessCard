@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 
 import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
+import com.bai.chesscard.activity.GamingActivity;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.bean.Bean_BetMoney;
@@ -188,7 +189,7 @@ public class GamePresenter implements Observer, TIMConnListener {
         params.put("table_id", Constent.TABLEID);
         params.put("house_id", Constent.ROOMID);
         params.put("user_id", Constent.USERID);
-        params.put("point",""+point);
+        params.put("point", "" + point);
         PostTools.postData(CommonUntilities.MAIN_URL + "addpoint", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
@@ -570,17 +571,7 @@ public class GamePresenter implements Observer, TIMConnListener {
      * 开始计时
      */
     public void startCountTime(int time, final int type) {
-        new CountDownTimer(time, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                gameOprateView.startCountTime((int) (millisUntilFinished / 1000), type);
-
-            }
-
-            @Override
-            public void onFinish() {
-            }
-        }.start();
+        gameOprateView.startCountTime(time, type);
     }
 
 
