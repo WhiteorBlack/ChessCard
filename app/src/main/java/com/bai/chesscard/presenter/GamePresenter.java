@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.bean.Bean_BetMoney;
 import com.bai.chesscard.bean.Bean_ChessList;
 import com.bai.chesscard.bean.Bean_Message;
@@ -39,6 +40,7 @@ import com.tencent.TIMConversationType;
 import com.tencent.TIMCustomElem;
 import com.tencent.TIMElem;
 import com.tencent.TIMElemType;
+import com.tencent.TIMGroupManager;
 import com.tencent.TIMGroupSystemElem;
 import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
@@ -174,11 +176,113 @@ public class GamePresenter implements Observer, TIMConnListener {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
-                Bean_Message params = new Bean_Message();
-                params.type = 0;
-                params.data = "测试信息json";
-                setMessage(params);
+            }
+        });
+    }
 
+    /**
+     * 玩儿家续费
+     */
+    public void lackBankerMoney(int point) {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", Constent.TABLEID);
+        params.put("house_id", Constent.ROOMID);
+        params.put("user_id", Constent.USERID);
+        params.put("point",""+point);
+        PostTools.postData(CommonUntilities.MAIN_URL + "addpoint", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    return;
+                }
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.status) {
+
+                }
+            }
+        });
+    }
+
+    /**
+     * 玩儿家续庄
+     */
+    public void lackBanker() {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", Constent.TABLEID);
+        params.put("house_id", Constent.ROOMID);
+        params.put("user_id", Constent.USERID);
+        PostTools.postData(CommonUntilities.MAIN_URL + "down", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    return;
+                }
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.status) {
+                    Constent.ISGAMER = true;
+                    Constent.ISBANKER = true;
+                    Constent.SELECT_SITE_POS = 0;
+                    Constent.SELECTPOS = 0;
+                }
+            }
+        });
+    }
+
+    /**
+     * 玩儿家下庄
+     */
+    public void downBanker() {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", Constent.TABLEID);
+        params.put("house_id", Constent.ROOMID);
+        params.put("user_id", Constent.USERID);
+        PostTools.postData(CommonUntilities.MAIN_URL + "down", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    return;
+                }
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.status) {
+                    resetGamer();
+                }
+            }
+        });
+    }
+
+    /**
+     * 玩儿家退出 数据重置
+     */
+    private void resetGamer() {
+        Constent.ISGAMER = false;
+        Constent.ISBANKER = false;
+        Constent.SELECT_SITE_POS = -1;
+        Constent.SELECTPOS = -1;
+    }
+
+    /**
+     * 玩儿家下桌
+     */
+    public void downTable() {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", Constent.TABLEID);
+        params.put("house_id", Constent.ROOMID);
+        params.put("user_id", Constent.USERID);
+        params.put("num", Constent.SELECT_SITE_POS + "");
+        PostTools.postData(CommonUntilities.MAIN_URL + "gameout", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    return;
+                }
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.status) {
+                    resetGamer();
+                }
             }
         });
     }
@@ -465,29 +569,20 @@ public class GamePresenter implements Observer, TIMConnListener {
     /**
      * 开始计时
      */
-    public void startCountTime(int time) {
+    public void startCountTime(int time, final int type) {
         new CountDownTimer(time, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                gameOprateView.startCountTime((int) (millisUntilFinished / 1000));
+                gameOprateView.startCountTime((int) (millisUntilFinished / 1000), type);
 
             }
 
             @Override
             public void onFinish() {
-                gameOprateView.moneyClickable(false);
-                endCountTime();
-                openChess();
             }
         }.start();
     }
 
-    /**
-     * 结束计时
-     */
-    public void endCountTime() {
-        gameOprateView.endCountTime();
-    }
 
     /**
      * 显示点数
@@ -580,7 +675,7 @@ public class GamePresenter implements Observer, TIMConnListener {
     }
 
     public void betMoneyAnim(final Activity activity, int[] startPoint, int pos) {
-        Constent.SELECTPOS=1;
+        Constent.SELECTPOS = 1;
         ChessCardApplication.getInstance().playGoldSound();
         int height = Tools.dip2px(activity, 30);
         float mutil = 1.34f;
@@ -588,7 +683,7 @@ public class GamePresenter implements Observer, TIMConnListener {
         int centerX = (int) (Tools.getScreenWide(activity) / 2);
         int centerY = (int) (Tools.getScreenHeight(activity) / 2);
         if (Constent.SELECTPOS == 1)
-            centerX -= centerY *2/ 5;
+            centerX -= centerY * 2 / 5;
         if (Constent.SELECTPOS == 3)
             centerX += centerY / 3;
         final int[] endPoint = new int[]{centerX, centerY};
@@ -712,6 +807,7 @@ public class GamePresenter implements Observer, TIMConnListener {
         Constent.ISSHAKING = false;
 
         final int pos = (one + two) % 4;
+        Constent.DEALCHESSPOS = pos;
         String toast = null;
         switch (pos) {
             case 0:
@@ -739,8 +835,6 @@ public class GamePresenter implements Observer, TIMConnListener {
             public void onFinish() {
                 viewGroup.removeAllViews();
                 viewGroup.setBackgroundColor(Color.TRANSPARENT);
-                gameOprateView.dealChess(pos);
-                gameOprateView.moneyClickable(true);
             }
         }.start();
 
@@ -824,7 +918,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                         switch (bean_message.type) {
                             case Constent.RESET_CHESS:
                                 //重新洗牌
-
+                                getChessData(16);
                                 break;
                             case Constent.SHAKE_DICE:
                                 //开始摇色子
@@ -832,19 +926,28 @@ public class GamePresenter implements Observer, TIMConnListener {
                                 break;
                             case Constent.DEAL_CHESS:
                                 //发牌
+                                startCountTime(2, Constent.DEAL_CHESS);
+                                gameOprateView.dealChess(Constent.DEALCHESSPOS);
 
+                                break;
+                            case Constent.BET_MONEY:
+                                //押注
+                                gameOprateView.moneyClickable(true);
+                                startCountTime(15, Constent.BET_MONEY);
                                 break;
                             case Constent.OPEN_CHESS:
                                 //开牌
-
+                                gameOprateView.moneyClickable(false);
+                                startCountTime(5, Constent.OPEN_CHESS);
                                 break;
-
                             case Constent.GAMER_EXIT:
                                 //玩儿家退出游戏
                                 gameOprateView.gamerEixt(bean_message.gamerPos);
+                                resetGamer();
                                 break;
                             case Constent.FREE_SITE:
                                 //座位空闲
+
                                 break;
                             case Constent.GAME_STATUE:
                                 //游戏状态,刚进入或者重连
@@ -852,10 +955,13 @@ public class GamePresenter implements Observer, TIMConnListener {
                                 break;
                             case Constent.RENEW_BANKER:
                                 //询问庄家是否续庄
-
+                                gameOprateView.lackBanker(10);
+                                startCountTime(10, Constent.RENEW_BANKER);
                                 break;
                             case Constent.RENEW_GOLD:
                                 //玩儿家续费
+                                startCountTime(10, Constent.RENEW_GOLD);
+                                gameOprateView.lackMoney(10);
                                 break;
                         }
                     }
@@ -868,6 +974,7 @@ public class GamePresenter implements Observer, TIMConnListener {
     @Override
     public void onConnected() {
         gameOprateView.contect();
+        getIn(Constent.TABLEID, Constent.USERID);
     }
 
     @Override

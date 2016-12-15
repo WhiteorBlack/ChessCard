@@ -19,32 +19,39 @@ import com.bai.chesscard.utils.Tools;
  * Created by Administrator on 2016/11/9.
  */
 
-public class LackMoneyNotifyPop extends BasePopupwind {
+public class LackBankerNotifyPop extends BasePopupwind {
     private View view;
     private TextView txtContent;
-    private EditText edtMoney;
-    private int countMoney = 0;
     private int countTime = 10;
 
-    public LackMoneyNotifyPop(Context context) {
+    public LackBankerNotifyPop(Context context) {
         super(context);
         initView();
     }
 
     private void initView() {
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.lack_money_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.lack_banker_pop, null);
         view.findViewById(R.id.btn_confirm).setOnClickListener(this);
         view.findViewById(R.id.img_add).setOnClickListener(this);
         view.findViewById(R.id.img_exit).setOnClickListener(this);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
-        edtMoney = (EditText) view.findViewById(R.id.edt_money);
         this.setContentView(view);
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
         this.setOutsideTouchable(true);
         this.setAnimationStyle(R.style.audi_anim);
     }
+
+    public void setContent(String content) {
+        if (!TextUtils.isEmpty(content))
+            txtContent.setText(content);
+    }
+
+    public void setContent(int content) {
+        txtContent.setText(content);
+    }
+
 
     @Override
     public void showPop(View parent) {
@@ -78,31 +85,9 @@ public class LackMoneyNotifyPop extends BasePopupwind {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.btn_confirm:
-                String money1 = edtMoney.getText().toString();
-                if (TextUtils.isEmpty(money1)) {
-                    dismiss();
-                    return;
-                } else countMoney = Integer.parseInt(money1.trim());
-                if (countMoney > AppPrefrence.getAmount(context)) {
-                    Tools.toastMsgCenter(context, "账户余额不足,请充值");
-                    return;
-                }
-                AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - countMoney);
-                Bundle bundle = new Bundle();
-                bundle.putInt("money", countMoney);
                 if (popInterfacer != null)
-                    popInterfacer.OnConfirm(flag, bundle);
+                    popInterfacer.OnConfirm(flag, null);
                 dismiss();
-                break;
-            case R.id.img_add:
-                String money = edtMoney.getText().toString();
-                if (TextUtils.isEmpty(money)) {
-                    countMoney += 100;
-                } else {
-                    countMoney = Integer.parseInt(money.trim());
-                    countMoney += 100;
-                }
-                edtMoney.setText(countMoney + "");
                 break;
             case R.id.img_exit:
                 if (popInterfacer != null)

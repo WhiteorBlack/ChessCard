@@ -34,6 +34,7 @@ public class BasePopupwind extends PopupWindow implements View.OnClickListener {
         this.setOutsideTouchable(false);
         this.setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
         this.setWidth(LinearLayout.LayoutParams.MATCH_PARENT);
+        this.setAnimationStyle(R.style.audi_anim);
     }
 
     public void setPopInterfacer(PopInterfacer l, int flag) {

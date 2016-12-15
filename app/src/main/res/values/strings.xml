@@ -13,4 +13,5 @@
     <string name="listview_header_last_time">最后更新时间：</string>
     <string name="add_money_info">注:\n&#160;&#160;&#160;&#160;进入游戏时系统会从个人账户中拿出房间最低限额的金币作为游戏本金;\n &#160;&#160;&#160;&#160;如果本金不够可以追加,系统将会从个人账户中拿出金币到本金中;\n
         &#160;&#160;&#160;&#160;最后剩余的游戏本金会在结束游戏后退还到个人账户中</string>
+    <string name="lack_banker_notify">是否续庄?</string>
 </resources>

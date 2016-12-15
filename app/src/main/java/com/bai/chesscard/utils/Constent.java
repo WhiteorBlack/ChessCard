@@ -21,6 +21,7 @@ public class Constent {
     public static boolean ISSHAKING = false;  //标识是否在摇色子
     public static int BANKERPOINT = -1;  //庄家点数
     public static boolean ISBANKERDOUBLE = false; //庄家是否为对子
+    public static int DEALCHESSPOS=-1; //从哪个位置开始发牌
     /**
      * 用户选择座位
      */
@@ -44,7 +45,7 @@ public class Constent {
     public static final int DEAL_CHESS = 2;
 
     /**
-     * 摇色子
+     * 押注
      */
     public static final int BET_MONEY = 3;
 
