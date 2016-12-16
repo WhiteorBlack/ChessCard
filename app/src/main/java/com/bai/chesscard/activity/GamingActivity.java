@@ -844,9 +844,9 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         } catch (Exception e) {
 
         }
-        txtMoneyLeft.setText(pointList[0]);
-        txtMoneyMid.setText(pointList[1]);
-        txtMoneyRight.setText(pointList[2]);
+        txtMoneyLeft.setText(pointList[0]+"");
+        txtMoneyMid.setText(pointList[1]+"");
+        txtMoneyRight.setText(pointList[2]+"");
         setBankerInfo(tableInfo.first_user);
         setLeftInfo(tableInfo.second_user);
         setBottomInfo(tableInfo.third_user);
