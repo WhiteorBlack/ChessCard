@@ -21,7 +21,7 @@ public class Constent {
     public static boolean ISSHAKING = false;  //标识是否在摇色子
     public static int BANKERPOINT = -1;  //庄家点数
     public static boolean ISBANKERDOUBLE = false; //庄家是否为对子
-    public static int DEALCHESSPOS=-1; //从哪个位置开始发牌
+    public static int DEALCHESSPOS = -1; //从哪个位置开始发牌
     /**
      * 用户选择座位
      */
@@ -33,12 +33,10 @@ public class Constent {
      * 码牌,一共16张牌,每码一次可以进行4轮游戏
      */
     public static final int RESET_CHESS = 0;
-
     /**
      * 摇色子
      */
     public static final int SHAKE_DICE = 1;
-
     /**
      * 发牌
      */
@@ -64,16 +62,20 @@ public class Constent {
     /**
      * 当前游戏状态
      */
-    public static final int GAME_STATUE=7;
+    public static final int GAME_STATUE = 7;
     /**
      * 询问庄家是否续庄
      */
-    public static final int RENEW_BANKER=8;
+    public static final int RENEW_BANKER = 8;
 
     /**
      * 续费时间
      */
-    public static final int RENEW_GOLD=9;
+    public static final int RENEW_GOLD = 9;
+    /**
+     * 有玩儿家坐下
+     */
+    public static final int GAMER_SITE = 10;
 
     /**
      * 押注总金额
@@ -81,4 +83,8 @@ public class Constent {
     public static int BETLEDTPOINT;
     public static int BETMIDPOINT;
     public static int BETRIGHTPOINT;
+
+    //以下方法均为前端控制
+    public static int GAMECOUNT = 0; //游戏局数
+    public static int GAMETEMP=0;  //游戏局数,如果够3发送换庄信息
 }

@@ -4,18 +4,12 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.bai.chesscard.R;
-import com.bai.chesscard.async.PostTools;
-import com.bai.chesscard.interfacer.PostCallBack;
-import com.bai.chesscard.utils.CommonUntilities;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.bai.chesscard.dialog.BasePopupwind;
 
 /**
  * Created by Administrator on 2016/11/9.

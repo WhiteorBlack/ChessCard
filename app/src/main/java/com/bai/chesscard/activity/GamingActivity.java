@@ -712,7 +712,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         imgTime.setVisibility(View.VISIBLE);
         flTime.setVisibility(View.VISIBLE);
 
-        CountDownTimer countDownTimer = new CountDownTimer(time, 1000) {
+        CountDownTimer countDownTimer = new CountDownTimer(time * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 if (isFinishing())
@@ -819,8 +819,8 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     @Override
-    public void shakeDice() {
-        gamePresenter.shakeDice(this);
+    public void shakeDice(int one, int two) {
+        gamePresenter.shakeDice(this, one, two);
         ChessCardApplication.getInstance().playDiceSound();
     }
 
@@ -836,17 +836,20 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void setTableInfo(Bean_TableDetial.TableDetial tableInfo) {
-        try {
-            String[] pointTmp = tableInfo.pointstr.split(",");
-            for (int i = 0; i < pointTmp.length; i++) {
-                pointList[i] = Integer.parseInt(pointTmp[i]);
-            }
-        } catch (Exception e) {
+        if (!TextUtils.isEmpty(tableInfo.pointstr)) {
+            try {
+                String[] pointTmp = tableInfo.pointstr.split(",");
+                for (int i = 0; i < pointTmp.length; i++) {
+                    pointList[i] = Integer.parseInt(pointTmp[i]);
+                }
+            } catch (Exception e) {
 
+            }
+            txtMoneyLeft.setText(pointList[0] + "");
+            txtMoneyMid.setText(pointList[1] + "");
+            txtMoneyRight.setText(pointList[2] + "");
         }
-        txtMoneyLeft.setText(pointList[0]+"");
-        txtMoneyMid.setText(pointList[1]+"");
-        txtMoneyRight.setText(pointList[2]+"");
+
         setBankerInfo(tableInfo.first_user);
         setLeftInfo(tableInfo.second_user);
         setBottomInfo(tableInfo.third_user);
@@ -864,6 +867,11 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             Constent.isHasUser[3] = false;
             return;
         }
+        Constent.isHasUser[3] = true;
+        if (!Constent.ISGAMER || !Constent.ISBANKER)
+            if (TextUtils.equals(Constent.USERID, four_user.id))
+                Constent.ISGAMER = true;
+            else Constent.ISGAMER = false;
         Glide.with(this).load(CommonUntilities.PIC_URL + four_user.avatar).error(R.mipmap.icon_default_head).into(imgHeadRight);
     }
 
@@ -878,6 +886,11 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             Constent.isHasUser[2] = false;
             return;
         }
+        Constent.isHasUser[2] = true;
+        if (!Constent.ISGAMER || !Constent.ISBANKER)
+            if (TextUtils.equals(Constent.USERID, third_user.id))
+                Constent.ISGAMER = true;
+            else Constent.ISGAMER = false;
         Glide.with(this).load(CommonUntilities.PIC_URL + third_user.avatar).error(R.mipmap.icon_default_head).into(imgHeadBottom);
     }
 
@@ -892,6 +905,11 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             Constent.isHasUser[1] = false;
             return;
         }
+        Constent.isHasUser[1] = true;
+        if (!Constent.ISGAMER || !Constent.ISBANKER)
+            if (TextUtils.equals(Constent.USERID, second_user.id))
+                Constent.ISGAMER = true;
+            else Constent.ISGAMER = false;
         Glide.with(this).load(CommonUntilities.PIC_URL + second_user.avatar).error(R.mipmap.icon_default_head).into(imgHeadLeft);
     }
 
@@ -907,6 +925,16 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             Constent.ISBANKER = false;
             return;
         }
+        Constent.isHasUser[0] = true;
+        if (!Constent.ISGAMER || !Constent.ISBANKER)
+            if (TextUtils.equals(Constent.USERID, first_user.id)) {
+                Constent.ISGAMER = true;
+                Constent.ISBANKER = true;
+            } else {
+                Constent.ISGAMER = false;
+                Constent.ISBANKER = false;
+            }
+
         Glide.with(this).load(CommonUntilities.PIC_URL + first_user.avatar).error(R.mipmap.icon_default_head).into(imgHeadTop);
     }
 
@@ -1075,6 +1103,30 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     @Override
     public void downBanker() {
 
+    }
+
+    @Override
+    public void tempCountTime(int time, int type) {
+        switch (type) {
+            case Constent.BET_MONEY:
+                //投注
+                imgTimeStatus.setBackgroundResource(R.mipmap.text_set_point);
+                break;
+            case Constent.OPEN_CHESS:
+                //开牌
+                imgTimeStatus.setBackgroundResource(R.mipmap.text_open_chess);
+                break;
+            case Constent.DEAL_CHESS:
+                imgTimeStatus.setBackgroundResource(R.mipmap.text_deal_chess);
+                break;
+            default:
+                imgTimeStatus.setBackgroundResource(R.mipmap.text_wait);
+                break;
+        }
+        imgTimeStatus.setVisibility(View.VISIBLE);
+        imgTime.setVisibility(View.VISIBLE);
+        flTime.setVisibility(View.VISIBLE);
+        imgTime.setBackgroundResource(timeRes[time]);
     }
 
     private void exitGame(int pos) {

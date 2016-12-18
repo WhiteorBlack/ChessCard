@@ -113,7 +113,7 @@ public interface GameOprateView {
     /**
      * 骰子摇动
      */
-    void shakeDice();
+    void shakeDice(int one ,int two);
 
     /**
      * 骰子停止
@@ -222,4 +222,10 @@ public interface GameOprateView {
      * 用户下庄
      */
     void downBanker();
+
+    //以下方法为临时方法
+    /**
+     * 开始计时
+     */
+    void tempCountTime(int time, int type);
 }
