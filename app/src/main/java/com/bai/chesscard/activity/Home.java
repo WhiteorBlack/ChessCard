@@ -234,6 +234,13 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
         txtUserName.setText("昵称: " + AppPrefrence.getUserName(context));
         txtUserNo.setText("编号: " + AppPrefrence.getUserNo(context));
         txtUserMoney.setText(AppPrefrence.getAmount(context) + "");
+        ChessCardApplication.getInstance().playBack();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ChessCardApplication.getInstance().stopBack();
     }
 
     @Override
@@ -433,4 +440,6 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
             Tools.debug("home receive");
         }
     }
+
+
 }

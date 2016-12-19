@@ -72,7 +72,7 @@ public class ChessCardApplication extends Application {
      */
     public void playBtnSound() {
         if (AppPrefrence.getIsNotify(this))
-            soundPool.play(btnSound, 1, 1, 1, 0, 1);
+            soundPool.play(btnSound, 0.5f, 0.5f, 0, 0, 1);
     }
 
     /**
@@ -80,7 +80,7 @@ public class ChessCardApplication extends Application {
      */
     public void playDiceSound() {
         if (AppPrefrence.getIsNotify(this))
-            soundPool.play(diceSound, 1, 1, 1, -1, 1);
+            soundPool.play(diceSound, 0.5f, 0.5f, 0, -1, 1);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ChessCardApplication extends Application {
      */
     public void playGoldSound() {
         if (AppPrefrence.getIsNotify(this))
-            soundPool.play(goldSound, 1, 1, 1, 0, 1);
+            soundPool.play(goldSound, 0.5f, 0.5f, 0, 0, 1);
     }
 
     public void stopDiecSound() {

@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 
 import static com.bai.chesscard.utils.AppPrefrence.setAmount;
 
-public class MainActivity extends BaseActivity implements PopInterfacer, View.OnLayoutChangeListener {
+public class MainActivity extends BaseActivity implements PopInterfacer {
 
 
     @BindView(R.id.img_chess_left)
@@ -86,7 +86,6 @@ public class MainActivity extends BaseActivity implements PopInterfacer, View.On
         if (AppPrefrence.getIsLogin(context)) {
             login();
         }
-        activityMain.addOnLayoutChangeListener(this);
     }
 
 
@@ -352,8 +351,4 @@ public class MainActivity extends BaseActivity implements PopInterfacer, View.On
         }
     }
 
-    @Override
-    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        Tools.debug("left" + left + "--" + top + "--" + right + "--" + bottom + "--" + oldTop + "--" + oldBottom);
-    }
 }

@@ -202,6 +202,8 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private GameChessAdapter gameChessAdapter;
     private int wide;
 
+    private Constent constent;
+
     /**
      * 标识用户的身份,
      * 0 为观众
@@ -217,23 +219,25 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gaming);
         ButterKnife.bind(this);
-        clearData();
+
         initView();
         init();
         initData();
+        clearData();
         resetData();
     }
 
     private void clearData() {
-        Constent.USERMONEY = 0;
-        Constent.ISSHAKING = false;
-        Constent.BETLEDTPOINT = 0;
-        Constent.BETMIDPOINT = 0;
-        Constent.BETRIGHTPOINT = 0;
-        Constent.ISBANKER = false;
-        Constent.ISGAMER = false;
+
+        constent.setUSERMONEY(0);
+        constent.setISSHAKING(false);
+        constent.setBETLEDTPOINT(0);
+        constent.setBETMIDPOINT(0);
+        constent.setBETRIGHTPOINT(0);
+        constent.setISBANKER(false);
+        constent.setISGAMER(false);
         for (int i = 0; i < 4; i++) {
-            Constent.isHasUser[i] = false;
+            constent.setIsHasUser(i, false);
         }
     }
 
@@ -241,25 +245,27 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
      * 重置桌面上面的数据
      */
     private void resetData() {
-        txtMoney.setText(Constent.USERMONEY + "");
+        txtMoney.setText(constent.getUSERMONEY() + "");
         txtTotalLeft.setText("");
-        Constent.BETLEDTPOINT = 0;
+        constent.setBETLEDTPOINT(0);
         txtTotalMid.setText("");
-        Constent.BETMIDPOINT = 0;
+        constent.setBETMIDPOINT(0);
         txtTotalRight.setText("");
-        Constent.BETRIGHTPOINT = 0;
+        constent.setBETRIGHTPOINT(0);
     }
 
     private void initView() {
+        if (constent == null)
+            constent = new Constent();
         roomId = getIntent().getStringExtra("roomId");
         tableId = getIntent().getStringExtra("tableId");
-        Constent.USERMONEY = getIntent().getIntExtra("point", 0);
-        AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - Constent.USERMONEY);
-        Constent.MINCOUNT = getIntent().getIntExtra("point", 0);
+        constent.setUSERMONEY(getIntent().getIntExtra("point", 0));
+        AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - constent.getUSERMONEY());
+        constent.setMINCOUNT(getIntent().getIntExtra("point", 0));
 
-        Constent.USERID = AppPrefrence.getUserNo(context);
-        Constent.ROOMID = roomId;
-        Constent.TABLEID = tableId;
+        constent.setUSERID(AppPrefrence.getUserNo(context));
+        constent.setROOMID(roomId);
+        constent.setTABLEID(tableId);
         wide = (int) ((int) Tools.getScreenWide(context) * 0.05);
         invisTime();
         invisChess();
@@ -410,8 +416,9 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     private void init() {
+
         chessList = new ArrayList();
-        gamePresenter = new GamePresenter(this, tableId, TIMConversationType.Group);
+        gamePresenter = new GamePresenter(this, tableId, TIMConversationType.Group, constent);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) llTable.getLayoutParams();
         params.width = (int) (Tools.getScreenWide(context) * 0.6);
         params.height = (int) (Tools.getScreenHeight(context) * 0.55);
@@ -482,23 +489,23 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
                 break;
             case R.id.fl_user_left:
                 //选择初家进行投注
-                if (Constent.ISGAMER)
+                if (constent.ISGAMER())
                     return;
-                Constent.SELECTPOS = 1;
+                constent.setSELECTPOS(2);
                 setChoice(1);
                 break;
             case R.id.fl_user_mid:
                 //选择天家进行投注
-                if (Constent.ISGAMER)
+                if (constent.ISGAMER())
                     return;
-                Constent.SELECTPOS = 2;
+                constent.setSELECTPOS(3);
                 setChoice(2);
                 break;
             case R.id.fl_user_right:
                 //选择尾家进行投注
-                if (Constent.ISGAMER)
+                if (constent.ISGAMER())
                     return;
-                Constent.SELECTPOS = 3;
+                constent.setSELECTPOS(4);
                 setChoice(3);
                 break;
         }
@@ -523,13 +530,14 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     protected void onDestroy() {
         super.onDestroy();
         gamePresenter.onDestory();
-        AppPrefrence.setAmount(this, AppPrefrence.getAmount(context) + Constent.USERMONEY);
-        Constent.USERMONEY = 0;
+        AppPrefrence.setAmount(this, AppPrefrence.getAmount(context) + constent.getUSERMONEY());
+        constent.setUSERMONEY(0);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        ChessCardApplication.getInstance().stopBack();
     }
 
     @Override
@@ -538,28 +546,28 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     }
 
     private void extiPop() {
-        if (!Constent.ISBANKER && !Constent.ISGAMER) {
+        if (!constent.ISBANKER() && !constent.ISGAMER()) {
             if (exitNotifyPop == null)
                 exitNotifyPop = new ExitNotifyPop(context);
-            exitNotifyPop.setIds(tableId, roomId, AppPrefrence.getUserNo(context), identify + "");
+            exitNotifyPop.setIds(tableId, roomId, AppPrefrence.getUserNo(context), (constent.getSelectSitePos()) + "");
             exitNotifyPop.setNotify("是否退出游戏?");
             exitNotifyPop.setPopInterfacer(this, 5);
             exitNotifyPop.showPop(txtHeadBottom);
         }
-        if (Constent.ISGAMER && !Constent.ISBANKER) {
+        if (constent.ISGAMER() && !constent.ISBANKER()) {
             if (gamerExitNotifyPop == null)
                 gamerExitNotifyPop = new GamerExitNotifyPop(context);
             gamerExitNotifyPop.setNotify("下桌之后可以进行观战押注\n退出将会直接退出该局游戏");
-            gamerExitNotifyPop.setIds(tableId, roomId, AppPrefrence.getUserNo(context), identify + "");
+            gamerExitNotifyPop.setIds(tableId, roomId, AppPrefrence.getUserNo(context), (constent.getSelectSitePos()) + "");
             gamerExitNotifyPop.setPopInterfacer(this, 9);
             gamerExitNotifyPop.showPop(txtHeadBottom);
         }
-        if (Constent.ISBANKER) {
+        if (constent.ISBANKER()) {
             if (bankerExitNotifyPop == null)
                 bankerExitNotifyPop = new BankerExitNotifyPop(context);
             bankerExitNotifyPop.setNotify("下庄之后可以进行观战押注\n" +
                     "退出将会直接退出该局游戏");
-            bankerExitNotifyPop.setIds(tableId, roomId, AppPrefrence.getUserNo(context), identify + "");
+            bankerExitNotifyPop.setIds(tableId, roomId, AppPrefrence.getUserNo(context), 1 + "");
             bankerExitNotifyPop.setPopInterfacer(this, 10);
             bankerExitNotifyPop.showPop(txtHeadBottom);
         }
@@ -864,14 +872,16 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private void setRightInfo(Bean_TableDetial.TableUser four_user) {
         if (four_user == null || TextUtils.isEmpty(four_user.id)) {
             imgHeadRight.setBackgroundResource(0);
-            Constent.isHasUser[3] = false;
+            constent.setIsHasUser(3, false);
             return;
         }
-        Constent.isHasUser[3] = true;
-        if (!Constent.ISGAMER || !Constent.ISBANKER)
-            if (TextUtils.equals(Constent.USERID, four_user.id))
-                Constent.ISGAMER = true;
-            else Constent.ISGAMER = false;
+        constent.setIsHasUser(3, true);
+        if (!constent.ISGAMER() || !constent.ISBANKER())
+            if (TextUtils.equals(constent.getUSERID(), four_user.id)) {
+                constent.setISGAMER(true);
+                constent.setSELECTPOS(4);
+                constent.setSelectSitePos(4);
+            }
         Glide.with(this).load(CommonUntilities.PIC_URL + four_user.avatar).error(R.mipmap.icon_default_head).into(imgHeadRight);
     }
 
@@ -883,14 +893,17 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private void setBottomInfo(Bean_TableDetial.TableUser third_user) {
         if (third_user == null || TextUtils.isEmpty(third_user.id)) {
             imgHeadBottom.setBackgroundResource(0);
-            Constent.isHasUser[2] = false;
+            constent.setIsHasUser(2, false);
             return;
         }
-        Constent.isHasUser[2] = true;
-        if (!Constent.ISGAMER || !Constent.ISBANKER)
-            if (TextUtils.equals(Constent.USERID, third_user.id))
-                Constent.ISGAMER = true;
-            else Constent.ISGAMER = false;
+        constent.setIsHasUser(2, true);
+        if (!constent.ISGAMER() || !constent.ISBANKER())
+            if (TextUtils.equals(constent.getUSERID(), third_user.id)) {
+                constent.setISGAMER(true);
+                constent.setSELECTPOS(3);
+                constent.setSelectSitePos(3);
+            }
+
         Glide.with(this).load(CommonUntilities.PIC_URL + third_user.avatar).error(R.mipmap.icon_default_head).into(imgHeadBottom);
     }
 
@@ -902,14 +915,16 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private void setLeftInfo(Bean_TableDetial.TableUser second_user) {
         if (second_user == null || TextUtils.isEmpty(second_user.id)) {
             imgHeadLeft.setBackgroundResource(0);
-            Constent.isHasUser[1] = false;
+            constent.setIsHasUser(1, false);
             return;
         }
-        Constent.isHasUser[1] = true;
-        if (!Constent.ISGAMER || !Constent.ISBANKER)
-            if (TextUtils.equals(Constent.USERID, second_user.id))
-                Constent.ISGAMER = true;
-            else Constent.ISGAMER = false;
+        constent.setIsHasUser(1, true);
+        if (!constent.ISGAMER() || !constent.ISBANKER())
+            if (TextUtils.equals(constent.getUSERID(), second_user.id)) {
+                constent.setISGAMER(true);
+                constent.setSELECTPOS(2);
+                constent.setSelectSitePos(2);
+            }
         Glide.with(this).load(CommonUntilities.PIC_URL + second_user.avatar).error(R.mipmap.icon_default_head).into(imgHeadLeft);
     }
 
@@ -921,18 +936,17 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     private void setBankerInfo(Bean_TableDetial.TableUser first_user) {
         if (first_user == null || TextUtils.isEmpty(first_user.id)) {
             imgHeadTop.setBackgroundResource(0);
-            Constent.isHasUser[0] = false;
-            Constent.ISBANKER = false;
+            constent.setIsHasUser(0, false);
+            constent.setISBANKER(false);
             return;
         }
-        Constent.isHasUser[0] = true;
-        if (!Constent.ISGAMER || !Constent.ISBANKER)
-            if (TextUtils.equals(Constent.USERID, first_user.id)) {
-                Constent.ISGAMER = true;
-                Constent.ISBANKER = true;
-            } else {
-                Constent.ISGAMER = false;
-                Constent.ISBANKER = false;
+        constent.setIsHasUser(0, true);
+        if (!constent.ISGAMER() || !constent.ISBANKER())
+            if (TextUtils.equals(constent.getUSERID(), first_user.id)) {
+                constent.setISGAMER(true);
+                constent.setISBANKER(true);
+                constent.setSELECTPOS(1);
+                constent.setSelectSitePos(1);
             }
 
         Glide.with(this).load(CommonUntilities.PIC_URL + first_user.avatar).error(R.mipmap.icon_default_head).into(imgHeadTop);
@@ -972,18 +986,18 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     public void showPointCard(int pos, int count) {
         switch (pos) {
             case 1:
-                Constent.BETLEDTPOINT = count;
-                txtTotalLeft.setText(Constent.BETLEDTPOINT + "");
+                constent.setBETLEDTPOINT(count);
+                txtTotalLeft.setText(constent.getBETLEDTPOINT() + "");
                 imgBgLeft.setVisibility(View.VISIBLE);
                 break;
             case 2:
-                Constent.BETMIDPOINT = count;
-                txtTotalMid.setText(Constent.BETMIDPOINT + "");
+                constent.setBETMIDPOINT(count);
+                txtTotalMid.setText(constent.getBETMIDPOINT() + "");
                 imgBgMid.setVisibility(View.VISIBLE);
                 break;
             case 3:
-                Constent.BETRIGHTPOINT = count;
-                txtTotalRight.setText(Constent.BETRIGHTPOINT + "");
+                constent.setBETRIGHTPOINT(count);
+                txtTotalRight.setText(constent.getBETRIGHTPOINT() + "");
                 imgBgRight.setVisibility(View.VISIBLE);
                 break;
         }
@@ -1105,36 +1119,12 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     }
 
-    @Override
-    public void tempCountTime(int time, int type) {
-        switch (type) {
-            case Constent.BET_MONEY:
-                //投注
-                imgTimeStatus.setBackgroundResource(R.mipmap.text_set_point);
-                break;
-            case Constent.OPEN_CHESS:
-                //开牌
-                imgTimeStatus.setBackgroundResource(R.mipmap.text_open_chess);
-                break;
-            case Constent.DEAL_CHESS:
-                imgTimeStatus.setBackgroundResource(R.mipmap.text_deal_chess);
-                break;
-            default:
-                imgTimeStatus.setBackgroundResource(R.mipmap.text_wait);
-                break;
-        }
-        imgTimeStatus.setVisibility(View.VISIBLE);
-        imgTime.setVisibility(View.VISIBLE);
-        flTime.setVisibility(View.VISIBLE);
-        imgTime.setBackgroundResource(timeRes[time]);
-    }
-
     private void exitGame(int pos) {
-        Constent.isHasUser[pos] = false;
-        Constent.ISGAMER = false;
+        constent.setIsHasUser(pos, false);
+        constent.setISGAMER(false);
         switch (pos) {
             case 0:
-                Constent.ISBANKER = false;
+                constent.setISBANKER(false);
                 imgHeadTop.setBackgroundResource(0);
                 break;
             case 1:
@@ -1204,8 +1194,8 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
             case 6:
                 if (bundle == null)
                     return;
-                Constent.USERMONEY += bundle.getInt("money");
-                txtMoney.setText(Constent.USERMONEY + "");
+                constent.setUSERMONEY(constent.getUSERMONEY() + bundle.getInt("money"));
+                txtMoney.setText(constent.getUSERMONEY() + "");
                 break;
             case 7:
                 finish();
@@ -1214,15 +1204,15 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
                 //用户续费
                 if (bundle == null)
                     return;
-                Constent.USERMONEY += bundle.getInt("money");
+                constent.setUSERMONEY(constent.getUSERMONEY() + bundle.getInt("money"));
                 gamePresenter.lackBankerMoney(bundle.getInt("money"));
-                txtMoney.setText(Constent.USERMONEY + "");
+                txtMoney.setText(constent.getUSERMONEY() + "");
                 break;
             case 9:
-                gamePresenter.gamerExit(Constent.SELECT_SITE_POS);
+                gamePresenter.gamerExit(constent.getSelectSitePos());
                 break;
             case 10:
-                gamePresenter.gamerExit(Constent.SELECT_SITE_POS);
+                gamePresenter.gamerExit(constent.getSelectSitePos());
                 finish();
                 break;
             case 11:
@@ -1239,17 +1229,17 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
                 break;
             case 8:
                 //为续费
-                if (Constent.ISBANKER)
+                if (constent.ISBANKER())
                     gamePresenter.downBanker();
                 else gamePresenter.downTable();
 
                 break;
             case 9:
-                gamePresenter.gamerExit(Constent.SELECT_SITE_POS);
+                gamePresenter.gamerExit(constent.getSelectSitePos());
                 finish();
                 break;
             case 10:
-                gamePresenter.gamerExit(Constent.SELECT_SITE_POS);
+                gamePresenter.gamerExit(constent.getSelectSitePos());
                 break;
             case 11:
                 gamePresenter.downBanker();
@@ -1261,6 +1251,12 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     public void onBackPressed() {
         showExitPop();
         return;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ChessCardApplication.getInstance().playBack();
     }
 
 }

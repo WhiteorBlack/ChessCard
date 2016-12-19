@@ -223,9 +223,4 @@ public interface GameOprateView {
      */
     void downBanker();
 
-    //以下方法为临时方法
-    /**
-     * 开始计时
-     */
-    void tempCountTime(int time, int type);
 }

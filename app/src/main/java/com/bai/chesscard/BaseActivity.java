@@ -25,13 +25,13 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ChessCardApplication.getInstance().playBack();
+//        ChessCardApplication.getInstance().playBack();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ChessCardApplication.getInstance().stopBack();
+//        ChessCardApplication.getInstance().stopBack();
     }
 
     @Override
