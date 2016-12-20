@@ -8,7 +8,7 @@ package com.bai.chesscard.utils;
 public class Constent {
 
     private static String USERID = ""; //用户id
-    private static  boolean ISBANKER ;  //是否为庄家
+    private static boolean ISBANKER;  //是否为庄家
     private static boolean ISGAMER = false; //是否为玩儿家
     private static String TABLEID = "-1"; //游戏桌id
     private static String ROOMID = ""; //房间id
@@ -23,12 +23,18 @@ public class Constent {
     private static int BANKERPOINT = -1;  //庄家点数
     private static boolean ISBANKERDOUBLE = false; //庄家是否为对子
     private static int DEALCHESSPOS = -1; //从哪个位置开始发牌
+    public static boolean ISDEALCHESS=false; //如果有玩儿家金币不够或者是遇到庄家续费或者续庄,暂停流程
+
+    public static int[] pointList = new int[]{100, 500, 1000}; //三个码牌的数值
+
+    public static int ROUNDCOUNT = 0; //游戏的局数,三局之后强制下庄,每局进行询问是否坐庄
+    public static int GAMECOUNT = 0; //游戏轮数,每次洗牌能玩儿4轮
     /**
      * 用户选择座位
      */
     public static int SELECT_SITE_POS = -1;
 
-    public  int getSelectSitePos() {
+    public int getSelectSitePos() {
         return SELECT_SITE_POS;
     }
 
@@ -36,168 +42,175 @@ public class Constent {
         Constent.SELECT_SITE_POS = selectSitePos;
     }
 
-    public  String getUSERID() {
+    public String getUSERID() {
         return USERID;
     }
 
-    public  void setUSERID(String USERID) {
+    public void setUSERID(String USERID) {
         this.USERID = USERID;
     }
 
-    public static boolean ISBANKER() {
+    public  boolean ISBANKER() {
         return ISBANKER;
     }
 
-    public static void setISBANKER(boolean ISBANKER) {
+    public  void setISBANKER(boolean ISBANKER) {
         Constent.ISBANKER = ISBANKER;
     }
 
-    public static boolean ISGAMER() {
+    public  boolean ISGAMER() {
         return ISGAMER;
     }
 
-    public static void setISGAMER(boolean ISGAMER) {
+    public  void setISGAMER(boolean ISGAMER) {
         Constent.ISGAMER = ISGAMER;
-        Tools.debug("setIsGamer---"+ISGAMER);
+        Tools.debug("setIsGamer---" + ISGAMER);
     }
 
-    public  String getTABLEID() {
+    public String getTABLEID() {
         return TABLEID;
     }
 
-    public  void setTABLEID(String TABLEID) {
+    public void setTABLEID(String TABLEID) {
         this.TABLEID = TABLEID;
     }
 
-    public  String getROOMID() {
+    public String getROOMID() {
         return ROOMID;
     }
 
-    public  void setROOMID(String ROOMID) {
+    public void setROOMID(String ROOMID) {
         this.ROOMID = ROOMID;
     }
 
-    public  String getROUNDID() {
+    public String getROUNDID() {
         return ROUNDID;
     }
 
-    public  void setROUNDID(String ROUNDID) {
+    public void setROUNDID(String ROUNDID) {
         this.ROUNDID = ROUNDID;
     }
 
-    public  int getSELECTPOS() {
+    public int getSELECTPOS() {
         return SELECTPOS;
     }
 
-    public  void setSELECTPOS(int SELECTPOS) {
+    public void setSELECTPOS(int SELECTPOS) {
         this.SELECTPOS = SELECTPOS;
     }
 
-    public  int getMINCOUNT() {
+    public int getMINCOUNT() {
         return MINCOUNT;
     }
 
-    public  void setMINCOUNT(int MINCOUNT) {
+    public void setMINCOUNT(int MINCOUNT) {
         this.MINCOUNT = MINCOUNT;
     }
 
-    public  int getUSERMONEY() {
+    public int getUSERMONEY() {
         return USERMONEY;
     }
 
-    public  void setUSERMONEY(int USERMONEY) {
+    public void setUSERMONEY(int USERMONEY) {
         this.USERMONEY = USERMONEY;
     }
 
-    public  int getIDENTIFY() {
+    public int getIDENTIFY() {
         return IDENTIFY;
     }
 
-    public  void setIDENTIFY(int IDENTIFY) {
+    public void setIDENTIFY(int IDENTIFY) {
         this.IDENTIFY = IDENTIFY;
     }
 
-    public  boolean[] getIsHasUser() {
+    public boolean[] getIsHasUser() {
         return isHasUser;
     }
 
-    public  void setIsHasUser(boolean[] isHasUser) {
+    public void setIsHasUser(boolean[] isHasUser) {
         this.isHasUser = isHasUser;
     }
 
-    public  void setIsHasUser(int pos, boolean isHas) {
+    public void setIsHasUser(int pos, boolean isHas) {
         isHasUser[pos] = isHas;
     }
 
-    public  boolean getIsHasUser(int pos) {
+    public boolean getIsHasUser(int pos) {
         return isHasUser[pos];
     }
 
-    public  String getGROUPID() {
+    public String getGROUPID() {
         return GROUPID;
     }
 
-    public  void setGROUPID(String GROUPID) {
+    public void setGROUPID(String GROUPID) {
         this.GROUPID = GROUPID;
     }
 
-    public  boolean ISSHAKING() {
+    public boolean ISSHAKING() {
         return ISSHAKING;
     }
 
-    public  void setISSHAKING(boolean ISSHAKING) {
+    public void setISSHAKING(boolean ISSHAKING) {
         this.ISSHAKING = ISSHAKING;
     }
 
-    public  int getBANKERPOINT() {
+    public int getBANKERPOINT() {
         return BANKERPOINT;
     }
 
-    public  void setBANKERPOINT(int BANKERPOINT) {
+    public void setBANKERPOINT(int BANKERPOINT) {
         this.BANKERPOINT = BANKERPOINT;
     }
 
-    public  boolean ISBANKERDOUBLE() {
+    public boolean ISBANKERDOUBLE() {
         return ISBANKERDOUBLE;
     }
 
-    public  void setISBANKERDOUBLE(boolean ISBANKERDOUBLE) {
+    public void setISBANKERDOUBLE(boolean ISBANKERDOUBLE) {
         this.ISBANKERDOUBLE = ISBANKERDOUBLE;
     }
 
-    public  int getDEALCHESSPOS() {
+    public int getDEALCHESSPOS() {
         return DEALCHESSPOS;
     }
 
-    public  void setDEALCHESSPOS(int DEALCHESSPOS) {
+    public void setDEALCHESSPOS(int DEALCHESSPOS) {
         this.DEALCHESSPOS = DEALCHESSPOS;
     }
 
-    public  int getBETLEDTPOINT() {
+    public int getBETLEDTPOINT() {
         return BETLEDTPOINT;
     }
 
-    public  void setBETLEDTPOINT(int BETLEDTPOINT) {
+    public void setBETLEDTPOINT(int BETLEDTPOINT) {
         Constent.BETLEDTPOINT = BETLEDTPOINT;
     }
 
-    public  int getBETMIDPOINT() {
+    public int getBETMIDPOINT() {
         return BETMIDPOINT;
     }
 
-    public  void setBETMIDPOINT(int BETMIDPOINT) {
+    public void setBETMIDPOINT(int BETMIDPOINT) {
         Constent.BETMIDPOINT = BETMIDPOINT;
     }
 
-    public  int getBETRIGHTPOINT() {
+    public int getBETRIGHTPOINT() {
         return BETRIGHTPOINT;
     }
 
-    public  void setBETRIGHTPOINT(int BETRIGHTPOINT) {
+    public void setBETRIGHTPOINT(int BETRIGHTPOINT) {
         this.BETRIGHTPOINT = BETRIGHTPOINT;
     }
 
-
+    /**
+     * 是否有玩儿家退出,如果有玩儿家退出,则不在发牌
+     *
+     * @return
+     */
+    public boolean isGamerExit() {
+        return (getIsHasUser(0) && getIsHasUser(1) && getIsHasUser(2) && getIsHasUser(3));
+    }
 
     //根据message的类型做相应的操作
 
@@ -248,6 +261,10 @@ public class Constent {
      * 有玩儿家坐下
      */
     public static final int GAMER_SITE = 10;
+    /**
+     * 庄家状态(续费,续庄) 需要进行等待
+     */
+    public static final int BANKER_STATE = 11;
 
     /**
      * 押注总金额

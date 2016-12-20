@@ -21,24 +21,25 @@ import java.util.Map;
  * Created by Administrator on 2016/11/9.
  */
 
-public class ExitBankerPop extends BasePopupwind {
+public class ExitGamerNotifyPop extends BasePopupwind {
     private View view;
     private TextView txtContent;
 
-    public ExitBankerPop(Context context) {
+    public ExitGamerNotifyPop(Context context) {
         super(context);
         initView();
     }
 
     private void initView() {
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.edit_banker_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.gamer_exit_pop, null);
         view.findViewById(R.id.btn_confirm).setOnClickListener(this);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
         this.setContentView(view);
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
         this.setOutsideTouchable(true);
+        this.setAnimationStyle(R.style.audi_anim);
     }
 
     @Override
@@ -46,13 +47,10 @@ public class ExitBankerPop extends BasePopupwind {
         this.showAtLocation(parent, Gravity.LEFT, 0, 0);
     }
 
-    public void setNotify(String notify) {
-        txtContent.setText(notify);
-    }
-
     public void setNotify(int notify) {
         txtContent.setText(context.getResources().getString(notify));
     }
+
 
     @Override
     public void onClick(View v) {

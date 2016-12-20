@@ -12,9 +12,12 @@ import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.Tools;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.Call;
 
 /**
  * Created by Administrator on 2016/11/9.
@@ -32,7 +35,7 @@ public class BankerExitNotifyPop extends BasePopupwind {
 
     private void initView() {
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.gamer_exit_notify_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.banker_exit_notify_pop, null);
         view.findViewById(R.id.btn_confirm).setOnClickListener(this);
         view.findViewById(R.id.img_cancle).setOnClickListener(this);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
@@ -69,7 +72,7 @@ public class BankerExitNotifyPop extends BasePopupwind {
                 if (popInterfacer != null)
                     popInterfacer.OnConfirm(flag, null);
                 break;
-            case R.id.btn_cancel:
+            case R.id.img_cancle:
                 //下庄
                 bankerDown();
                 if (popInterfacer != null)
@@ -88,6 +91,13 @@ public class BankerExitNotifyPop extends BasePopupwind {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
+                Tools.debug("bankerDown--"+response);
+            }
+
+            @Override
+            public void onError(Call call, Exception e) {
+                super.onError(call, e);
+                Tools.debug("bankerDown--"+e.toString());
             }
         });
     }

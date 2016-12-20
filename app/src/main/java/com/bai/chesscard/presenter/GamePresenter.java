@@ -23,11 +23,13 @@ import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.bean.Bean_BetMoney;
 import com.bai.chesscard.bean.Bean_ChessList;
 import com.bai.chesscard.bean.Bean_Message;
+import com.bai.chesscard.bean.Bean_Result;
 import com.bai.chesscard.bean.Bean_ShakeDice;
 import com.bai.chesscard.bean.Bean_TableDetial;
 import com.bai.chesscard.interfacer.GameOprateView;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.service.MessageEvent;
+import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.Tools;
@@ -100,10 +102,10 @@ public class GamePresenter implements Observer, TIMConnListener {
 
     public void gamerExit(int pos) {
         gameOprateView.gamerEixt(pos);
-        Bean_Message bean_message = new Bean_Message();
-        bean_message.type = Constent.GAMER_EXIT;
-        bean_message.gamerPos = pos;
-        setMessage(bean_message);
+//        Bean_Message bean_message = new Bean_Message();
+//        bean_message.type = Constent.GAMER_EXIT;
+//        bean_message.gamerPos = pos;
+//        setMessage(bean_message);
     }
 
     /**
@@ -142,7 +144,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                 Bean_BetMoney bean_betMoney = new Gson().fromJson(response, Bean_BetMoney.class);
                 if (bean_betMoney != null && bean_betMoney.status) {
                     gameOprateView.showPointCard(bean_betMoney.data.num, bean_betMoney.data.totalPoint);
-                    constent.setUSERMONEY(constent.getUSERMONEY() - point);
+                    gameOprateView.rediusPoint(point);
                     gameOprateView.resetUserMoney(constent.getUSERMONEY());
                     Bean_Message message = new Bean_Message();
                     message.type = Constent.BET_MONEY;
@@ -246,6 +248,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
                 if (baseBean.status) {
                     resetGamer();
+                    gameOprateView.downBanker();
                 }
             }
         });
@@ -255,6 +258,10 @@ public class GamePresenter implements Observer, TIMConnListener {
      * 玩儿家退出 数据重置
      */
     private void resetGamer() {
+        gameOprateView.resetStatue();
+        getChessData(0);
+        Constent.ROUNDCOUNT = 0;
+        Constent.GAMECOUNT = 0;
         constent.setISGAMER(false);
         constent.setISBANKER(false);
         constent.setSelectSitePos(0);
@@ -315,31 +322,8 @@ public class GamePresenter implements Observer, TIMConnListener {
                     constent.setIsHasUser(1, bean_tableDetial.data.second_user == null);
                     constent.setIsHasUser(2, bean_tableDetial.data.third_user == null);
                     constent.setIsHasUser(3, bean_tableDetial.data.four_user == null);
-//                    if (bean_tableDetial.data.first_user != null && TextUtils.equals(bean_tableDetial.data.first_user.id, constent.getUSERID())) {
-//                        constent.setSelectSitePos(0);
-//                        constent.setSELECTPOS(0);
-////                        constent.setISBANKER(true);
-////                        constent.setISGAMER(true);
-//                    }
-//                    if (bean_tableDetial.data.second_user != null && TextUtils.equals(bean_tableDetial.data.second_user.id, constent.getUSERID())) {
-//                        constent.setSelectSitePos(1);
-//                        constent.setSELECTPOS(1);
-//                        constent.setISBANKER(false);
-//                        constent.setISGAMER(true);
-//                    }
-//                    if (bean_tableDetial.data.third_user != null && TextUtils.equals(bean_tableDetial.data.third_user.id, constent.getUSERID())) {
-//                        constent.setSelectSitePos(2);
-//                        constent.setSELECTPOS(2);
-//                        constent.setISBANKER(false);
-//                        constent.setISGAMER(true);
-//                    }
-//                    if (bean_tableDetial.data.four_user != null && TextUtils.equals(bean_tableDetial.data.four_user.id, constent.getUSERID())) {
-//                        constent.setSelectSitePos(3);
-//                        constent.setSELECTPOS(3);
-//                        constent.setISBANKER(false);
-//                        constent.setISGAMER(true);
-//                    }
                     gameOprateView.setTableInfo(bean_tableDetial.data);
+                    constent.setMINCOUNT(bean_tableDetial.data.sz_point);
                 }
             }
 
@@ -387,6 +371,14 @@ public class GamePresenter implements Observer, TIMConnListener {
                     break;
             }
         } else {
+            if (pos == 0)
+                if (constent.getUSERMONEY() < constent.getMINCOUNT()) {
+                    gameOprateView.toastMsg("坐庄最低需要" + constent.getMINCOUNT() + "个金币");
+                    return;
+                } else {
+                    gameOprateView.showBankerInfo();
+                    return;
+                }
             capturePosition(pos + 1, userId);
         }
     }
@@ -397,7 +389,7 @@ public class GamePresenter implements Observer, TIMConnListener {
      * @param pos
      * @param userId
      */
-    private void capturePosition(final int pos, String userId) {
+    public void capturePosition(final int pos, String userId) {
         Map<String, String> params = new HashMap<>();
         params.put("table_id", constent.getTABLEID());
         params.put("num", pos + "");
@@ -411,7 +403,6 @@ public class GamePresenter implements Observer, TIMConnListener {
                     constent.setIsHasUser(pos - 1, false);
                     return;
                 }
-
                 constent.setIsHasUser(pos - 1, true);
                 bean_tableDetial = new Gson().fromJson(response, Bean_TableDetial.class);
                 if (bean_tableDetial != null) {
@@ -426,6 +417,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                     if (pos == 1) {
                         constent.setISBANKER(true);
                         constent.setISGAMER(true);
+                        gameOprateView.upBanker();
                     } else {
                         constent.setISBANKER(false);
                         constent.setISGAMER(true);
@@ -501,18 +493,26 @@ public class GamePresenter implements Observer, TIMConnListener {
     /**
      * 开牌
      */
-    public void openChess() {
+    public void openChess(String chessPoint) {
+        String[] chessData = new String[8];
+        try {
+            if (!TextUtils.isEmpty(chessPoint))
+                chessPoint = chessPoint.replaceAll("-", ",").trim();
+            chessData = chessPoint.split(",");
+        } catch (Exception e) {
+
+        }
+        int[] chessIntData = getChessPoint(chessData);
         Bundle bundle = new Bundle();
-//        bundle.putInt("bankerOne", getChessPoint(bean_shakeDice.data.first)[0]);
-//        bundle.putInt("bankerTwo", getChessPoint(bean_shakeDice.data.first)[1]);
-//        bundle.putInt("leftOne", getChessPoint(bean_shakeDice.data.second)[0]);
-//        bundle.putInt("leftTwo", getChessPoint(bean_shakeDice.data.second)[1]);
-//        bundle.putInt("bottomOne", getChessPoint(bean_shakeDice.data.third)[0]);
-//        bundle.putInt("bottomTwo", getChessPoint(bean_shakeDice.data.third)[1]);
-//        bundle.putInt("rightOne", getChessPoint(bean_shakeDice.data.four)[0]);
-//        bundle.putInt("rightTwo", getChessPoint(bean_shakeDice.data.four)[1]);
+        bundle.putInt("bankerOne", chessIntData[0]);
+        bundle.putInt("bankerTwo", chessIntData[1]);
+        bundle.putInt("leftOne", chessIntData[2]);
+        bundle.putInt("leftTwo", chessIntData[3]);
+        bundle.putInt("bottomOne", chessIntData[4]);
+        bundle.putInt("bottomTwo", chessIntData[5]);
+        bundle.putInt("rightOne", chessIntData[6]);
+        bundle.putInt("rightTwo", chessIntData[7]);
         gameOprateView.openChess(bundle);
-        getResult();
     }
 
     /**
@@ -520,6 +520,7 @@ public class GamePresenter implements Observer, TIMConnListener {
      */
     private void getResult() {
         Map<String, String> params = new HashMap<>();
+        params.put("user_id", constent.getUSERID());
         params.put("mh_id", constent.getROUNDID());
         params.put("house_id", constent.getROOMID());
         params.put("table_id", constent.getTABLEID());
@@ -531,6 +532,13 @@ public class GamePresenter implements Observer, TIMConnListener {
                     return;
                 }
                 Tools.debug("result" + response);
+                Bean_Result bean_result = new Gson().fromJson(response, Bean_Result.class);
+                if (bean_result.status) {
+                    gameOprateView.addPoint(bean_result.data.ucount);
+                    checkGamerMoney();
+                    checkBankerMoney();
+                    checkBankerCount();
+                }
             }
         });
     }
@@ -541,11 +549,12 @@ public class GamePresenter implements Observer, TIMConnListener {
      * @param chess
      * @return
      */
-    private int[] getChessPoint(String chess) {
-        int[] chessPoint = new int[]{-1, -1};
+    private int[] getChessPoint(String[] chess) {
+        int[] chessPoint = new int[]{-1, -1, -1, -1, -1, -1, -1, -1};
         try {
-            chessPoint[0] = Integer.parseInt(chess.split(",")[0]) - 1;
-            chessPoint[1] = Integer.parseInt(chess.split(",")[1]) - 1;
+            for (int i = 0; i < chess.length; i++) {
+                chessPoint[i] = Integer.parseInt(chess[i]);
+            }
         } catch (Exception e) {
 
         }
@@ -642,7 +651,6 @@ public class GamePresenter implements Observer, TIMConnListener {
     public void shakeDice(Activity context, int one, int two) {
         constent.setISSHAKING(true);
         startDice(context, one, two);
-//        getDiceData();
     }
 
     private Bean_ShakeDice bean_shakeDice;
@@ -660,9 +668,6 @@ public class GamePresenter implements Observer, TIMConnListener {
                     return;
                 bean_shakeDice = new Gson().fromJson(response, Bean_ShakeDice.class);
                 constent.setROUNDID(bean_shakeDice.data.id);
-                if (bean_shakeDice != null && bean_shakeDice.status && !constent.ISSHAKING()) {
-                    endDice(bean_shakeDice.data.scount, bean_shakeDice.data.scount1);
-                }
             }
         });
     }
@@ -796,7 +801,6 @@ public class GamePresenter implements Observer, TIMConnListener {
      */
     public void endDice(final int one, final int two) {
         constent.setISSHAKING(false);
-
         final int pos = (one + two) % 4;
         constent.setDEALCHESSPOS(pos);
         String toast = null;
@@ -815,22 +819,40 @@ public class GamePresenter implements Observer, TIMConnListener {
                 break;
         }
         gameOprateView.toastMsg(toast);
-        gameOprateView.dealChess(pos);
-        new CountDownTimer(1000, 1000) {
+        new CountDownTimer(2000, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
-
+                if (millisUntilFinished / 1000 == 1) {
+                    viewGroup.removeAllViews();
+                    viewGroup.setBackgroundColor(Color.TRANSPARENT);
+                }
             }
 
             @Override
             public void onFinish() {
-                viewGroup.removeAllViews();
-                viewGroup.setBackgroundColor(Color.TRANSPARENT);
+                if (constent.ISGAMER())
+                    dealChessData();
             }
         }.start();
 
     }
+
+    /**
+     * 通知后台进行发牌
+     */
+    private void dealChessData() {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", constent.getTABLEID());
+        PostTools.postData(CommonUntilities.MAIN_URL + "fapai", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+
+            }
+        });
+    }
+
 
     public void showExitPop() {
         gameOprateView.showExitPop();
@@ -857,6 +879,113 @@ public class GamePresenter implements Observer, TIMConnListener {
         });
     }
 
+    public void endCountTime(int type) {
+        if (constent.ISGAMER())
+            switch (type) {
+                case Constent.RESET_CHESS:
+                    getDiceData();
+                    break;
+                case Constent.DEAL_CHESS: //发牌结束
+                    betMoneyData(3);
+                    break;
+                case Constent.BET_MONEY: //投注时间结束
+                    gameOprateView.moneyClickable(false);
+                    betMoneyData(4);
+                    break;
+                case Constent.OPEN_CHESS: //开牌时间结束
+                    gameOprateView.resetStatue();
+                    if (Constent.ISDEALCHESS && constent.isGamerExit() && constent.ISGAMER()) {
+                        if (Constent.GAMECOUNT < 4)
+                            getDiceData();
+                    }
+                    break;
+                case Constent.BANKER_STATE:
+
+                    break;
+            }
+    }
+
+    /**
+     * 判断庄家是否需要强制下庄
+     * 如果局数没有达到限制,并且本局游戏结束,询问是否续庄
+     */
+    private void checkBankerCount() {
+        if (constent.ISBANKER())
+            Constent.ISDEALCHESS = true;
+        if (Constent.ROUNDCOUNT == 3 && Constent.GAMECOUNT == 4) {
+            Constent.ISDEALCHESS = false;
+            downBanker();
+            gameOprateView.downBankerNotify();
+        } else if (Constent.GAMECOUNT == 4) {
+            Constent.ISDEALCHESS = false;
+            bankerLackMoney(2);
+        }
+    }
+
+    /**
+     * 判断庄家金币是否足够
+     */
+    private void checkBankerMoney() {
+        Tools.debug("usermoney" + constent.getUSERMONEY() + "---betMoney" + constent.getBETLEDTPOINT());
+        if (constent.ISBANKER() && constent.getUSERMONEY() < Constent.pointList[0]) {
+            bankerLackMoney(1);
+            Constent.ISDEALCHESS = false;
+        } else Constent.ISDEALCHESS = true;
+    }
+
+    /**
+     * 通知后台庄家金币不够,需要充值
+     *
+     * @param type 1为金币不够需要续费 2为续庄
+     */
+    private void bankerLackMoney(final int type) {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", constent.getTABLEID());
+        PostTools.postData(CommonUntilities.MAIN_URL + "jxzz", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                Tools.debug("庄家续费--" + response);
+                if (TextUtils.isEmpty(response)) {
+                    bankerLackMoney(type);
+                    return;
+                }
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.status) {
+                    if (type == 1)
+                        gameOprateView.lackMoney(10);
+                    if (type == 2)
+                        gameOprateView.lackBanker(10);
+                }
+            }
+        });
+    }
+
+    /**
+     * 判断三个玩儿家金币是否足够,如果不够就踢出该用户
+     */
+    private void checkGamerMoney() {
+        if (constent.ISGAMER() && !constent.ISBANKER())
+            if (constent.getUSERMONEY() < Constent.pointList[0]) {
+                Constent.ISDEALCHESS = false;
+                downTable();
+                gamerExit(constent.getSelectSitePos());
+                gameOprateView.showGamerLackMoney();
+            } else Constent.ISDEALCHESS = true;
+    }
+
+    /**
+     * 通知后台发送押注信息
+     *
+     * @param type 3押注,4开牌
+     */
+    private void betMoneyData(int type) {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", constent.getTABLEID());
+        params.put("type", type + "");
+        params.put("mid", constent.getROUNDID());
+        PostTools.postData(CommonUntilities.MAIN_URL + "message", params, new PostCallBack());
+    }
 
     @Override
     public void update(Observable observable, Object data) {
@@ -875,8 +1004,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                         try {
                             bean_message = new Gson().fromJson(elemText.getText(), Bean_Message.class);
                         } catch (JsonSyntaxException e) {
-//                            if (TextUtils.equals(elemText.getText(), "0"))
-//                                gameOprateView.shakeDice();
+//
                         }
 
                         if (bean_message == null)
@@ -891,7 +1019,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                                 break;
                             case Constent.GAMER_EXIT:
                                 //玩儿家退出游戏
-                                gameOprateView.gamerEixt(bean_message.gamerPos);
+//                                gameOprateView.gamerEixt(bean_message.gamerPos);
                                 break;
                         }
                     }
@@ -912,26 +1040,26 @@ public class GamePresenter implements Observer, TIMConnListener {
                         switch (bean_message.type) {
                             case Constent.RESET_CHESS:
                                 //重新洗牌
-                                getChessData(16);
-                                gameOprateView.startCountTime(bean_message.time,Constent.RESET_CHESS);
+                                if (constent.ISBANKER())
+                                    Constent.ROUNDCOUNT++;
+                                Constent.GAMECOUNT = 0;
+                                gameOprateView.resetStatue();
+                                getChessData(bean_message.chesscount);
+                                gameOprateView.startCountTime(bean_message.time, Constent.RESET_CHESS);
+                                constent.setROUNDID(bean_message.mid);
                                 break;
                             case Constent.SHAKE_DICE:
                                 //开始摇色子
-                                if (!TextUtils.isEmpty(bean_message.diceNum)) {
-                                    try {
-                                        String[] diceNum = bean_message.diceNum.split(",");
-                                        gameOprateView.shakeDice(Integer.parseInt(diceNum[0]), Integer.parseInt(diceNum[1]));
-                                    } catch (Exception e) {
-                                    }
-
-                                }
+                                Constent.GAMECOUNT++;
+                                gameOprateView.shakeDice(bean_message.diceNum, bean_message.diceNum1);
                                 constent.setISSHAKING(true);
-
+                                constent.setROUNDID(bean_message.mid);
                                 break;
                             case Constent.DEAL_CHESS:
                                 //发牌
                                 startCountTime(bean_message.time, Constent.DEAL_CHESS);
                                 gameOprateView.dealChess(constent.getDEALCHESSPOS());
+                                constent.setROUNDID(bean_message.mid);
                                 break;
                             case Constent.BET_MONEY:
                                 //押注
@@ -940,11 +1068,13 @@ public class GamePresenter implements Observer, TIMConnListener {
                                 break;
                             case Constent.OPEN_CHESS:
                                 //开牌
-                                gameOprateView.moneyClickable(false);
+                                openChess(bean_message.chessPoint);
                                 startCountTime(bean_message.time, Constent.OPEN_CHESS);
+                                getResult();
                                 break;
                             case Constent.GAMER_EXIT:
                                 //玩儿家退出游戏
+                                Tools.debug("gamerOut-----");
                                 gameOprateView.gamerEixt(bean_message.gamerPos);
                                 resetGamer();
                                 break;
@@ -954,7 +1084,11 @@ public class GamePresenter implements Observer, TIMConnListener {
                                 break;
                             case Constent.GAME_STATUE:
                                 //游戏状态,刚进入或者重连
-//                                gameOprateView.setTableInfo(bean_message.gameStatue);
+                                gameOprateView.setTableInfo(bean_message.gameStatue);
+                                if (bean_message.status>1){
+                                    constent.setROUNDID(bean_message.mid);
+
+                                }
                                 break;
                             case Constent.RENEW_BANKER:
                                 //询问庄家是否续庄
@@ -968,7 +1102,9 @@ public class GamePresenter implements Observer, TIMConnListener {
                                 break;
                             case Constent.GAMER_SITE:
                                 //有玩儿家坐下
-
+                                break;
+                            case Constent.BANKER_STATE:
+                                gameOprateView.startCountTime(bean_message.time, Constent.BANKER_STATE);
                                 break;
                         }
                     }

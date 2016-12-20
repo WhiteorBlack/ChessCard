@@ -14,6 +14,8 @@ public class Bean_TableDetial extends BaseBean {
         public TableUser second_user;
         public TableUser third_user;
         public TableUser four_user;
+        public int sz_point;
+        public int min_point;
     }
 
     public static class TableUser {

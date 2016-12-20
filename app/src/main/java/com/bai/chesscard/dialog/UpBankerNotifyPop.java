@@ -12,7 +12,6 @@ import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.CommonUntilities;
-import com.bai.chesscard.utils.Tools;
 import com.tencent.TIMGroupManager;
 
 import java.util.HashMap;
@@ -22,19 +21,18 @@ import java.util.Map;
  * Created by Administrator on 2016/11/9.
  */
 
-public class GamerExitNotifyPop extends BasePopupwind {
+public class UpBankerNotifyPop extends BasePopupwind {
     private View view;
     private TextView txtContent;
-    private String userId = "", tableId = "", houseId = "", num = "";
 
-    public GamerExitNotifyPop(Context context) {
+    public UpBankerNotifyPop(Context context) {
         super(context);
         initView();
     }
 
     private void initView() {
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.gamer_exit_notify_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.exit_notify_pop, null);
         view.findViewById(R.id.btn_confirm).setOnClickListener(this);
         view.findViewById(R.id.img_cancle).setOnClickListener(this);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
@@ -54,27 +52,19 @@ public class GamerExitNotifyPop extends BasePopupwind {
         txtContent.setText(notify);
     }
 
-    public void setIds(String tableId, String roomId, String userId, String num) {
-        this.tableId = tableId;
-        this.houseId = roomId;
-        this.num = num;
-        this.userId = userId;
+    public void setNotify(int notify) {
+        txtContent.setText(context.getResources().getString(notify));
     }
 
     @Override
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case R.id.img_cancle:
-                //下桌
-                getAudiunce();
+            case R.id.btn_confirm:
                 if (popInterfacer != null)
                     popInterfacer.OnConfirm(flag, null);
                 break;
-            case R.id.btn_confirm:
-                //直接退出游戏
-                TIMGroupManager.getInstance().quitGroup(tableId, null);
-                getAudiunce();
+            case R.id.btn_cancel:
                 if (popInterfacer != null)
                     popInterfacer.OnCancle(flag);
                 break;
@@ -82,18 +72,4 @@ public class GamerExitNotifyPop extends BasePopupwind {
         dismiss();
     }
 
-    private void getAudiunce() {
-        Map<String, String> params = new HashMap<>();
-        params.put("table_id", tableId);
-        params.put("house_id", houseId);
-        params.put("user_id", userId);
-        params.put("num", num);
-        PostTools.postData(CommonUntilities.MAIN_URL + "gameout", params, new PostCallBack() {
-            @Override
-            public void onResponse(String response) {
-                super.onResponse(response);
-                Tools.debug("gameOut--"+response);
-            }
-        });
-    }
 }

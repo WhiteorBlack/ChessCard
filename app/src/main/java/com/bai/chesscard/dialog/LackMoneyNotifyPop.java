@@ -34,7 +34,7 @@ public class LackMoneyNotifyPop extends BasePopupwind {
     private void initView() {
         if (view == null)
             view = LayoutInflater.from(context).inflate(R.layout.lack_money_pop, null);
-        view.findViewById(R.id.btn_confirm).setOnClickListener(this);
+        view.findViewById(R.id.img_confirm).setOnClickListener(this);
         view.findViewById(R.id.img_add).setOnClickListener(this);
         view.findViewById(R.id.img_exit).setOnClickListener(this);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
@@ -77,7 +77,7 @@ public class LackMoneyNotifyPop extends BasePopupwind {
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case R.id.btn_confirm:
+            case R.id.img_confirm:
                 String money1 = edtMoney.getText().toString();
                 if (TextUtils.isEmpty(money1)) {
                     dismiss();

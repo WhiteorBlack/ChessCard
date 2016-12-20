@@ -113,7 +113,7 @@ public interface GameOprateView {
     /**
      * 骰子摇动
      */
-    void shakeDice(int one ,int two);
+    void shakeDice(int one, int two);
 
     /**
      * 骰子停止
@@ -223,4 +223,20 @@ public interface GameOprateView {
      */
     void downBanker();
 
+    void downBankerNotify();
+
+    /**
+     * 三个玩儿家金币不够直接踢出游戏,并且给用户一个提示信息
+     */
+    void showGamerLackMoney();
+
+    /**
+     * 展示上庄的信息
+     */
+    void showBankerInfo();
+
+    /**
+     * 上庄成功
+     */
+    void upBanker();
 }

@@ -65,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:background="@mipmap/btn_gamer_exit" />
+                android:background="@mipmap/btn_banker_exit" />
 
             <ImageView
                 android:id="@+id/img_confirm"
