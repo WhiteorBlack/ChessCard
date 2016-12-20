@@ -41,10 +41,6 @@ public class ExitBankerPop extends BasePopupwind {
         this.setOutsideTouchable(true);
     }
 
-    @Override
-    public void showPop(View parent) {
-        this.showAtLocation(parent, Gravity.LEFT, 0, 0);
-    }
 
     public void setNotify(String notify) {
         txtContent.setText(notify);

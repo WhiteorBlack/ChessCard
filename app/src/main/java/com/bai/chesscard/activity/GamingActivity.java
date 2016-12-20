@@ -844,6 +844,8 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void setTableInfo(Bean_TableDetial.TableDetial tableInfo) {
+        if (tableInfo == null)
+            return;
         if (!TextUtils.isEmpty(tableInfo.pointstr)) {
             try {
                 String[] pointTmp = tableInfo.pointstr.split(",");
@@ -1120,10 +1122,11 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void lackBanker(int time) {
+        Tools.debug("lackBanker");
         if (lackBankerNotifyPop == null)
             lackBankerNotifyPop = new LackBankerNotifyPop(context);
         lackBankerNotifyPop.setCountTime(time);
-        lackBankerNotifyPop.setContent(R.string.lack_banker_notify);
+        lackBankerNotifyPop.showPop(txtHeadBottom);
         lackBankerNotifyPop.setPopInterfacer(this, 11);
     }
 
@@ -1134,6 +1137,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void downBankerNotify() {
+        Tools.debug("downBankerNotify");
         if (lackBankerNotifyPop != null && lackBankerNotifyPop.isShowing())
             lackBankerNotifyPop.dismiss();
         if (exitBankerPop == null)
@@ -1152,6 +1156,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
 
     @Override
     public void showGamerLackMoney() {
+        Tools.debug("downBankerNotify");
         if (exitGamerNotifyPop == null)
             exitGamerNotifyPop = new ExitGamerNotifyPop(context);
         exitGamerNotifyPop.setNotify(R.string.gamer_lack_money);

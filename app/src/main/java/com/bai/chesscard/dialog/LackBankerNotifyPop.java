@@ -32,15 +32,13 @@ public class LackBankerNotifyPop extends BasePopupwind {
     private void initView() {
         if (view == null)
             view = LayoutInflater.from(context).inflate(R.layout.lack_banker_pop, null);
-        view.findViewById(R.id.btn_confirm).setOnClickListener(this);
-        view.findViewById(R.id.img_add).setOnClickListener(this);
+        view.findViewById(R.id.img_confirm).setOnClickListener(this);
         view.findViewById(R.id.img_exit).setOnClickListener(this);
-        txtContent = (TextView) view.findViewById(R.id.txt_content);
+        txtContent = (TextView) view.findViewById(R.id.txt_notify);
         this.setContentView(view);
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
         this.setOutsideTouchable(true);
-        this.setAnimationStyle(R.style.audi_anim);
     }
 
     public void setContent(String content) {
@@ -55,6 +53,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
 
     @Override
     public void showPop(View parent) {
+        super.showPop(parent);
         startCount();
     }
 
@@ -63,11 +62,11 @@ public class LackBankerNotifyPop extends BasePopupwind {
     }
 
     private void startCount() {
-        new CountDownTimer(countTime, 1000) {
+        new CountDownTimer(countTime*1000, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                txtContent.setText("桌面金币不足,请续金币\n" + millisUntilFinished / 1000 + "秒后未续金币将下桌");
+                txtContent.setText("是否续庄\n" + millisUntilFinished / 1000 + "秒后未续系统将您下庄");
             }
 
             @Override
@@ -84,7 +83,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
-            case R.id.btn_confirm:
+            case R.id.img_confirm:
                 if (popInterfacer != null)
                     popInterfacer.OnConfirm(flag, null);
                 dismiss();

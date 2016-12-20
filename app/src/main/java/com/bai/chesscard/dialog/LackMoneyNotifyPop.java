@@ -48,6 +48,7 @@ public class LackMoneyNotifyPop extends BasePopupwind {
 
     @Override
     public void showPop(View parent) {
+        super.showPop(parent);
         startCount();
     }
 
@@ -56,7 +57,7 @@ public class LackMoneyNotifyPop extends BasePopupwind {
     }
 
     private void startCount() {
-        new CountDownTimer(countTime, 1000) {
+        new CountDownTimer(countTime*1000, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {

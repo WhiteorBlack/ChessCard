@@ -36,6 +36,7 @@ public class UpBankerNotifyPop extends BasePopupwind {
         view.findViewById(R.id.btn_confirm).setOnClickListener(this);
         view.findViewById(R.id.img_cancle).setOnClickListener(this);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
+        txtContent.setTextSize(14);
         this.setContentView(view);
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);

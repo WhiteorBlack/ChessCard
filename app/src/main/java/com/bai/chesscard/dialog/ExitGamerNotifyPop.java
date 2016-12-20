@@ -39,13 +39,8 @@ public class ExitGamerNotifyPop extends BasePopupwind {
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
         this.setOutsideTouchable(true);
-        this.setAnimationStyle(R.style.audi_anim);
     }
 
-    @Override
-    public void showPop(View parent) {
-        this.showAtLocation(parent, Gravity.LEFT, 0, 0);
-    }
 
     public void setNotify(int notify) {
         txtContent.setText(context.getResources().getString(notify));

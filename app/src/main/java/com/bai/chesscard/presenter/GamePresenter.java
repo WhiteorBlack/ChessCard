@@ -102,10 +102,10 @@ public class GamePresenter implements Observer, TIMConnListener {
 
     public void gamerExit(int pos) {
         gameOprateView.gamerEixt(pos);
-//        Bean_Message bean_message = new Bean_Message();
-//        bean_message.type = Constent.GAMER_EXIT;
-//        bean_message.gamerPos = pos;
-//        setMessage(bean_message);
+        Bean_Message bean_message = new Bean_Message();
+        bean_message.type = Constent.GAMER_EXIT;
+        bean_message.gamerPos = pos;
+        setMessage(bean_message);
     }
 
     /**
@@ -225,6 +225,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                     constent.setISBANKER(true);
                     constent.setSelectSitePos(1);
                     constent.setSELECTPOS(1);
+                    resetChessData();
                 }
             }
         });
@@ -405,12 +406,16 @@ public class GamePresenter implements Observer, TIMConnListener {
                 }
                 constent.setIsHasUser(pos - 1, true);
                 bean_tableDetial = new Gson().fromJson(response, Bean_TableDetial.class);
-                if (bean_tableDetial != null) {
+                if (bean_tableDetial != null && bean_tableDetial.status) {
                     constent.setIsHasUser(0, bean_tableDetial.data.first_user == null);
                     constent.setIsHasUser(1, bean_tableDetial.data.second_user == null);
                     constent.setIsHasUser(2, bean_tableDetial.data.third_user == null);
                     constent.setIsHasUser(3, bean_tableDetial.data.four_user == null);
                     gameOprateView.setTableInfo(bean_tableDetial.data);
+                    Bean_Message message = new Bean_Message();
+                    message.gameStatue = bean_tableDetial.data;
+                    message.type = Constent.GAMER_SITE;
+                    setMessage(message);
                 }
                 if (bean_tableDetial.status) {
 
@@ -535,9 +540,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                 Bean_Result bean_result = new Gson().fromJson(response, Bean_Result.class);
                 if (bean_result.status) {
                     gameOprateView.addPoint(bean_result.data.ucount);
-                    checkGamerMoney();
-                    checkBankerMoney();
-                    checkBankerCount();
+
                 }
             }
         });
@@ -656,6 +659,7 @@ public class GamePresenter implements Observer, TIMConnListener {
     private Bean_ShakeDice bean_shakeDice;
 
     private void getDiceData() {
+        Tools.debug("getDiceData is runing");
         Map<String, String> params = new HashMap<>();
         params.put("house_id", constent.getROOMID());
         params.put("table_id", constent.getTABLEID());
@@ -809,13 +813,13 @@ public class GamePresenter implements Observer, TIMConnListener {
                 toast = "庄家开";
                 break;
             case 1:
-                toast = "初家开";
+                toast = "初门开";
                 break;
             case 2:
-                toast = "天家开";
+                toast = "天门开";
                 break;
             case 3:
-                toast = "尾家开";
+                toast = "尾门开";
                 break;
         }
         gameOprateView.toastMsg(toast);
@@ -824,13 +828,14 @@ public class GamePresenter implements Observer, TIMConnListener {
             @Override
             public void onTick(long millisUntilFinished) {
                 if (millisUntilFinished / 1000 == 1) {
-                    viewGroup.removeAllViews();
+
                     viewGroup.setBackgroundColor(Color.TRANSPARENT);
                 }
             }
 
             @Override
             public void onFinish() {
+                viewGroup.removeAllViews();
                 if (constent.ISGAMER())
                     dealChessData();
             }
@@ -893,16 +898,55 @@ public class GamePresenter implements Observer, TIMConnListener {
                     betMoneyData(4);
                     break;
                 case Constent.OPEN_CHESS: //开牌时间结束
+                    Tools.debug("isdealchess--" + Constent.ISDEALCHESS);
+                    resetMsgStatue();
                     gameOprateView.resetStatue();
-                    if (Constent.ISDEALCHESS && constent.isGamerExit() && constent.ISGAMER()) {
+                    if (constent.isGamerExit() && constent.ISGAMER()) {
                         if (Constent.GAMECOUNT < 4)
                             getDiceData();
+                        else {
+                            if (constent.ISBANKER()) {
+                                checkBankerCount();
+                                checkBankerMoney();
+                            } else checkGamerMoney();
+
+                        }
                     }
                     break;
                 case Constent.BANKER_STATE:
-
+                    if (constent.isGamerExit() && constent.ISGAMER()) {
+                        resetChessData();
+                    }
                     break;
             }
+    }
+
+    /**
+     * 流程走完把所有的流程状态标识重置
+     */
+    private void resetMsgStatue() {
+        Constent.IS_BET_MONEY = false;
+        Constent.IS_OPEN_CHESS = false;
+        Constent.IS_DEAL_CHESS = false;
+        Constent.IS_SHAK_EDICE = false;
+        Constent.IS_RESET_CHESS = false;
+        Constent.IS_BANKER_STATE = false;
+    }
+
+    /**
+     * 通知后台进行洗牌
+     */
+    private void resetChessData() {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", constent.getTABLEID());
+        PostTools.postData(CommonUntilities.MAIN_URL + "xipai", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                Tools.debug("洗牌--" + response);
+
+            }
+        });
     }
 
     /**
@@ -920,6 +964,7 @@ public class GamePresenter implements Observer, TIMConnListener {
             Constent.ISDEALCHESS = false;
             bankerLackMoney(2);
         }
+        Tools.debug("isdealchess--" + Constent.ISDEALCHESS);
     }
 
     /**
@@ -931,6 +976,7 @@ public class GamePresenter implements Observer, TIMConnListener {
             bankerLackMoney(1);
             Constent.ISDEALCHESS = false;
         } else Constent.ISDEALCHESS = true;
+        Tools.debug("isdealchess--" + Constent.ISDEALCHESS);
     }
 
     /**
@@ -952,9 +998,9 @@ public class GamePresenter implements Observer, TIMConnListener {
                 }
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
                 if (baseBean.status) {
-                    if (type == 1)
+                    if (type == 1 && constent.ISBANKER())
                         gameOprateView.lackMoney(10);
-                    if (type == 2)
+                    if (type == 2 && constent.ISBANKER())
                         gameOprateView.lackBanker(10);
                 }
             }
@@ -972,6 +1018,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                 gamerExit(constent.getSelectSitePos());
                 gameOprateView.showGamerLackMoney();
             } else Constent.ISDEALCHESS = true;
+        Tools.debug("isdealchess--" + Constent.ISDEALCHESS);
     }
 
     /**
@@ -1019,7 +1066,11 @@ public class GamePresenter implements Observer, TIMConnListener {
                                 break;
                             case Constent.GAMER_EXIT:
                                 //玩儿家退出游戏
-//                                gameOprateView.gamerEixt(bean_message.gamerPos);
+                                gameOprateView.gamerEixt(bean_message.gamerPos);
+                                resetGamer();
+                                break;
+                            case Constent.GAMER_SITE:
+                                gameOprateView.setTableInfo(bean_message.gameStatue);
                                 break;
                         }
                     }
@@ -1040,42 +1091,62 @@ public class GamePresenter implements Observer, TIMConnListener {
                         switch (bean_message.type) {
                             case Constent.RESET_CHESS:
                                 //重新洗牌
-                                if (constent.ISBANKER())
-                                    Constent.ROUNDCOUNT++;
-                                Constent.GAMECOUNT = 0;
-                                gameOprateView.resetStatue();
-                                getChessData(bean_message.chesscount);
-                                gameOprateView.startCountTime(bean_message.time, Constent.RESET_CHESS);
-                                constent.setROUNDID(bean_message.mid);
+                                if (!Constent.IS_RESET_CHESS) {
+                                    Constent.IS_RESET_CHESS = true;
+                                    if (constent.ISBANKER())
+                                        Constent.ROUNDCOUNT++;
+                                    Constent.GAMECOUNT = 0;
+                                    gameOprateView.resetStatue();
+                                    getChessData(bean_message.chesscount);
+                                    gameOprateView.startCountTime(bean_message.time, Constent.RESET_CHESS);
+                                    constent.setROUNDID(bean_message.mid);
+
+                                }
+
                                 break;
                             case Constent.SHAKE_DICE:
                                 //开始摇色子
-                                Constent.GAMECOUNT++;
-                                gameOprateView.shakeDice(bean_message.diceNum, bean_message.diceNum1);
-                                constent.setISSHAKING(true);
-                                constent.setROUNDID(bean_message.mid);
+                                if (!Constent.IS_SHAK_EDICE) {
+                                    Constent.IS_SHAK_EDICE = true;
+                                    Constent.GAMECOUNT++;
+                                    gameOprateView.shakeDice(bean_message.diceNum, bean_message.diceNum1);
+                                    constent.setISSHAKING(true);
+                                    constent.setROUNDID(bean_message.mid);
+                                }
+
                                 break;
                             case Constent.DEAL_CHESS:
                                 //发牌
-                                startCountTime(bean_message.time, Constent.DEAL_CHESS);
-                                gameOprateView.dealChess(constent.getDEALCHESSPOS());
-                                constent.setROUNDID(bean_message.mid);
+                                if (!Constent.IS_DEAL_CHESS) {
+                                    Constent.IS_DEAL_CHESS = true;
+                                    startCountTime(bean_message.time, Constent.DEAL_CHESS);
+                                    gameOprateView.dealChess(constent.getDEALCHESSPOS());
+                                    constent.setROUNDID(bean_message.mid);
+                                }
+
                                 break;
                             case Constent.BET_MONEY:
                                 //押注
-                                gameOprateView.moneyClickable(true);
-                                startCountTime(bean_message.time, Constent.BET_MONEY);
+                                if (!Constent.IS_BET_MONEY) {
+                                    gameOprateView.moneyClickable(true);
+                                    startCountTime(bean_message.time, Constent.BET_MONEY);
+                                }
+
                                 break;
                             case Constent.OPEN_CHESS:
                                 //开牌
-                                openChess(bean_message.chessPoint);
-                                startCountTime(bean_message.time, Constent.OPEN_CHESS);
-                                getResult();
+                                if (!Constent.IS_OPEN_CHESS) {
+                                    Constent.IS_OPEN_CHESS = true;
+                                    openChess(bean_message.chessPoint);
+                                    startCountTime(bean_message.time, Constent.OPEN_CHESS);
+                                    getResult();
+                                }
+
                                 break;
                             case Constent.GAMER_EXIT:
                                 //玩儿家退出游戏
                                 Tools.debug("gamerOut-----");
-                                gameOprateView.gamerEixt(bean_message.gamerPos);
+                                gameOprateView.gamerEixt(bean_message.gamerPos + 1);
                                 resetGamer();
                                 break;
                             case Constent.FREE_SITE:
@@ -1085,9 +1156,8 @@ public class GamePresenter implements Observer, TIMConnListener {
                             case Constent.GAME_STATUE:
                                 //游戏状态,刚进入或者重连
                                 gameOprateView.setTableInfo(bean_message.gameStatue);
-                                if (bean_message.status>1){
+                                if (bean_message.status > 1) {
                                     constent.setROUNDID(bean_message.mid);
-
                                 }
                                 break;
                             case Constent.RENEW_BANKER:
@@ -1102,9 +1172,13 @@ public class GamePresenter implements Observer, TIMConnListener {
                                 break;
                             case Constent.GAMER_SITE:
                                 //有玩儿家坐下
+                                gameOprateView.setTableInfo(bean_message.gameStatue);
                                 break;
                             case Constent.BANKER_STATE:
-                                gameOprateView.startCountTime(bean_message.time, Constent.BANKER_STATE);
+                                if (!Constent.IS_BANKER_STATE) {
+                                    Constent.IS_BANKER_STATE = true;
+                                    gameOprateView.startCountTime(bean_message.time, Constent.BANKER_STATE);
+                                }
                                 break;
                         }
                     }

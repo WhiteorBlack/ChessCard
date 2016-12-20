@@ -23,7 +23,7 @@ public class Constent {
     private static int BANKERPOINT = -1;  //庄家点数
     private static boolean ISBANKERDOUBLE = false; //庄家是否为对子
     private static int DEALCHESSPOS = -1; //从哪个位置开始发牌
-    public static boolean ISDEALCHESS=false; //如果有玩儿家金币不够或者是遇到庄家续费或者续庄,暂停流程
+    public static boolean ISDEALCHESS = false; //如果有玩儿家金币不够或者是遇到庄家续费或者续庄,暂停流程
 
     public static int[] pointList = new int[]{100, 500, 1000}; //三个码牌的数值
 
@@ -50,19 +50,19 @@ public class Constent {
         this.USERID = USERID;
     }
 
-    public  boolean ISBANKER() {
+    public boolean ISBANKER() {
         return ISBANKER;
     }
 
-    public  void setISBANKER(boolean ISBANKER) {
+    public void setISBANKER(boolean ISBANKER) {
         Constent.ISBANKER = ISBANKER;
     }
 
-    public  boolean ISGAMER() {
+    public boolean ISGAMER() {
         return ISGAMER;
     }
 
-    public  void setISGAMER(boolean ISGAMER) {
+    public void setISGAMER(boolean ISGAMER) {
         Constent.ISGAMER = ISGAMER;
         Tools.debug("setIsGamer---" + ISGAMER);
     }
@@ -241,9 +241,9 @@ public class Constent {
      */
     public static final int GAMER_EXIT = 5;
     /**
-     * 有空闲座位
+     * 有玩儿家坐下
      */
-    public static final int FREE_SITE = 6;
+    public static final int GAMER_SITE = 6;
     /**
      * 当前游戏状态
      */
@@ -257,10 +257,11 @@ public class Constent {
      * 续费时间
      */
     public static final int RENEW_GOLD = 9;
+
     /**
-     * 有玩儿家坐下
+     * 有空闲座位
      */
-    public static final int GAMER_SITE = 10;
+    public static final int FREE_SITE = 10;
     /**
      * 庄家状态(续费,续庄) 需要进行等待
      */
@@ -272,5 +273,13 @@ public class Constent {
     public static int BETLEDTPOINT;
     public static int BETMIDPOINT;
     public static int BETRIGHTPOINT;
+
+    //标示是否已经接受过该消息,如果已经接受,则不做处理
+    public static boolean IS_RESET_CHESS=false;
+    public static boolean IS_SHAK_EDICE=false;
+    public static boolean IS_DEAL_CHESS=false;
+    public static boolean IS_BET_MONEY=false;
+    public static boolean IS_OPEN_CHESS=false;
+    public static boolean IS_BANKER_STATE=false;
 
 }

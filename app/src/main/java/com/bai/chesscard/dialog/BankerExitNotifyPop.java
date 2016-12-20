@@ -43,13 +43,8 @@ public class BankerExitNotifyPop extends BasePopupwind {
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
         this.setOutsideTouchable(true);
-        this.setAnimationStyle(R.style.audi_anim);
     }
 
-    @Override
-    public void showPop(View parent) {
-        this.showAtLocation(parent, Gravity.LEFT, 0, 0);
-    }
 
     public void setNotify(String notify) {
         txtContent.setText(notify);
@@ -91,13 +86,13 @@ public class BankerExitNotifyPop extends BasePopupwind {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
-                Tools.debug("bankerDown--"+response);
+                Tools.debug("bankerDown--" + response);
             }
 
             @Override
             public void onError(Call call, Exception e) {
                 super.onError(call, e);
-                Tools.debug("bankerDown--"+e.toString());
+                Tools.debug("bankerDown--" + e.toString());
             }
         });
     }

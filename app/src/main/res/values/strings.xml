@@ -16,5 +16,5 @@
     <string name="lack_banker_notify">是否续庄?</string>
     <string name="gamer_lack_money">您的金币余额不足,系统已将您踢出游戏\n您可以联系管理员进行充值</string>
     <string name="banker_dwon">您坐庄已超过限定次数\n系统已将您下庄,请稍后再上庄</string>
-    <string name="up_banker_info">每次坐庄只能做3局,到达次数系统将自动进行下庄\n(上庄之后系统将按照最低金额从您的账户拿出金币作为游戏资金;\n您可以点击下方加号增加游戏资金)</string>
+    <string name="up_banker_info">每次坐庄只能坐3局,到达次数系统将自动进行下庄\n(上庄之后系统将按照最低金额从您的账户拿出金币作为游戏资金;\n您可以点击下方加号增加游戏资金)</string>
 </resources>
