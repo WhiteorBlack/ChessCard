@@ -123,7 +123,7 @@ public class GamePresenter implements Observer, TIMConnListener {
             gameOprateView.toastMsg("账号余额不足,请及时充值");
             return;
         }
-
+        gameOprateView.moneyClickable(false);
         betMoneyAnim(activity, startPoint, pos);
         Map<String, String> params = new HashMap<>();
         params.put("user_id", userId);
@@ -652,6 +652,7 @@ public class GamePresenter implements Observer, TIMConnListener {
      * 摇动骰子
      */
     public void shakeDice(Activity context, int one, int two) {
+        ChessCardApplication.getInstance().playDiceSound();
         constent.setISSHAKING(true);
         startDice(context, one, two);
     }
@@ -676,18 +677,28 @@ public class GamePresenter implements Observer, TIMConnListener {
         });
     }
 
+
     public void betMoneyAnim(final Activity activity, int[] startPoint, int pos) {
 
         ChessCardApplication.getInstance().playGoldSound();
-        int height = Tools.dip2px(activity, 30);
+        int height = Tools.dip2px(activity, 40);
         float mutil = 1.34f;
         int width = (int) (height * mutil);
+        if (constent.ISBANKER()) {
+        } else {
+
+        }
         int centerX = (int) (Tools.getScreenWide(activity) / 2);
         int centerY = (int) (Tools.getScreenHeight(activity) / 2);
-        if (constent.getSELECTPOS() == 1)
-            centerX -= centerY * 2 / 5;
-        if (constent.getSELECTPOS() == 3)
-            centerX += centerY / 3;
+        if (constent.ISBANKER()) {
+//            centerY -= centerY / 2;
+        } else {
+            if (constent.getSELECTPOS() == 1)
+                centerX -= centerY * 2 / 5;
+            if (constent.getSELECTPOS() == 3)
+                centerX += centerY / 3;
+        }
+
         final int[] endPoint = new int[]{centerX, centerY};
 
         final ImageView imgBet = new ImageView(activity);
@@ -700,15 +711,15 @@ public class GamePresenter implements Observer, TIMConnListener {
             Glide.with(activity).load(R.mipmap.bg_money_mid).into(imgBet);
         if (pos == 2)
             Glide.with(activity).load(R.mipmap.bg_money_right).into(imgBet);
-        if (viewGroup == null)
-            viewGroup = createAnimLayout(activity);
+//        if (viewGroup == null)
+        final ViewGroup viewGroup = createAnimLayout(activity);
         viewGroup.removeAllViews();
 //        startPoint[0] -= width * 2.5;
 //        startPoint[1] -= height * 3;
         endPoint[0] -= width / 2;
         endPoint[1] -= height / 2;
-        imgBet.setX(startPoint[0]);
-        imgBet.setY(startPoint[1]);
+        imgBet.setLeft(startPoint[0]);
+        imgBet.setTop(startPoint[1]);
         viewGroup.addView(imgBet);
         viewGroup.setBackgroundColor(Color.TRANSPARENT);
 
@@ -723,14 +734,11 @@ public class GamePresenter implements Observer, TIMConnListener {
             @Override
             public void onAnimationStart(Animation animation) {
                 imgBet.setVisibility(View.INVISIBLE);
-                gameOprateView.moneyClickable(false);
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 imgBet.clearAnimation();
-//                imgBet.setX(endPoint[0]);
-//                imgBet.setY(endPoint[1]);
                 imgBet.setVisibility(View.GONE);
                 imgBet.setBackgroundResource(0);
                 viewGroup.removeAllViews();
@@ -804,6 +812,7 @@ public class GamePresenter implements Observer, TIMConnListener {
      * 骰子停止摇动
      */
     public void endDice(final int one, final int two) {
+        ChessCardApplication.getInstance().stopDiecSound();
         constent.setISSHAKING(false);
         final int pos = (one + two) % 4;
         constent.setDEALCHESSPOS(pos);
@@ -1068,9 +1077,11 @@ public class GamePresenter implements Observer, TIMConnListener {
                                 //玩儿家退出游戏
                                 gameOprateView.gamerEixt(bean_message.gamerPos);
                                 resetGamer();
+                                resetMsgStatue();
                                 break;
                             case Constent.GAMER_SITE:
                                 gameOprateView.setTableInfo(bean_message.gameStatue);
+                                resetMsgStatue();
                                 break;
                         }
                     }
@@ -1148,6 +1159,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                                 Tools.debug("gamerOut-----");
                                 gameOprateView.gamerEixt(bean_message.gamerPos + 1);
                                 resetGamer();
+                                resetMsgStatue();
                                 break;
                             case Constent.FREE_SITE:
                                 //座位空闲
@@ -1173,6 +1185,7 @@ public class GamePresenter implements Observer, TIMConnListener {
                             case Constent.GAMER_SITE:
                                 //有玩儿家坐下
                                 gameOprateView.setTableInfo(bean_message.gameStatue);
+                                resetMsgStatue();
                                 break;
                             case Constent.BANKER_STATE:
                                 if (!Constent.IS_BANKER_STATE) {

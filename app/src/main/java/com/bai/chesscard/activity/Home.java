@@ -264,7 +264,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(1).id).putExtra("point", roomList.get(1).min_piont), 1);
                 break;
             case R.id.fl_hig_room:
-                if (roomList.size() == 0)
+                if (roomList.size() <2)
                     return;
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(2).id).putExtra("point", roomList.get(2).min_piont), 2);
                 break;

@@ -469,17 +469,20 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
                 //投注
                 if (Constent.pointList == null || Constent.pointList.length == 0)
                     return;
-                int[] start_location = new int[]{(int) (Tools.getScreenWide(this) / 2 - Tools.dip2px(this, 20)), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 50))};
+                int[] start_location = new int[2];
+                txtMoneyLeft.getLocationInWindow(start_location);
                 gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), Constent.pointList[0], tableId, roomId, start_location, 0);
                 break;
             case R.id.txt_money_mid:
                 //投注
-                int[] start_location1 = new int[]{(int) (Tools.getScreenWide(this) * 3 / 5), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 50))};
+                int[] start_location1 = new int[2];
+                txtMoneyMid.getLocationInWindow(start_location1);
                 gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), Constent.pointList[1], tableId, roomId, start_location1, 1);
                 break;
             case R.id.txt_money_right:
                 //投注
-                int[] start_location2 = new int[]{(int) (Tools.getScreenWide(this) * 4 / 5 - Tools.dip2px(this, 40)), (int) (Tools.getScreenHeight(this) - Tools.dip2px(this, 50))};
+                int[] start_location2 = new int[2];
+                txtMoneyRight.getLocationInWindow(start_location2);
                 gamePresenter.betMoney(this, AppPrefrence.getUserNo(context), Constent.pointList[2], tableId, roomId, start_location2, 2);
                 break;
             case R.id.img_setting:
@@ -829,7 +832,6 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
     @Override
     public void shakeDice(int one, int two) {
         gamePresenter.shakeDice(this, one, two);
-        ChessCardApplication.getInstance().playDiceSound();
     }
 
     @Override

@@ -156,7 +156,7 @@ public class LoginPop extends BasePopupwind {
                     AppPrefrence.setToken(context, login.token);
                     AppPrefrence.setReferrer(context, login.data.referrer);
                     AppPrefrence.setAvatar(context, login.data.avatar);
-                    AppPrefrence.setAmount(context, login.data.amount);
+                    AppPrefrence.setAmount(context, login.data.point);
                     AppPrefrence.setUserNo(context,login.data.id);
                 }else Tools.toastMsgCenter(context, login.msg);
                 if (popInterfacer != null)

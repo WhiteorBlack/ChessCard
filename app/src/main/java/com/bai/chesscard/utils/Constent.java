@@ -10,7 +10,7 @@ public class Constent {
     private static String USERID = ""; //用户id
     private static boolean ISBANKER;  //是否为庄家
     private static boolean ISGAMER = false; //是否为玩儿家
-    private static String TABLEID = "-1"; //游戏桌id
+    private static String TABLEID = ""; //游戏桌id
     private static String ROOMID = ""; //房间id
     private static String ROUNDID = ""; //游戏局数id
     private static int SELECTPOS = -1; //选择投注的用户位置
