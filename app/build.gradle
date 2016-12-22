@@ -4,10 +4,10 @@ apply plugin: 'com.neenbedankt.android-apt'
 android {
     signingConfigs {
         config {
-//            keyAlias 'chesscard'
-//            keyPassword 'chesscard2016'
-//            storeFile file('F:\\myProject\\ChessCard\\chessCard.jks')
-//            storePassword 'chesscard2016'
+            keyAlias 'chesscard'
+            keyPassword 'chesscard2016'
+            storeFile file('F:\\myProject\\ChessCard\\chessCard.jks')
+            storePassword 'chesscard2016'
         }
     }
     compileSdkVersion 24
@@ -21,13 +21,13 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-//        release {
-//            minifyEnabled false
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro';
-//            debuggable true;
-//            signingConfig signingConfigs.config;
-//        }
-//        debug { signingConfig signingConfigs.config }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro';
+            debuggable true;
+            signingConfig signingConfigs.config;
+        }
+        debug { signingConfig signingConfigs.config }
     }
     sourceSets { main { jniLibs.srcDirs = ['libs'] } }
 }
