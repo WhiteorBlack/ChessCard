@@ -30,6 +30,8 @@
     <dimen name="dp74">74dp</dimen>
     <dimen name="dp76">76dp</dimen>
     <dimen name="dp80">80dp</dimen>
+    <dimen name="dp81">81dp</dimen>
+    <dimen name="dp82">82dp</dimen>
     <dimen name="dp87">87dp</dimen>
     <dimen name="dp100">100dp</dimen>
     <dimen name="dp200">200dp</dimen>

@@ -70,7 +70,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
              />
-
+        <activity
+            android:name=".activity.GamingActivityNew"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            />
         <service
             android:name=".service.BackgroundService"
             android:exported="false" />

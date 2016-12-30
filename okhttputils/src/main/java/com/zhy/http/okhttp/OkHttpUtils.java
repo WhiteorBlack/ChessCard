@@ -8,6 +8,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 
 import okhttp3.Call;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -37,7 +38,48 @@ public class OkHttpUtils
 
     private OkHttpUtils()
     {
-        OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
+        OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request()
+                        .newBuilder()
+                        .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                        .build();
+                return chain.proceed(request);
+            }
+        });
+        //cookie enabled
+        okHttpClientBuilder.cookieJar(new SimpleCookieJar());
+        mDelivery = new Handler(Looper.getMainLooper());
+
+
+        if (true)
+        {
+            okHttpClientBuilder.hostnameVerifier(new HostnameVerifier()
+            {
+                @Override
+                public boolean verify(String hostname, SSLSession session)
+                {
+                    return true;
+                }
+            });
+        }
+
+        mOkHttpClient = okHttpClientBuilder.build();
+    }
+
+    private OkHttpUtils(final String token)
+    {
+        OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request()
+                        .newBuilder()
+                        .addHeader("Content-Type", token)
+                        .build();
+                return chain.proceed(request);
+            }
+        });
         //cookie enabled
         okHttpClientBuilder.cookieJar(new SimpleCookieJar());
         mDelivery = new Handler(Looper.getMainLooper());
@@ -68,6 +110,20 @@ public class OkHttpUtils
         return this;
     }
 
+    public static OkHttpUtils getInstance(String token)
+    {
+        if (mInstance == null)
+        {
+            synchronized (OkHttpUtils.class)
+            {
+                if (mInstance == null)
+                {
+                    mInstance = new OkHttpUtils(token);
+                }
+            }
+        }
+        return mInstance;
+    }
 
     public static OkHttpUtils getInstance()
     {

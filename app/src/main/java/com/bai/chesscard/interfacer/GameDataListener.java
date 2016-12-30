@@ -1,41 +1,30 @@
 package com.bai.chesscard.interfacer;
 
-
 /**
- * Created by Administrator on 2016/11/25.
+ * Created by Administrator on 2016/12/27.
  */
 
 public interface GameDataListener {
     /**
-     * /**
-     * 链接断开
+     * 进入游戏获取数据失败
      */
-    void onMinaDisconect();
+    void getInGameFail();
 
     /**
-     * 重连
+     * 进入游戏获取数据成功
      *
-     * @param time
+     * @param result
      */
-    void onMinaReconect(int time);
+    void getInGameSuccess(String result);
 
 
     /**
-     * 接收消息
-     *
-     * @param msg
+     * 押注失败
      */
-    void onMessageReceive(Object msg);
+    void betMoneyFial();
 
     /**
-     * 长连接握手失败
+     * 押注成功
      */
-    void onContectFail();
-
-    /**
-     * 重连失败
-     */
-    void onReContactFail();
-
-    void onException(Throwable cause);
+    void betMoneySuccess();
 }

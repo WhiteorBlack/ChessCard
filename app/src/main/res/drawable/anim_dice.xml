@@ -3,20 +3,20 @@
 
     <item
         android:drawable="@drawable/dice_two"
-        android:duration="100" />
+        android:duration="300" />
     <item
         android:drawable="@drawable/dice_six"
-        android:duration="100" />
+        android:duration="300" />
     <item
         android:drawable="@drawable/dice_three"
-        android:duration="100" />
+        android:duration="300" />
     <item
         android:drawable="@drawable/dice_one"
-        android:duration="100" />
+        android:duration="300" />
     <item
         android:drawable="@drawable/dice_five"
-        android:duration="100" />
+        android:duration="300" />
     <item
         android:drawable="@drawable/dice_four"
-        android:duration="100" />
+        android:duration="300" />
 </animation-list>

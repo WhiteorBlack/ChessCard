@@ -139,13 +139,13 @@ public class TableList extends BaseActivity {
                     @Override
                     public void onError(int i, String s) {
                         Tools.debug("onError--"+s);
-                        startActivity(new Intent(context, GamingActivity.class).putExtra("roomId", tabList.get(position).house_id).
+                        startActivity(new Intent(context, GamingActivityNew.class).putExtra("roomId", tabList.get(position).house_id).
                                 putExtra("tableId", tabList.get(position).id).putExtra("point", minPoint));
                     }
 
                     @Override
                     public void onSuccess() {
-                        startActivity(new Intent(context, GamingActivity.class).putExtra("roomId", tabList.get(position).house_id).
+                        startActivity(new Intent(context, GamingActivityNew.class).putExtra("roomId", tabList.get(position).house_id).
                                 putExtra("tableId", tabList.get(position).id).putExtra("point", minPoint));
                     }
                 });

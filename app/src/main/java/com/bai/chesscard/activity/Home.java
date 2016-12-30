@@ -1,6 +1,5 @@
 package com.bai.chesscard.activity;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,22 +9,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bai.chesscard.BaseActivity;
 import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.MainActivity;
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
-import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.bean.Bean_Avatar;
 import com.bai.chesscard.bean.Bean_Notify;
 import com.bai.chesscard.bean.Bean_Room;
@@ -46,7 +39,6 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoActivity;
-import com.jph.takephoto.model.CropOptions;
 import com.jph.takephoto.model.TResult;
 import com.tencent.TIMFriendshipManager;
 import com.tencent.TIMMessage;

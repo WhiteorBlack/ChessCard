@@ -47,7 +47,7 @@
                         style="@style/login_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="手机号:"
+                        android:text="用户名:"
                         android:textStyle="bold" />
 
                     <EditText
@@ -58,8 +58,8 @@
                         android:background="@mipmap/login_edit_bg"
                         android:focusable="true"
                         android:gravity="center_vertical|left"
-                        android:inputType="phone"
                         android:imeOptions="flagNoExtractUi|flagNoFullscreen"
+                        android:inputType="phone"
                         android:maxLength="11"
                         android:paddingLeft="10dp" />
                 </LinearLayout>
@@ -84,9 +84,9 @@
                         android:id="@+id/edt_pwd"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
                         android:background="@mipmap/login_edit_bg"
                         android:gravity="center_vertical|left"
-                        android:layout_marginLeft="5dp"
                         android:imeOptions="flagNoExtractUi|flagNoFullscreen"
                         android:inputType="text"
                         android:paddingLeft="10dp" />
@@ -101,8 +101,8 @@
                     android:layout_marginRight="8.5dp"
                     android:layout_marginTop="6dp"
                     android:text="@string/forget_pwd"
-                    android:visibility="invisible"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="invisible" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -117,10 +117,10 @@
                     <ImageView
                         android:id="@+id/btn_login"
                         style="@style/btn_login"
-                        android:visibility="invisible"
                         android:layout_gravity="bottom|right"
                         android:layout_marginRight="12dp"
-                        android:background="@mipmap/btn_login" />
+                        android:background="@mipmap/btn_login"
+                        android:visibility="invisible" />
                 </FrameLayout>
             </LinearLayout>
 

@@ -60,7 +60,6 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
     private LoginPop loginPop;
     private RegisterPop registerPop;
     private InputPwdPop inputPwdPop;
-    private GetCodePop getCode;
     private ProgressDialog progressDilaog;
     private FindPwdPop findPwdPop;
     private FrameLayout flTEst;
@@ -70,7 +69,6 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
         setContentView(R.layout.main_activity);
         ButterKnife.bind(this);
         if (AppPrefrence.getIsLogin(context)) {
-//            countDown();
             txtLoading.setVisibility(View.VISIBLE);
             imgLoading.setVisibility(View.GONE);
         } else {
@@ -152,22 +150,6 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
         loginPop.setPopInterfacer(MainActivity.this, 0);
     }
 
-    private void countDown() {
-        new CountDownTimer(2000, 2000) {
-
-            @Override
-            public void onTick(long l) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                startActivity(new Intent(context, Home.class));
-                finish();
-            }
-        }.start();
-    }
-
 
     @Override
     public void OnDismiss(int flag) {
@@ -179,8 +161,9 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                 registerPop = null;
                 break;
             case 2:
-                getCode = null;
+                inputPwdPop = null;
                 break;
+
         }
     }
 
@@ -191,22 +174,14 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
         switch (flag) {
             case 0:
                 if (bundle == null) return;
-                if (bundle.getInt("type",-1) == 0) {
-                    //忘记密码
-                    if (getCode == null)
-                        getCode = new GetCodePop(context);
-                    getCode.setPhone(AppPrefrence.getUserPhone(context));
-                    getCode.showPop(txtLoading);
-                    getCode.setPopInterfacer(this, 2);
-                }
-                if (bundle.getInt("type",-1) == 1) {
+                if (bundle.getInt("type", -1) == 1) {
                     //注册
                     if (registerPop == null)
                         registerPop = new RegisterPop(context);
                     registerPop.showPop(txtLoading);
                     registerPop.setPopInterfacer(this, 1);
                 }
-                if (bundle.getInt("type",-1) == 2) {
+                if (bundle.getInt("type", -1) == 2) {
                     //登录成功
                     if (bundle.getBoolean("statue")) {
                         dismissPop();
@@ -216,43 +191,19 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                 }
                 break;
             case 1:
-                phone = bundle.getString("phone");
-                man = bundle.getString("man");
-                if (getCode == null)
-                    getCode = new GetCodePop(context);
-                getCode.setPhone(phone);
-                getCode.showPop(txtLoading);
-                getCode.setPopInterfacer(this, 2);
+                if (bundle==null)
+                    return;
+                if (inputPwdPop == null)
+                    inputPwdPop = new InputPwdPop(context);
+                inputPwdPop.showPop(txtLoading);
+                inputPwdPop.setPopInterfacer(this, 2);
+                phone=bundle.getString("phone");
+                man=bundle.getString("man");
                 break;
             case 2:
                 //填写密码
                 if (bundle == null)
                     return;
-                if (bundle.getInt("type") == 1) {
-                    //用户协议
-
-                    return;
-                }
-                if (bundle.getInt("type") == 2) {
-                    code = bundle.getString("code");
-                }
-                if (TextUtils.isEmpty(code))
-                    return;
-                if (bundle.getInt("putType") == 0) {
-                    if (inputPwdPop == null)
-                        inputPwdPop = new InputPwdPop(context);
-                    inputPwdPop.showPop(txtLoading);
-                    inputPwdPop.setPopInterfacer(this, 3);
-                } else {
-                    if (findPwdPop == null)
-                        findPwdPop = new FindPwdPop(context);
-                    findPwdPop.showPop(txtLoading);
-                    findPwdPop.setPopInterfacer(this, 4);
-                }
-
-                break;
-            case 3:
-                //注册
                 pwd = bundle.getString("pwd");
                 register();
                 break;
@@ -294,7 +245,6 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
         progressDilaog.setMessage("注册中...");
         Map<String, String> params = new HashMap<>();
         params.put("phone", phone);
-        params.put("code", code);
         params.put("password", pwd);
         params.put("referrer", man);
         PostTools.postData(CommonUntilities.MAIN_URL + "register", params, new PostCallBack() {
@@ -330,16 +280,14 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
     }
 
     private void dismissPop() {
-        if (getCode != null)
-            getCode.dismiss();
-        if (inputPwdPop != null)
-            inputPwdPop.dismiss();
         if (registerPop != null)
             registerPop.dismiss();
         if (loginPop != null)
             loginPop.dismiss();
         if (findPwdPop != null)
             findPwdPop = null;
+        if (inputPwdPop != null)
+            inputPwdPop.dismiss();
     }
 
     @Override

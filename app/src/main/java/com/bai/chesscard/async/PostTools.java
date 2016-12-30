@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import okhttp3.OkHttpClient;
+
 public class PostTools {
 
     public static void postData(final String url, Map<String, String> params, final PostCallBack postCallBack) {
@@ -24,8 +26,7 @@ public class PostTools {
         if (params == null)
             params = new HashMap<>();
         params.put("timestamp",System.currentTimeMillis()+"");
-        OkHttpUtils.post().url(url).params(params).build().execute(postCallBack);
-
+        OkHttpUtils.post().url(url).params(params).addHeader("","").build().execute(postCallBack);
     }
 
     public static void postFile(String url, String uri, Map<String, String> params, PostCallBack postCallBack) {

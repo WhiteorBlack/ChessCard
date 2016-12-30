@@ -1,6 +1,7 @@
 package com.bai.chesscard.activity;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -1173,6 +1174,7 @@ public class GamingActivity extends BaseActivity implements GameOprateView, PopI
         upBankerNotifyPop.setNotify(R.string.up_banker_info);
         upBankerNotifyPop.showPop(txtHeadBottom);
         upBankerNotifyPop.setPopInterfacer(this, 14);
+
     }
 
     @Override

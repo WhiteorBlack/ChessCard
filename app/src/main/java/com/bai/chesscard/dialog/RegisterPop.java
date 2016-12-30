@@ -30,7 +30,6 @@ public class RegisterPop extends BasePopupwind  {
     EditText edtPhone;
     EditText edtPwd;
     private View view;
-    private InputMethodManager inputMethodManager;
 
     public RegisterPop(Context context) {
         super(context);
@@ -38,19 +37,11 @@ public class RegisterPop extends BasePopupwind  {
     }
 
     private void initView() {
-        inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (view == null)
             view = LayoutInflater.from(context).inflate(R.layout.register_pop, null);
         edtPhone = (EditText) view.findViewById(R.id.edt_phone);
         edtPwd = (EditText) view.findViewById(R.id.edt_pwd);
         view.findViewById(R.id.btn_register).setOnClickListener(this);
-
-        edtPwd.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-
-            }
-        });
         this.setFocusable(true);
         this.setContentView(view);
     }
@@ -63,14 +54,14 @@ public class RegisterPop extends BasePopupwind  {
             case R.id.btn_register:
                 String phone = edtPhone.getText().toString();
                 if (TextUtils.isEmpty(phone)) {
-                    Tools.toastMsgCenter(context, "请输入手机号码");
+                    Tools.toastMsgCenter(context, "请输入用户名");
                     return;
                 }
                 bundle.putString("phone", phone);
                 String man = edtPwd.getText().toString();
                 if (TextUtils.isEmpty(man)) {
                     Tools.toastMsgCenter(context, "请输入推荐人");
-//                    return;
+                    return;
                 }
                 bundle.putString("man", man);
                 bundle.putInt("type", 1);
