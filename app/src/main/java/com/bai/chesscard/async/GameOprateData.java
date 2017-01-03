@@ -14,10 +14,10 @@ import java.util.Map;
  */
 
 public class GameOprateData {
-    private GameDataListener gameDataListener;
+    private static GameDataListener gameDataListener;
 
-    public GameOprateData getInstance(GameDataListener gameDataListener) {
-        this.gameDataListener = gameDataListener;
+    public static GameOprateData getInstance(GameDataListener DataListener) {
+        gameDataListener = DataListener;
         return new GameOprateData();
     }
 

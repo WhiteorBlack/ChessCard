@@ -1,11 +1,18 @@
 package com.bai.chesscard.activity;
 
+import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -13,8 +20,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bai.chesscard.BaseActivity;
+import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.GameChessAdapter;
+import com.bai.chesscard.dialog.DiscontectNotifyPop;
 import com.bai.chesscard.dialog.PersonalPop;
 import com.bai.chesscard.dialog.SettingPop;
 import com.bai.chesscard.interfacer.GameOprateViewNew;
@@ -25,6 +34,7 @@ import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.StrokeTextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -166,6 +176,17 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     private SettingPop settingPop;
     private PersonalPop personalPop;
+    private DiscontectNotifyPop discontectNotifyPop;
+
+    private int[] chessRes = new int[]{R.mipmap.chess_one, R.mipmap.chess_two, R.mipmap.chess_three, R.mipmap.chess_four, R.mipmap.chess_five, R.mipmap.chess_six, R.mipmap.chess_seven,
+            R.mipmap.chess_eight, R.mipmap.chess_nine};
+    private int[] mutilRes = new int[]{R.mipmap.one_multiple, R.mipmap.double_multiple, R.mipmap.trable_multiple};
+    private int[] pointRes = new int[]{R.mipmap.point_zero, R.mipmap.point_one, R.mipmap.point_two, R.mipmap.point_three, R.mipmap.point_four, R.mipmap.point_five,
+            R.mipmap.point_six, R.mipmap.point_seven, R.mipmap.point_eight, R.mipmap.point_nine, R.mipmap.point_double};
+    private int[] pointGrayRes = new int[]{R.mipmap.point_zero_gray, R.mipmap.point_one_gray, R.mipmap.point_two_gray, R.mipmap.point_three_gray, R.mipmap.point_four_gray, R.mipmap.point_five_gray,
+            R.mipmap.point_six_gray, R.mipmap.point_seven_gray, R.mipmap.point_eight_gray, R.mipmap.point_nine_gray, R.mipmap.point_double_gray};
+
+    private int timeCount=0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -179,6 +200,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     private void initData() {
+
         invisCountTime();
         invisBetMoney();
         invisChess();
@@ -238,6 +260,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     private void initView() {
+        chessList = new ArrayList();
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) llTable.getLayoutParams();
         params.width = (int) (Tools.getScreenWide(context) * 0.59);
         params.height = (int) (Tools.getScreenHeight(context) * 0.57);
@@ -258,6 +281,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     private void invisCountTime() {
         llTimeContent.setVisibility(View.INVISIBLE);
+    }
+
+    private void glideImg(int path, ImageView imageView) {
+        imageView.setBackgroundResource(path);
     }
 
     @Override
@@ -365,13 +392,198 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     @Override
-    public void dealChess() {
+    public void dealChess(int userPos) {
+        for (int i = 0; i < 4; i++) {
+            if (userPos > 3)
+                userPos = 0;
+            switch (userPos) {
+                case 0:
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            glideImg(R.mipmap.bg_chess_back, imgTopLeft);
+                            glideImg(R.mipmap.bg_chess_back, imgTopRight);
+                            imgTopLeft.setVisibility(View.VISIBLE);
+                            imgTopRight.setVisibility(View.VISIBLE);
+                        }
+                    }, 500 * i);
 
+                    break;
+                case 1:
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            glideImg(R.mipmap.bg_chess_back, imgChessLeftOne);
+                            glideImg(R.mipmap.bg_chess_back, imgChessLeftTwo);
+                            imgChessLeftOne.setVisibility(View.VISIBLE);
+                            imgChessLeftTwo.setVisibility(View.VISIBLE);
+                        }
+                    }, 500 * i);
+
+                    break;
+                case 2:
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            glideImg(R.mipmap.bg_chess_back, imgChessMidOne);
+                            glideImg(R.mipmap.bg_chess_back, imgChessMidTwo);
+                            imgChessMidOne.setVisibility(View.VISIBLE);
+                            imgChessMidTwo.setVisibility(View.VISIBLE);
+                        }
+                    }, 500 * i);
+
+                    break;
+                case 3:
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            glideImg(R.mipmap.bg_chess_back, imgChessRightOne);
+                            glideImg(R.mipmap.bg_chess_back, imgChessRightTwo);
+                            imgChessRightOne.setVisibility(View.VISIBLE);
+                            imgChessRightTwo.setVisibility(View.VISIBLE);
+                        }
+                    }, 500 * i);
+
+                    break;
+            }
+            userPos++;
+        }
     }
 
     @Override
-    public void openChess() {
+    public void openChess(final Bundle bundle) {
+        //庄家
+        glideImg(chessRes[bundle.getInt("bankerOne")], imgTopLeft);
+        glideImg(chessRes[bundle.getInt("bankerTwo")], imgTopRight);
+        imgTopLeft.setVisibility(View.VISIBLE);
+        imgTopRight.setVisibility(View.VISIBLE);
+        gamePresenterNew.showPoint(0, bundle.getInt("bankerOne"), bundle.getInt("bankerTwo"));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //初家的牌
+                glideImg(chessRes[bundle.getInt("leftOne")], imgChessLeftOne);
+                glideImg(chessRes[bundle.getInt("leftTwo")], imgChessLeftTwo);
+                imgChessLeftOne.setVisibility(View.VISIBLE);
+                imgChessLeftTwo.setVisibility(View.VISIBLE);
+                gamePresenterNew.showPoint(1, bundle.getInt("leftOne"), bundle.getInt("leftTwo"));
+            }
+        }, 500);
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //天家
+                glideImg(chessRes[bundle.getInt("bottomOne")], imgChessMidOne);
+                glideImg(chessRes[bundle.getInt("bottomTwo")], imgChessMidTwo);
+                imgChessMidOne.setVisibility(View.VISIBLE);
+                imgChessMidTwo.setVisibility(View.VISIBLE);
+                gamePresenterNew.showPoint(2, bundle.getInt("bottomOne"), bundle.getInt("bottomTwo"));
+            }
+        }, 1000);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //尾家
+                glideImg(chessRes[bundle.getInt("rightOne")], imgChessRightOne);
+                glideImg(chessRes[bundle.getInt("rightTwo")], imgChessRightTwo);
+                imgChessRightOne.setVisibility(View.VISIBLE);
+                imgChessLeftTwo.setVisibility(View.VISIBLE);
+                gamePresenterNew.showPoint(3, bundle.getInt("rightOne"), bundle.getInt("rightTwo"));
+            }
+        }, 1500);
+    }
+
+    @Override
+    public void showPoint(int pos, int point, boolean isGray) {
+        switch (pos) {
+            case 0:
+                glideImg(pointRes[point], imgChessTopCount);
+                imgChessTopCount.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+                if (isGray)
+                    glideImg(pointGrayRes[point], imgChessLeftCount);
+                else
+                    glideImg(pointRes[point], imgChessLeftCount);
+                imgChessLeftCount.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                if (isGray)
+                    glideImg(pointGrayRes[point], imgChessMidCount);
+                else
+                    glideImg(pointRes[point], imgChessMidCount);
+                imgChessMidCount.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                if (isGray)
+                    glideImg(pointGrayRes[point], imgChessRightCount);
+                else
+                    glideImg(pointRes[point], imgChessRightCount);
+                imgChessRightCount.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    @Override
+    public void showMutil(int pos, int mutil) {
+        switch (pos) {
+            case 1:
+                glideImg(mutilRes[mutil], imgChessLeftMultiple);
+                imgChessLeftMultiple.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                glideImg(mutilRes[mutil], imgChessMidMultiple);
+                imgChessMidMultiple.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                glideImg(mutilRes[mutil], imgChessRightMultiple);
+                imgChessRightMultiple.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    @Override
+    public void settleResult(int pos, final boolean isWinner) {
+        timeCount++;
+        final int[] bankerPoint = new int[2];
+        final int[] gamerPoint = new int[2];
+        flHeadTop.getLocationInWindow(bankerPoint);
+        switch (pos) {
+            case 0:
+
+                break;
+            case 1:
+                flHeadLeft.getLocationInWindow(gamerPoint);
+                break;
+            case 2:
+                flHeadBottom.getLocationInWindow(gamerPoint);
+                break;
+            case 3:
+                flHeadRight.getLocationInWindow(gamerPoint);
+                break;
+        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isWinner)
+                    settleResult(bankerPoint, gamerPoint);
+                else   settleResult(gamerPoint, bankerPoint);
+            }
+        },500*timeCount);
+
+    }
+
+    private void settleResult(final int[] startPoint, final int[] endPoint) {
+        for (int i = 0; i < 3; i++) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    settleMoneyAnim(startPoint, endPoint);
+                }
+            }, 100 * i);
+        }
     }
 
     @Override
@@ -386,24 +598,45 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void disContect() {
-
+        if (discontectNotifyPop == null)
+            discontectNotifyPop = new DiscontectNotifyPop(context);
+        discontectNotifyPop.showPop(txtHeadBottom);
+        discontectNotifyPop.setPopInterfacer(this, ConstentNew.DISCONTECT_POP);
     }
 
     @Override
     public void reContect() {
-
+        gamePresenterNew.getInGame();
+        if (discontectNotifyPop != null && discontectNotifyPop.isShowing()) {
+            discontectNotifyPop.setIsContect(true);
+            discontectNotifyPop.dismiss();
+        }
     }
 
     @Override
     public void OnDismiss(int flag) {
-
+        switch (flag) {
+            case ConstentNew.DISCONTECT_POP:
+                discontectNotifyPop = null;
+                break;
+            case ConstentNew.PERSONAL_POP:
+                personalPop = null;
+                break;
+            case ConstentNew.SETTING_POP:
+                settingPop = null;
+                break;
+        }
     }
 
     @Override
     public void OnConfirm(int flag, Bundle bundle) {
         switch (flag) {
             case ConstentNew.SETTING_POP:
-
+                if (bundle == null)
+                    return;
+                if (bundle.getBoolean("type")) {
+                    ChessCardApplication.getInstance().playBack();
+                } else ChessCardApplication.getInstance().stopBack();
                 break;
         }
     }
@@ -421,31 +654,165 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
 
-    @OnClick({R.id.img_back, R.id.rel_head_bottom, R.id.rel_head_right, R.id.rel_head_top, R.id.img_gameing_user, R.id.img_head, R.id.img_add, R.id.txt_money_left, R.id.txt_money_mid, R.id.txt_money_right, R.id.img_setting})
+    @OnClick({R.id.img_back, R.id.rel_head_left, R.id.rel_head_bottom, R.id.rel_head_right, R.id.rel_head_top, R.id.img_gameing_user,
+            R.id.img_head, R.id.img_add, R.id.txt_money_left, R.id.txt_money_mid, R.id.txt_money_right, R.id.img_setting})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
                 break;
             case R.id.rel_head_bottom:
+               gamePresenterNew.settleResult();
                 break;
             case R.id.rel_head_right:
+
                 break;
             case R.id.rel_head_top:
+                break;
+            case R.id.rel_head_left:
+
                 break;
             case R.id.img_gameing_user:
                 break;
             case R.id.img_head:
+                gamePresenterNew.showPersonalPop();
                 break;
             case R.id.img_add:
                 break;
             case R.id.txt_money_left:
+                gamePresenterNew.betMoney();
+                int[] leftPoint = new int[2];
+                txtMoneyLeft.getLocationInWindow(leftPoint);
+                betMoneyAnim(leftPoint, 0);
                 break;
             case R.id.txt_money_mid:
+                gamePresenterNew.betMoney();
+                int[] midPoint = new int[2];
+                txtMoneyLeft.getLocationInWindow(midPoint);
+                betMoneyAnim(midPoint, 1);
                 break;
             case R.id.txt_money_right:
+                gamePresenterNew.betMoney();
+                int[] rightPoint = new int[2];
+                txtMoneyLeft.getLocationInWindow(rightPoint);
+                betMoneyAnim(rightPoint, 2);
                 break;
             case R.id.img_setting:
+                gamePresenterNew.showSettingPop();
                 break;
         }
     }
+
+    public void settleMoneyAnim(int[] startPoint, int[] endPoint) {
+        ChessCardApplication.getInstance().playGoldSound();
+        int height = Tools.dip2px(context, 40);
+        final ViewGroup viewGroup = createAnimLayout(this);
+        viewGroup.removeAllViews();
+        viewGroup.setBackgroundColor(Color.TRANSPARENT);
+        TranslateAnimation translateAnimation = new TranslateAnimation(startPoint[0], endPoint[0], startPoint[1], endPoint[1]);
+        translateAnimation.setDuration(300);
+        translateAnimation.setRepeatCount(0);
+        translateAnimation.setInterpolator(new LinearInterpolator());
+        final ImageView imgBet = new ImageView(context);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(height, height);
+        imgBet.setLayoutParams(params);
+        glideImg(R.mipmap.bg_money_right, imgBet);
+        imgBet.setLeft(startPoint[0]);
+        imgBet.setTop(startPoint[1]);
+        viewGroup.addView(imgBet);
+        translateAnimation.setFillAfter(true);
+        imgBet.setAnimation(translateAnimation);
+        translateAnimation.start();
+
+        translateAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                imgBet.clearAnimation();
+                imgBet.setVisibility(View.GONE);
+                viewGroup.removeAllViews();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    public void betMoneyAnim(int[] startPoint, int pos) {
+        ChessCardApplication.getInstance().playGoldSound();
+        int height = Tools.dip2px(context, 40);
+        float mutil = 1.34f;
+        int width = (int) (height * mutil);
+        int centerX = (int) (Tools.getScreenWide(context) / 2);
+        int centerY = (int) (Tools.getScreenHeight(context) / 2);
+
+        final int[] endPoint = new int[]{centerX, centerY};
+
+        final ImageView imgBet = new ImageView(context);
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(height, height);
+        imgBet.setLayoutParams(params);
+        imgBet.setVisibility(View.GONE);
+        if (pos == 0)
+            glideImg(R.mipmap.bg_money_left, imgBet);
+        if (pos == 1)
+            glideImg(R.mipmap.bg_money_mid, imgBet);
+        if (pos == 2)
+            glideImg(R.mipmap.bg_money_right, imgBet);
+        final ViewGroup viewGroup = createAnimLayout(this);
+        viewGroup.removeAllViews();
+        endPoint[0] -= width / 2;
+        endPoint[1] -= height / 2;
+        imgBet.setLeft(startPoint[0]);
+        imgBet.setTop(startPoint[1]);
+        viewGroup.addView(imgBet);
+        viewGroup.setBackgroundColor(Color.TRANSPARENT);
+
+        TranslateAnimation translateAnimation = new TranslateAnimation(startPoint[0], endPoint[0] - startPoint[0], startPoint[1], endPoint[1] - startPoint[1]);
+        translateAnimation.setDuration(500);
+        translateAnimation.setRepeatCount(0);
+        translateAnimation.setInterpolator(new LinearInterpolator());
+        translateAnimation.setFillAfter(true);
+        imgBet.setAnimation(translateAnimation);
+        translateAnimation.start();
+        translateAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                imgBet.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                imgBet.clearAnimation();
+                imgBet.setVisibility(View.GONE);
+                imgBet.setBackgroundResource(0);
+                viewGroup.removeAllViews();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    /**
+     * 创建动画层
+     */
+    private ViewGroup createAnimLayout(Activity context) {
+        ViewGroup rootView = (ViewGroup) context.getWindow().getDecorView();
+        LinearLayout animLayout = new LinearLayout(context);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        animLayout.setLayoutParams(lp);
+        animLayout.setId(Integer.MAX_VALUE - 1);
+        animLayout.setBackgroundResource(android.R.color.transparent);
+        rootView.addView(animLayout);
+        return animLayout;
+    }
+
 }

@@ -303,7 +303,7 @@
             android:layout_height="@dimen/dp44"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/ll_table"
-            android:onClick="cardClick">
+            >
 
             <FrameLayout
                 android:id="@+id/fl_head_left"
@@ -355,7 +355,6 @@
             android:layout_below="@id/ll_table"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="10dp"
-            android:onClick="cardClick"
             android:paddingLeft="@dimen/dp10">
 
             <FrameLayout
@@ -406,7 +405,7 @@
             android:layout_height="@dimen/dp50"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/ll_table"
-            android:onClick="cardClick">
+            >
 
             <FrameLayout
                 android:id="@+id/fl_head_right"
@@ -457,7 +456,6 @@
             android:layout_height="@dimen/dp44"
             android:layout_above="@id/ll_table"
             android:layout_centerHorizontal="true"
-            android:onClick="cardClick"
             android:paddingLeft="@dimen/dp10">
 
             <FrameLayout

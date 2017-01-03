@@ -31,7 +31,16 @@ public class ConstentNew {
      * 当前房间id
      */
     public static String ROOM_ID;
-
+    /**
+     * 庄家的点数
+     */
+    public static int BANKER_POINT;
+    /**
+     * 庄家是否为对子
+     */
+    public static int DICE_COUNT=-1;
+    public static boolean[] SETTLE_RESULT = new boolean[]{false, false, true, false};
+    public static boolean IS_BANKER_MUTIL = false;
     /**
      * 坐庄最低限额
      */
@@ -99,7 +108,12 @@ public class ConstentNew {
      * 消息类型 当前游戏状态
      */
     public static final int TYPE_CURRENT_STATUE = 12;
+    /**
+     * 玩儿家坐下
+     */
+    public static final int TYPE_SITE_DOWN = 13;
 
     public static final int SETTING_POP = 0;
     public static final int PERSONAL_POP = 1;
+    public static final int DISCONTECT_POP = 2;
 }

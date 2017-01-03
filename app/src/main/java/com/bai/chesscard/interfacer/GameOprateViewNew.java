@@ -77,12 +77,33 @@ public interface GameOprateViewNew {
     /**
      * 发牌
      */
-    void dealChess();
+    void dealChess(int pos);
 
     /**
      * 开牌
      */
-    void openChess();
+    void openChess(Bundle bundle);
+
+    /**
+     * 显示点数
+     */
+    void showPoint(int pos, int point, boolean isGray);
+
+    /**
+     * 显示倍数
+     *
+     * @param pos
+     * @param mutil
+     */
+    void showMutil(int pos, int mutil);
+
+    /**
+     * 结算结果
+     *
+     * @param pos
+     * @param isWinner
+     */
+    void settleResult(int pos, boolean isWinner);
 
     /**
      * toast 信息展示
@@ -102,4 +123,6 @@ public interface GameOprateViewNew {
      * 重连
      */
     void reContect();
+
+
 }

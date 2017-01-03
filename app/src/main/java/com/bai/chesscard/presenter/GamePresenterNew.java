@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.LinearLayout;
 
 import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
+import com.bai.chesscard.async.GameOprateData;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.bean.Bean_BetMoney;
@@ -29,6 +31,7 @@ import com.bai.chesscard.bean.Bean_Message;
 import com.bai.chesscard.bean.Bean_Result;
 import com.bai.chesscard.bean.Bean_ShakeDice;
 import com.bai.chesscard.bean.Bean_TableDetial;
+import com.bai.chesscard.interfacer.GameDataListener;
 import com.bai.chesscard.interfacer.GameOprateView;
 import com.bai.chesscard.interfacer.GameOprateViewNew;
 import com.bai.chesscard.interfacer.PostCallBack;
@@ -62,7 +65,7 @@ import java.util.Observer;
  * Created by Administrator on 2016/11/16.
  */
 
-public class GamePresenterNew implements Observer, TIMConnListener {
+public class GamePresenterNew implements Observer, TIMConnListener, GameDataListener {
     private GameOprateViewNew gameOprateView;
     private ViewGroup viewGroup;
     private int[] diceRes = new int[]{R.drawable.dice_one, R.drawable.dice_two, R.drawable.dice_three, R.drawable.dice_four, R.drawable.dice_five, R.drawable.dice_six};
@@ -84,64 +87,106 @@ public class GamePresenterNew implements Observer, TIMConnListener {
         conversation = null;
     }
 
-
-    public void betMoneyAnim(final Activity activity, int[] startPoint, int pos) {
-        ChessCardApplication.getInstance().playGoldSound();
-        int height = Tools.dip2px(activity, 40);
-        float mutil = 1.34f;
-        int width = (int) (height * mutil);
-        int centerX = (int) (Tools.getScreenWide(activity) / 2);
-        int centerY = (int) (Tools.getScreenHeight(activity) / 2);
-
-        final int[] endPoint = new int[]{centerX, centerY};
-
-        final ImageView imgBet = new ImageView(activity);
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(height, height);
-        imgBet.setLayoutParams(params);
-        imgBet.setVisibility(View.GONE);
-        if (pos == 0)
-            Glide.with(activity).load(R.mipmap.bg_money_left).into(imgBet);
-        if (pos == 1)
-            Glide.with(activity).load(R.mipmap.bg_money_mid).into(imgBet);
-        if (pos == 2)
-            Glide.with(activity).load(R.mipmap.bg_money_right).into(imgBet);
-        final ViewGroup viewGroup = createAnimLayout(activity);
-        viewGroup.removeAllViews();
-        endPoint[0] -= width / 2;
-        endPoint[1] -= height / 2;
-        imgBet.setLeft(startPoint[0]);
-        imgBet.setTop(startPoint[1]);
-        viewGroup.addView(imgBet);
-        viewGroup.setBackgroundColor(Color.TRANSPARENT);
-
-        TranslateAnimation translateAnimation = new TranslateAnimation(startPoint[0], endPoint[0] - startPoint[0], startPoint[1], endPoint[1] - startPoint[1]);
-        translateAnimation.setDuration(500);
-        translateAnimation.setRepeatCount(0);
-        translateAnimation.setInterpolator(new LinearInterpolator());
-        translateAnimation.setFillAfter(true);
-        imgBet.setAnimation(translateAnimation);
-        translateAnimation.start();
-        translateAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                imgBet.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                imgBet.clearAnimation();
-                imgBet.setVisibility(View.GONE);
-                imgBet.setBackgroundResource(0);
-                viewGroup.removeAllViews();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
+    /**
+     * 进入游戏获取桌面用户数据
+     */
+    public void getInGame() {
+        GameOprateData.getInstance(this).getInGame();
     }
 
+    /**
+     * 用户投注
+     */
+    public void betMoney() {
+        GameOprateData.getInstance(this).betMoney();
+    }
+
+    /**
+     * 展示设置弹窗
+     */
+    public void showSettingPop() {
+        gameOprateView.showSettingPop();
+    }
+
+    /**
+     * 展示个人中心弹窗
+     */
+    public void showPersonalPop() {
+        gameOprateView.showMinePop();
+    }
+
+    /**
+     * 展示点数
+     *
+     * @param pos 玩家为之
+     * @param one 点数1
+     * @param two 点数2
+     */
+    public void showPoint(int pos, int one, int two) {
+        int point = one + two + 2;
+        int mutil = -1;
+        boolean isGray;
+        if (point > 9)
+            point -= 10;
+        else if (one == two) {
+            mutil = 1;
+            if (pos != 0)
+                gameOprateView.showMutil(pos, mutil);
+        }
+        if (pos == 0) {
+            ConstentNew.BANKER_POINT = point;
+            ConstentNew.IS_BANKER_MUTIL = (mutil > 0);
+            gameOprateView.showPoint(pos, (mutil > 0) ? 10 : point, false);
+        }
+        if (mutil > 0) {
+            if (ConstentNew.IS_BANKER_MUTIL) {
+                if (point > ConstentNew.BANKER_POINT)
+                    isGray = false;
+                else isGray = true;
+            } else isGray = false;
+        } else {
+            if (ConstentNew.IS_BANKER_MUTIL)
+                isGray = true;
+            else {
+                if (point > ConstentNew.BANKER_POINT)
+                    isGray = false;
+                else isGray = true;
+            }
+        }
+        ConstentNew.SETTLE_RESULT[pos] = !isGray;
+        gameOprateView.showPoint(pos, (mutil > 0) ? 10 : point, isGray);
+    }
+
+    /**
+     * 结算结果
+     */
+    private int pos;
+
+    public void settleResult() {
+        pos = ConstentNew.DICE_COUNT;
+        for (int i = 0; i < 3; i++) {
+            if (pos == 0)
+                pos = 1;
+            if (!ConstentNew.SETTLE_RESULT[pos]) {
+                gameOprateView.settleResult(pos, ConstentNew.SETTLE_RESULT[pos]);
+            }
+            pos++;
+            if (pos > 3)
+                pos = 1;
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if (pos == 0)
+                pos = 1;
+            if (ConstentNew.SETTLE_RESULT[pos]) {
+                gameOprateView.settleResult(pos, ConstentNew.SETTLE_RESULT[pos]);
+            }
+            pos++;
+            if (pos > 3)
+                pos = 1;
+        }
+
+    }
 
     public void startDice(final Activity context, final int one, final int two, int[] startPoint) {
         final int[] endPoint = new int[]{(int) (Tools.getScreenWide(context) / 2), (int) (Tools.getScreenHeight(context) / 2)};
@@ -295,7 +340,7 @@ public class GamePresenterNew implements Observer, TIMConnListener {
 
                                 break;
                             case ConstentNew.TYPE_GET_RESULT: //结算
-
+                                settleResult();
                                 break;
                             case ConstentNew.TYPE_NOTIFY_BANKER: //通知庄家进行选择
 
@@ -313,6 +358,9 @@ public class GamePresenterNew implements Observer, TIMConnListener {
 
                                 break;
                             case ConstentNew.TYPE_WAIT_TIME: //等待时间
+
+                                break;
+                            case ConstentNew.TYPE_SITE_DOWN: //玩儿家坐下
 
                                 break;
                         }
@@ -336,5 +384,28 @@ public class GamePresenterNew implements Observer, TIMConnListener {
     @Override
     public void onWifiNeedAuth(String s) {
 
+    }
+
+    /**
+     * 异步获取数据回调
+     */
+
+    @Override
+    public void getInGameFail() {
+
+    }
+
+    @Override
+    public void getInGameSuccess(String result) {
+
+    }
+
+    @Override
+    public void betMoneyFial() {
+
+    }
+
+    @Override
+    public void betMoneySuccess() {
     }
 }

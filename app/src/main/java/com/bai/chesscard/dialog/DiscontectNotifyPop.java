@@ -42,8 +42,8 @@ public class DiscontectNotifyPop extends BasePopupwind {
         startCount();
     }
 
-    public void setIsContect(boolean isContect){
-        this.isContect=isContect;
+    public void setIsContect(boolean isContect) {
+        this.isContect = isContect;
     }
 
     private void startCount() {
@@ -52,6 +52,8 @@ public class DiscontectNotifyPop extends BasePopupwind {
             @Override
             public void onTick(long millisUntilFinished) {
                 txtContent.setText("您已断开连接\n" + millisUntilFinished / 1000 + "秒后将退出游戏");
+                if (isContect)
+                    cancel();
             }
 
             @Override
