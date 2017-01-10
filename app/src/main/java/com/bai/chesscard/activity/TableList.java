@@ -101,7 +101,7 @@ public class TableList extends BaseActivity {
         Map<String, String> params = new HashMap<>();
         params.put("house_id", id);
         params.put("user_id", AppPrefrence.getUserNo(context));
-        PostTools.postData(CommonUntilities.MAIN_URL + "housetable", params, new PostCallBack() {
+        PostTools.postData(CommonUntilities.MAIN_URL + "TableList", params, new PostCallBack() {
             @Override
             public void onAfter() {
                 super.onAfter();

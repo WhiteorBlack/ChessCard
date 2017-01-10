@@ -7,6 +7,7 @@ package com.bai.chesscard.bean;/**
  * TODO:
  */
 public class BaseBean {
+    public int id;
     public boolean status;
     public String msg;
     public String token;

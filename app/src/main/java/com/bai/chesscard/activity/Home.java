@@ -150,7 +150,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
      */
     private void getRoomData() {
 
-        PostTools.postData(CommonUntilities.MAIN_URL + "house", null, new PostCallBack() {
+        PostTools.postData(CommonUntilities.MAIN_URL + "HouseList", null, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -197,8 +197,8 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
      */
     private void getNotify() {
         Map<String, String> params = new HashMap<>();
-        params.put("Type", "0");
-        PostTools.postData(CommonUntilities.MAIN_URL + "articlelist", params, new PostCallBack() {
+//        params.put("Type", "0");
+        PostTools.postData(CommonUntilities.MAIN_URL + "NoticeList", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -396,7 +396,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
 
     private void uploadPic() {
         Map<String, String> params = new HashMap<>();
-        params.put("picture", Tools.convertIconToString(picPath));
+        params.put("userlogo", Tools.convertIconToString(picPath));
         params.put("token", AppPrefrence.getToken(context));
         PostTools.postData(CommonUntilities.MAIN_URL + "uploadpic", params, new PostCallBack() {
             @Override
@@ -407,7 +407,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                     return;
                 }
                 Bean_Avatar baseBean = new Gson().fromJson(response, Bean_Avatar.class);
-                if (baseBean.status) {
+                if (baseBean.id>0) {
                     if (personalPop != null)
                         personalPop.setPhoto(picPath);
                     Glide.with(context).load(picPath).into(imgUserPhoto);

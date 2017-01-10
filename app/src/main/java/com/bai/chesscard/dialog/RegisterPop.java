@@ -25,10 +25,11 @@ import com.bai.chesscard.utils.Tools;
  * author:${白曌勇} on 2016/11/6
  * TODO:
  */
-public class RegisterPop extends BasePopupwind  {
+public class RegisterPop extends BasePopupwind {
 
     EditText edtPhone;
     EditText edtPwd;
+    EditText edtRefer;
     private View view;
 
     public RegisterPop(Context context) {
@@ -41,11 +42,11 @@ public class RegisterPop extends BasePopupwind  {
             view = LayoutInflater.from(context).inflate(R.layout.register_pop, null);
         edtPhone = (EditText) view.findViewById(R.id.edt_phone);
         edtPwd = (EditText) view.findViewById(R.id.edt_pwd);
+        edtRefer = (EditText) view.findViewById(R.id.edt_refer);
         view.findViewById(R.id.btn_register).setOnClickListener(this);
         this.setFocusable(true);
         this.setContentView(view);
     }
-
 
 
     public void onClick(View view) {
@@ -58,18 +59,24 @@ public class RegisterPop extends BasePopupwind  {
                     return;
                 }
                 bundle.putString("phone", phone);
-                String man = edtPwd.getText().toString();
+                String man = edtRefer.getText().toString();
                 if (TextUtils.isEmpty(man)) {
                     Tools.toastMsgCenter(context, "请输入推荐人");
-                    return;
+//                    return;
                 }
                 bundle.putString("man", man);
+                String pwd = edtPwd.getText().toString();
+                if (TextUtils.isEmpty(pwd)) {
+                    Tools.toastMsgCenter(context, "请输入密码");
+                    return;
+                }
+                bundle.putString("pwd", pwd);
                 bundle.putInt("type", 1);
                 break;
         }
         if (popInterfacer != null)
             popInterfacer.OnConfirm(flag, bundle);
-        dismiss();
+//        dismiss();
 
     }
 

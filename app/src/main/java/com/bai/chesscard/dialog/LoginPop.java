@@ -92,15 +92,13 @@ public class LoginPop extends BasePopupwind {
                 break;
             case R.id.btn_register:
                 bundle.putInt("type", 1);
+                dismiss();
                 break;
             case R.id.btn_login:
                 String phone = edtPhone.getText().toString();
+
                 if (TextUtils.isEmpty(phone)) {
-                    Tools.toastMsg(context, "请输入手机号码");
-                    return;
-                }
-                if (!Tools.isMobileNum(phone)) {
-                    Tools.toastMsg(context, "请输入正确的手机号码");
+                    Tools.toastMsg(context, "请输入用户名");
                     return;
                 }
                 bundle.putString("phone", phone);
@@ -119,7 +117,7 @@ public class LoginPop extends BasePopupwind {
 
     private void login(String phone, final String pwd) {
         Map<String, String> params = new HashMap<>();
-        params.put("phone", phone);
+        params.put("username", phone);
         params.put("password", pwd);
         PostTools.postData(CommonUntilities.MAIN_URL + "login", params, new PostCallBack() {
             @Override

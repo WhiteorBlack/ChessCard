@@ -37,6 +37,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.Call;
 
 import static com.bai.chesscard.utils.AppPrefrence.setAmount;
 
@@ -91,7 +92,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
         progressDilaog.setMessage("登录中...");
         progressDilaog.show();
         Map<String, String> params = new HashMap<>();
-        params.put("phone", AppPrefrence.getUserPhone(context));
+        params.put("username", AppPrefrence.getUserPhone(context));
         params.put("password", AppPrefrence.getUserPwd(context));
         PostTools.postData(CommonUntilities.MAIN_URL + "login", params, new PostCallBack() {
             @Override
@@ -120,7 +121,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                         }
                     });
                     AppPrefrence.setIsLogin(context, true);
-                    AppPrefrence.setUserPhone(context, login.data.mobile);
+//                    AppPrefrence.setUserPhone(context, login.data.mobile);
                     AppPrefrence.setToken(context, login.token);
                     AppPrefrence.setReferrer(context, login.data.referrer);
                     AppPrefrence.setAvatar(context, CommonUntilities.PIC_URL + login.data.avatar);
@@ -167,7 +168,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
         }
     }
 
-    String phone = "", man = "", pwd = "", code = "";
+    String phone = "", man = "", pwd = "";
 
     @Override
     public void OnConfirm(int flag, Bundle bundle) {
@@ -191,14 +192,16 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                 }
                 break;
             case 1:
-                if (bundle==null)
+                if (bundle == null)
                     return;
-                if (inputPwdPop == null)
-                    inputPwdPop = new InputPwdPop(context);
-                inputPwdPop.showPop(txtLoading);
-                inputPwdPop.setPopInterfacer(this, 2);
-                phone=bundle.getString("phone");
-                man=bundle.getString("man");
+//                if (inputPwdPop == null)
+//                    inputPwdPop = new InputPwdPop(context);
+//                inputPwdPop.showPop(txtLoading);
+//                inputPwdPop.setPopInterfacer(this, 2);
+                phone = bundle.getString("phone");
+                man = bundle.getString("man");
+                pwd = bundle.getString("pwd");
+                register();
                 break;
             case 2:
                 //填写密码
@@ -217,7 +220,6 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
     private void findPwd() {
         Map<String, String> params = new HashMap<>();
         params.put("phone", AppPrefrence.getUserPhone(context));
-        params.put("code", code);
         params.put("password", pwd);
         PostTools.postData(CommonUntilities.MAIN_URL, params, new PostCallBack() {
             @Override
@@ -244,29 +246,31 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
     private void register() {
         progressDilaog.setMessage("注册中...");
         Map<String, String> params = new HashMap<>();
-        params.put("phone", phone);
+        params.put("username", phone);
         params.put("password", pwd);
-        params.put("referrer", man);
-        PostTools.postData(CommonUntilities.MAIN_URL + "register", params, new PostCallBack() {
+        params.put("recname", man);
+        PostTools.postData(CommonUntilities.MAIN_URL + "UserRegister", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
+                Tools.debug("register==" + response);
                 if (TextUtils.isEmpty(response)) {
-                    Tools.toastMsgCenter(context, "");
+                    Tools.toastMsgCenter(context, "检查网络后重试");
                     return;
                 }
                 Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
-                if (login.status) {
-                    AppPrefrence.setIsLogin(context, true);
-                    AppPrefrence.setUserPhone(context, login.data.mobile);
-                    AppPrefrence.setUserPwd(context, pwd);
-                    AppPrefrence.setToken(context, login.token);
-                    AppPrefrence.setReferrer(context, login.data.referrer);
-                    AppPrefrence.setAvatar(context, login.data.avatar);
-                    setAmount(context, login.data.amount);
-                    AppPrefrence.setUserNo(context, login.data.id);
-                    AppPrefrence.setUserName(context, login.data.nick_name);
-                    dismissPop();
+                if (login.id > 0) {
+                    login(phone,pwd);
+//                    AppPrefrence.setIsLogin(context, true);
+//                    AppPrefrence.setUserPhone(context, login.data.mobile);
+//                    AppPrefrence.setUserPwd(context, pwd);
+//                    AppPrefrence.setToken(context, login.token);
+//                    AppPrefrence.setReferrer(context, login.data.referrer);
+//                    AppPrefrence.setAvatar(context, login.data.avatar);
+//                    setAmount(context, login.data.amount);
+//                    AppPrefrence.setUserNo(context, login.data.id);
+//                    AppPrefrence.setUserName(context, login.data.nick_name);
+//                    dismissPop();
                 }
                 Tools.toastMsgCenter(context, login.msg);
             }
@@ -275,6 +279,61 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
             public void onAfter() {
                 super.onAfter();
                 progressDilaog.dismiss();
+            }
+
+            @Override
+            public void onError(Call call, Exception e) {
+                super.onError(call, e);
+                Tools.debug("error--" + e.toString());
+            }
+        });
+    }
+
+    private void login(final String phone, final String pwd) {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", phone);
+        params.put("password", pwd);
+        PostTools.postData(CommonUntilities.MAIN_URL + "login", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (Tools.isEmpty(response)) {
+                    Tools.toastMsgCenter(context, R.string.no_network);
+                    return;
+                }
+                final Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
+                if (login.id>0) {
+                    AppPrefrence.setIsLogin(context, true);
+                    AppPrefrence.setUserPhone(context, phone);
+                    AppPrefrence.setUserPwd(context, pwd);
+                    AppPrefrence.setToken(context, login.token);
+                    AppPrefrence.setReferrer(context, login.data.referrer);
+                    AppPrefrence.setAvatar(context, login.data.avatar);
+                    AppPrefrence.setAmount(context, login.data.point);
+                    AppPrefrence.setUserNo(context, login.data.id);
+                    TIMUser user = new TIMUser();
+                    user.setAccountType(CommonUntilities.ACCOUNTTYPE);
+                    user.setAppIdAt3rd(CommonUntilities.SDKAPPID + "");
+                    user.setIdentifier(login.data.user_name);
+
+                    TIMManager.getInstance().login(CommonUntilities.SDKAPPID, user, login.msg, new TIMCallBack() {
+                        @Override
+                        public void onError(int i, String s) {
+                        }
+
+                        @Override
+                        public void onSuccess() {
+                            TIMFriendshipManager.getInstance().setNickName(TextUtils.isEmpty(login.data.nick_name) ? login.data.user_name : login.data.nick_name, null);
+                            if (!TextUtils.isEmpty(login.data.avatar))
+                                TIMFriendshipManager.getInstance().setFaceUrl(CommonUntilities.PIC_URL + login.data.avatar, null);
+                            startActivity(new Intent(context,Home.class));
+                            finish();
+                        }
+                    });
+
+                    dismissPop();
+                } else Tools.toastMsgCenter(context, login.msg);
+
             }
         });
     }
