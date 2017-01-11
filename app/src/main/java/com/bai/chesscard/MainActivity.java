@@ -3,9 +3,7 @@ package com.bai.chesscard;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -17,7 +15,6 @@ import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.bean.Bean_Login;
 import com.bai.chesscard.dialog.FindPwdPop;
-import com.bai.chesscard.dialog.GetCodePop;
 import com.bai.chesscard.dialog.InputPwdPop;
 import com.bai.chesscard.dialog.LoginPop;
 import com.bai.chesscard.dialog.RegisterPop;
@@ -38,8 +35,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.Call;
-
-import static com.bai.chesscard.utils.AppPrefrence.setAmount;
 
 public class MainActivity extends BaseActivity implements PopInterfacer {
 
@@ -103,31 +98,31 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     return;
                 }
                 final Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
-                if (login.status) {
+                if (login.id>0) {
+                    CommonUntilities.TOKEN=login.result.token;
                     TIMUser user = new TIMUser();
                     user.setAccountType(CommonUntilities.ACCOUNTTYPE);
                     user.setAppIdAt3rd(CommonUntilities.SDKAPPID + "");
-                    user.setIdentifier(login.data.user_name);
-                    TIMManager.getInstance().login(CommonUntilities.SDKAPPID, user, login.msg, new TIMCallBack() {
+                    user.setIdentifier(login.result.id);
+                    TIMManager.getInstance().login(CommonUntilities.SDKAPPID, user, login.result.sign, new TIMCallBack() {
                         @Override
                         public void onError(int i, String s) {
+                            Tools.debug("IM error--"+s);
                         }
 
                         @Override
                         public void onSuccess() {
-                            TIMFriendshipManager.getInstance().setNickName(TextUtils.isEmpty(login.data.nick_name) ? login.data.user_name : login.data.nick_name, null);
-                            if (!TextUtils.isEmpty(login.data.avatar))
-                                TIMFriendshipManager.getInstance().setFaceUrl(CommonUntilities.PIC_URL + login.data.avatar, null);
+                            TIMFriendshipManager.getInstance().setNickName(TextUtils.isEmpty(AppPrefrence.getUserPhone(context)) ? login.result.id : AppPrefrence.getUserPhone(context), null);
+                            if (!TextUtils.isEmpty(login.result.user_logo))
+                                TIMFriendshipManager.getInstance().setFaceUrl(login.result.user_logo, null);
                         }
                     });
                     AppPrefrence.setIsLogin(context, true);
-//                    AppPrefrence.setUserPhone(context, login.data.mobile);
-                    AppPrefrence.setToken(context, login.token);
-                    AppPrefrence.setReferrer(context, login.data.referrer);
-                    AppPrefrence.setAvatar(context, CommonUntilities.PIC_URL + login.data.avatar);
-                    AppPrefrence.setAmount(context, login.data.point);
-                    AppPrefrence.setUserNo(context, login.data.id);
-                    AppPrefrence.setUserName(context, login.data.nick_name);
+                    AppPrefrence.setToken(context, login.result.token);
+                    AppPrefrence.setAvatar(context, login.result.user_logo);
+                    AppPrefrence.setAmount(context, login.result.amount);
+                    AppPrefrence.setUserNo(context, login.result.id);
+                    AppPrefrence.setUserName(context, login.result.real_name);
                     startActivity(new Intent(context, Home.class));
                     finish();
                 } else Tools.toastMsgCenter(context, login.msg);
@@ -184,7 +179,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                 }
                 if (bundle.getInt("type", -1) == 2) {
                     //登录成功
-                    if (bundle.getBoolean("statue")) {
+                    if (bundle.getInt("statue")>0) {
                         dismissPop();
                         startActivity(new Intent(context, Home.class));
                         finish();
@@ -230,7 +225,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     return;
                 }
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
-                if (baseBean.status) {
+                if (baseBean.id>0) {
                     AppPrefrence.setUserPwd(context, pwd);
                     dismissPop();
                     if (loginPop == null)
@@ -261,6 +256,9 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                 Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
                 if (login.id > 0) {
                     login(phone,pwd);
+                    AppPrefrence.setUserName(context,phone);
+                    AppPrefrence.setUserPhone(context,phone);
+                    AppPrefrence.setReferrer(context,man);
 //                    AppPrefrence.setIsLogin(context, true);
 //                    AppPrefrence.setUserPhone(context, login.data.mobile);
 //                    AppPrefrence.setUserPwd(context, pwd);
@@ -303,29 +301,31 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                 }
                 final Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
                 if (login.id>0) {
+                    CommonUntilities.TOKEN=login.result.token;
                     AppPrefrence.setIsLogin(context, true);
                     AppPrefrence.setUserPhone(context, phone);
                     AppPrefrence.setUserPwd(context, pwd);
-                    AppPrefrence.setToken(context, login.token);
-                    AppPrefrence.setReferrer(context, login.data.referrer);
-                    AppPrefrence.setAvatar(context, login.data.avatar);
-                    AppPrefrence.setAmount(context, login.data.point);
-                    AppPrefrence.setUserNo(context, login.data.id);
+                    AppPrefrence.setToken(context, login.result.token);
+                    AppPrefrence.setAvatar(context, login.result.user_logo);
+                    AppPrefrence.setAmount(context, login.result.amount);
+                    AppPrefrence.setUserNo(context, login.result.id);
+                    AppPrefrence.setUserName(context, login.result.real_name);
                     TIMUser user = new TIMUser();
                     user.setAccountType(CommonUntilities.ACCOUNTTYPE);
                     user.setAppIdAt3rd(CommonUntilities.SDKAPPID + "");
-                    user.setIdentifier(login.data.user_name);
+                    user.setIdentifier(login.result.id);
 
-                    TIMManager.getInstance().login(CommonUntilities.SDKAPPID, user, login.msg, new TIMCallBack() {
+                    TIMManager.getInstance().login(CommonUntilities.SDKAPPID, user, login.result.sign, new TIMCallBack() {
                         @Override
                         public void onError(int i, String s) {
+                            Tools.debug("IM error--"+s);
                         }
 
                         @Override
                         public void onSuccess() {
-                            TIMFriendshipManager.getInstance().setNickName(TextUtils.isEmpty(login.data.nick_name) ? login.data.user_name : login.data.nick_name, null);
-                            if (!TextUtils.isEmpty(login.data.avatar))
-                                TIMFriendshipManager.getInstance().setFaceUrl(CommonUntilities.PIC_URL + login.data.avatar, null);
+                            TIMFriendshipManager.getInstance().setNickName(TextUtils.isEmpty(login.result.real_name) ? login.result.id : login.result.real_name, null);
+                            if (!TextUtils.isEmpty(login.result.user_logo))
+                                TIMFriendshipManager.getInstance().setFaceUrl(login.result.user_logo, null);
                             startActivity(new Intent(context,Home.class));
                             finish();
                         }

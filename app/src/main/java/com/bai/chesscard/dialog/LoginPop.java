@@ -115,7 +115,7 @@ public class LoginPop extends BasePopupwind {
 
     }
 
-    private void login(String phone, final String pwd) {
+    private void login(final String phone, final String pwd) {
         Map<String, String> params = new HashMap<>();
         params.put("username", phone);
         params.put("password", pwd);
@@ -130,32 +130,34 @@ public class LoginPop extends BasePopupwind {
                     return;
                 }
                 final Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
-                bundle.putBoolean("statue", login.status);
-                if (login.status) {
+                bundle.putInt("statue", login.id);
+                if (login.id>0) {
+                    CommonUntilities.TOKEN=login.result.token;
                     TIMUser user = new TIMUser();
                     user.setAccountType(CommonUntilities.ACCOUNTTYPE);
                     user.setAppIdAt3rd(CommonUntilities.SDKAPPID + "");
-                    user.setIdentifier(login.data.user_name);
-                    TIMManager.getInstance().login(CommonUntilities.SDKAPPID, user, login.msg, new TIMCallBack() {
+                    user.setIdentifier(login.result.id);
+                    TIMManager.getInstance().login(CommonUntilities.SDKAPPID, user, login.result.sign, new TIMCallBack() {
                         @Override
                         public void onError(int i, String s) {
+                            Tools.debug("IM error--"+s);
                         }
 
                         @Override
                         public void onSuccess() {
-                            TIMFriendshipManager.getInstance().setNickName(TextUtils.isEmpty(login.data.nick_name) ? login.data.user_name : login.data.nick_name, null);
-                            if (!TextUtils.isEmpty(login.data.avatar))
-                                TIMFriendshipManager.getInstance().setFaceUrl(CommonUntilities.PIC_URL + login.data.avatar, null);
+                            TIMFriendshipManager.getInstance().setNickName(TextUtils.isEmpty(login.result.real_name) ? login.result.id : login.result.real_name, null);
+                            if (!TextUtils.isEmpty(login.result.user_logo))
+                                TIMFriendshipManager.getInstance().setFaceUrl(login.result.user_logo, null);
                         }
                     });
                     AppPrefrence.setIsLogin(context, true);
-                    AppPrefrence.setUserPhone(context, login.data.mobile);
+                    AppPrefrence.setUserPhone(context,phone);
                     AppPrefrence.setUserPwd(context, pwd);
-                    AppPrefrence.setToken(context, login.token);
-                    AppPrefrence.setReferrer(context, login.data.referrer);
-                    AppPrefrence.setAvatar(context, login.data.avatar);
-                    AppPrefrence.setAmount(context, login.data.point);
-                    AppPrefrence.setUserNo(context,login.data.id);
+                    AppPrefrence.setToken(context, login.result.token);
+                    AppPrefrence.setReferrer(context, login.result.referrer);
+                    AppPrefrence.setAvatar(context, login.result.user_logo);
+                    AppPrefrence.setAmount(context, login.result.amount);
+                    AppPrefrence.setUserNo(context,login.result.id);
                 }else Tools.toastMsgCenter(context, login.msg);
                 if (popInterfacer != null)
                     popInterfacer.OnConfirm(flag, bundle);

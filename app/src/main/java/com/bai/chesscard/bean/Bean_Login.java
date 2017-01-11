@@ -5,7 +5,7 @@ package com.bai.chesscard.bean;
  */
 
 public class Bean_Login extends BaseBean {
-    public Login data;
+    public Login result;
 
     public static class Login {
         public String id;
@@ -13,7 +13,7 @@ public class Bean_Login extends BaseBean {
         public String birthday;
         public String groupid;
         public String nick_name;
-        public String avatar;
+        public String user_logo;
         public String mobile;
         public String telphone;
         public String msn;
@@ -24,5 +24,8 @@ public class Bean_Login extends BaseBean {
         public int game_music;
         public int status;
         public String sex;
+        public String token;
+        public String sign;
+        public String real_name;
     }
 }

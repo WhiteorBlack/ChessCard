@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -23,6 +24,7 @@ import com.bai.chesscard.BaseActivity;
 import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.GameChessAdapter;
+import com.bai.chesscard.bean.Bean_TableDetial;
 import com.bai.chesscard.dialog.DiscontectNotifyPop;
 import com.bai.chesscard.dialog.PersonalPop;
 import com.bai.chesscard.dialog.SettingPop;
@@ -33,6 +35,7 @@ import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.StrokeTextView;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -186,7 +189,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     private int[] pointGrayRes = new int[]{R.mipmap.point_zero_gray, R.mipmap.point_one_gray, R.mipmap.point_two_gray, R.mipmap.point_three_gray, R.mipmap.point_four_gray, R.mipmap.point_five_gray,
             R.mipmap.point_six_gray, R.mipmap.point_seven_gray, R.mipmap.point_eight_gray, R.mipmap.point_nine_gray, R.mipmap.point_double_gray};
 
-    private int timeCount=0;
+    private int timeCount = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -197,16 +200,43 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         ButterKnife.bind(this);
         initView();
         initData();
+
+        gamePresenterNew.getInGame();
     }
 
     private void initData() {
-
+        ConstentNew.TABLE_ID = getIntent().getStringExtra("tableId");
+        ConstentNew.ROOM_ID = getIntent().getStringExtra("roomId");
         invisCountTime();
         invisBetMoney();
         invisChess();
         invisPoint();
         invisMutil();
         initBetCount();
+        invisTabelMoney(-1);
+    }
+
+    private void invisTabelMoney(int pos) {
+        switch (pos) {
+            case -1:
+                txtBankerMoney.setVisibility(View.INVISIBLE);
+                txtLeftMoney.setVisibility(View.INVISIBLE);
+                txtMidMoney.setVisibility(View.INVISIBLE);
+                txtRightMoney.setVisibility(View.INVISIBLE);
+                break;
+            case 0:
+                txtBankerMoney.setVisibility(View.INVISIBLE);
+                break;
+            case 1:
+                txtLeftMoney.setVisibility(View.INVISIBLE);
+                break;
+            case 2:
+                txtMidMoney.setVisibility(View.INVISIBLE);
+                break;
+            case 3:
+                txtRightMoney.setVisibility(View.INVISIBLE);
+                break;
+        }
     }
 
     private void initBetCount() {
@@ -285,6 +315,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     private void glideImg(int path, ImageView imageView) {
         imageView.setBackgroundResource(path);
+    }
+
+    private void glideImg(String path, ImageView imageView) {
+        Glide.with(this).load(path).into(imageView);
     }
 
     @Override
@@ -569,9 +603,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             public void run() {
                 if (isWinner)
                     settleResult(bankerPoint, gamerPoint);
-                else   settleResult(gamerPoint, bankerPoint);
+                else settleResult(gamerPoint, bankerPoint);
             }
-        },500*timeCount);
+        }, 500 * timeCount);
 
     }
 
@@ -610,6 +644,87 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         if (discontectNotifyPop != null && discontectNotifyPop.isShowing()) {
             discontectNotifyPop.setIsContect(true);
             discontectNotifyPop.dismiss();
+        }
+    }
+
+    @Override
+    public void setTableInfo(Bean_TableDetial bean_tableDetial) {
+        if (bean_tableDetial.first_user != null) {
+            txtBankerMoney.setText(bean_tableDetial.first_user.lookmonery + "");
+            txtBankerMoney.setVisibility(View.VISIBLE);
+            glideImg(bean_tableDetial.first_user.user_logo, imgHeadTop);
+            ConstentNew.IS_HAS_GAMER[0] = true;
+            if (TextUtils.equals(bean_tableDetial.first_user.id, AppPrefrence.getUserNo(context)))
+                ConstentNew.IS_BANKER = true;
+            else {
+                ConstentNew.IS_GAMER = true;
+                ConstentNew.IS_BANKER = false;
+            }
+        } else {
+            invisTabelMoney(0);
+            glideImg(R.mipmap.site_empty, imgHeadTop);
+            ConstentNew.IS_HAS_GAMER[0] = false;
+            ConstentNew.IS_BANKER = false;
+        }
+
+        if (bean_tableDetial.second_user != null) {
+            txtLeftMoney.setText(bean_tableDetial.second_user.lookmonery + "");
+            txtLeftMoney.setVisibility(View.VISIBLE);
+            glideImg(bean_tableDetial.second_user.user_logo, imgHeadLeft);
+            ConstentNew.IS_HAS_GAMER[1] = true;
+            if (TextUtils.equals(bean_tableDetial.second_user.id, AppPrefrence.getUserNo(context))) {
+                ConstentNew.IS_GAMER = true;
+                ConstentNew.IS_BANKER = false;
+            } else {
+                ConstentNew.IS_GAMER = false;
+                ConstentNew.IS_BANKER = false;
+            }
+        } else {
+            invisTabelMoney(1);
+            glideImg(R.mipmap.site_empty, imgHeadLeft);
+            ConstentNew.IS_HAS_GAMER[1] = false;
+            ConstentNew.IS_BANKER = false;
+            ConstentNew.IS_GAMER = false;
+        }
+
+        if (bean_tableDetial.third_user != null) {
+            txtMidMoney.setText(bean_tableDetial.third_user.lookmonery + "");
+            txtMidMoney.setVisibility(View.VISIBLE);
+            glideImg(bean_tableDetial.third_user.user_logo, imgHeadBottom);
+            ConstentNew.IS_HAS_GAMER[2] = true;
+            if (TextUtils.equals(bean_tableDetial.second_user.id, AppPrefrence.getUserNo(context))) {
+                ConstentNew.IS_GAMER = true;
+                ConstentNew.IS_BANKER = false;
+            } else {
+                ConstentNew.IS_GAMER = false;
+                ConstentNew.IS_BANKER = false;
+            }
+        } else {
+            invisTabelMoney(2);
+            glideImg(R.mipmap.site_empty, imgHeadBottom);
+            ConstentNew.IS_HAS_GAMER[2] = false;
+            ConstentNew.IS_BANKER = false;
+            ConstentNew.IS_GAMER = false;
+        }
+
+        if (bean_tableDetial.four_user!=null){
+            txtRightMoney.setText(bean_tableDetial.four_user.lookmonery + "");
+            txtRightMoney.setVisibility(View.VISIBLE);
+            glideImg(bean_tableDetial.four_user.user_logo, imgHeadRight);
+            ConstentNew.IS_HAS_GAMER[3] = true;
+            if (TextUtils.equals(bean_tableDetial.four_user.id, AppPrefrence.getUserNo(context))) {
+                ConstentNew.IS_GAMER = true;
+                ConstentNew.IS_BANKER = false;
+            } else {
+                ConstentNew.IS_GAMER = false;
+                ConstentNew.IS_BANKER = false;
+            }
+        }else {
+            invisTabelMoney(3);
+            glideImg(R.mipmap.site_empty, imgHeadBottom);
+            ConstentNew.IS_HAS_GAMER[3] = false;
+            ConstentNew.IS_BANKER = false;
+            ConstentNew.IS_GAMER = false;
         }
     }
 
@@ -661,12 +776,13 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case R.id.img_back:
                 break;
             case R.id.rel_head_bottom:
-               gamePresenterNew.settleResult();
+                
                 break;
             case R.id.rel_head_right:
 
                 break;
             case R.id.rel_head_top:
+
                 break;
             case R.id.rel_head_left:
 

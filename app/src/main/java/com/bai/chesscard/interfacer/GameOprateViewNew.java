@@ -124,5 +124,6 @@ public interface GameOprateViewNew {
      */
     void reContect();
 
+    void setTableInfo(Bean_TableDetial bean_tableDetial);
 
 }

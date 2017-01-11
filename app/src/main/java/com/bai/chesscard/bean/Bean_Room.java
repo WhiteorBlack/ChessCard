@@ -7,7 +7,7 @@ import java.util.List;
  */
 
 public class Bean_Room extends BaseBean {
-    public List<Room> data;
+    public List<Room> result;
     public static class Room{
         public String id;
         public String house_name;

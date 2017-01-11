@@ -32,6 +32,17 @@ public class ConstentNew {
      */
     public static String ROOM_ID;
     /**
+     * 记录当前游戏轮数
+     */
+    public static int GAMEROUND=0;
+
+    /**
+     * 三个筹码的数额
+     */
+    public static int LEFTPOINT=0;
+    public static int MIDPOINT=0;
+    public static int RIGHTPOINT=0;
+    /**
      * 庄家的点数
      */
     public static int BANKER_POINT;

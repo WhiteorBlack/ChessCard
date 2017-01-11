@@ -5,35 +5,29 @@ package com.bai.chesscard.bean;
  */
 
 public class Bean_TableDetial extends BaseBean {
-    public TableDetial data;
-
-    public static class TableDetial {
-        public String id;
+//    public TableDetial data;
+//
+//    public static class TableDetial {
         public String pointstr;
         public TableUser first_user;
         public TableUser second_user;
         public TableUser third_user;
         public TableUser four_user;
-        public int sz_point;
-        public int min_point;
-    }
+        public int game_status;
+        public int secordbet;
+        public int thirdbet;
+        public int fourbet;
+        public int round;
+        public int ver;
+//    }
 
     public static class TableUser {
         public String id;
         public String token;
-        public String group_id;
-        public String user_name;
-        public String salt;
-        public String password;
         public String mobile;
-        public String avatar;
+        public String user_logo;
         public String nick_name;
-        public String sex;
-        public String email;
+        public int lookmonery;
         public int amount;
-        public int point;
-        public int exp;
-        public int status;
-        public String reffer_tel;
     }
 }

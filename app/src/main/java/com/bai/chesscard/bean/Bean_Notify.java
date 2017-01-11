@@ -7,7 +7,7 @@ import java.util.List;
  */
 
 public class Bean_Notify extends BaseBean {
-    public List<Notify> data;
+    public List<Notify> result;
     public static class Notify{
         public String id;
         public String channel_id;

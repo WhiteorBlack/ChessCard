@@ -32,6 +32,7 @@ import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.service.MessageEvent;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.BaseScollTextView;
 import com.bai.chesscard.widget.ScrollTextView;
@@ -149,7 +150,6 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
      * 获取房间信息
      */
     private void getRoomData() {
-
         PostTools.postData(CommonUntilities.MAIN_URL + "HouseList", null, new PostCallBack() {
             @Override
             public void onResponse(String response) {
@@ -159,9 +159,9 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                     return;
                 }
                 Bean_Room beanRoom = new Gson().fromJson(response, Bean_Room.class);
-                if (beanRoom != null && beanRoom.status && beanRoom.data != null && beanRoom.data.size() > 0) {
+                if (beanRoom != null && beanRoom.id > 0 && beanRoom.result != null && beanRoom.result.size() > 0) {
                     roomList.clear();
-                    roomList.addAll(beanRoom.data);
+                    roomList.addAll(beanRoom.result);
                     setData();
                 }
             }
@@ -207,10 +207,10 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                     return;
                 }
                 Bean_Notify bean_notify = new Gson().fromJson(response, Bean_Notify.class);
-                if (bean_notify != null && bean_notify.data != null && bean_notify.data.size() > 0) {
+                if (bean_notify != null && bean_notify.result != null && bean_notify.result.size() > 0) {
                     notifyList.clear();
                     notifyStringList.clear();
-                    notifyList.addAll(bean_notify.data);
+                    notifyList.addAll(bean_notify.result);
                     for (int i = 0; i < notifyList.size(); i++) {
                         notifyStringList.add(notifyList.get(i).title);
                     }
@@ -223,7 +223,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
     @Override
     protected void onResume() {
         super.onResume();
-        txtUserName.setText("昵称: " + AppPrefrence.getUserName(context));
+        txtUserName.setText("昵称: " + (TextUtils.isEmpty(AppPrefrence.getUserName(context)) ? AppPrefrence.getUserPhone(context) : AppPrefrence.getUserName(context)));
         txtUserNo.setText("编号: " + AppPrefrence.getUserNo(context));
         txtUserMoney.setText(AppPrefrence.getAmount(context) + "");
         ChessCardApplication.getInstance().playBack();
@@ -248,16 +248,19 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
             case R.id.fl_pre_room:
                 if (roomList.size() == 0)
                     return;
+                dealPoint(roomList.get(0).point_str);
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(0).id).putExtra("point", roomList.get(0).min_piont), 0);
                 break;
             case R.id.fl_mid_room:
                 if (roomList.size() == 0)
                     return;
+                dealPoint(roomList.get(1).point_str);
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(1).id).putExtra("point", roomList.get(1).min_piont), 1);
                 break;
             case R.id.fl_hig_room:
-                if (roomList.size() <2)
+                if (roomList.size() < 2)
                     return;
+                dealPoint(roomList.get(2).point_str);
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(2).id).putExtra("point", roomList.get(2).min_piont), 2);
                 break;
             case R.id.img_start:
@@ -283,6 +286,15 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                 settingPop.setPopInterfacer(this, 2);
                 break;
         }
+    }
+
+    private void dealPoint(String point_str) {
+        if (TextUtils.isEmpty(point_str))
+            return;
+        String[] point=point_str.split(",");
+        ConstentNew.LEFTPOINT=Integer.parseInt(point[0]);
+        ConstentNew.MIDPOINT=Integer.parseInt(point[1]);
+        ConstentNew.RIGHTPOINT=Integer.parseInt(point[2]);
     }
 
     @Override
@@ -398,7 +410,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
         Map<String, String> params = new HashMap<>();
         params.put("userlogo", Tools.convertIconToString(picPath));
         params.put("token", AppPrefrence.getToken(context));
-        PostTools.postData(CommonUntilities.MAIN_URL + "uploadpic", params, new PostCallBack() {
+        PostTools.postData(CommonUntilities.MAIN_URL + "EditUserLogo", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -407,7 +419,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                     return;
                 }
                 Bean_Avatar baseBean = new Gson().fromJson(response, Bean_Avatar.class);
-                if (baseBean.id>0) {
+                if (baseBean.id > 0) {
                     if (personalPop != null)
                         personalPop.setPhoto(picPath);
                     Glide.with(context).load(picPath).into(imgUserPhoto);

@@ -79,7 +79,7 @@ public class PersonalPopInfo extends BasePopupwind {
         txtName.setText("昵称:" + user.nick_name);
         txtNo.setText("编号: " + user.id);
         txtMoney.setText(user.amount+"");
-        Glide.with(context).load(CommonUntilities.PIC_URL + user.avatar).error(R.mipmap.icon_default_head).into(imgPhoto);
+        Glide.with(context).load(CommonUntilities.PIC_URL + user.user_logo).error(R.mipmap.icon_default_head).into(imgPhoto);
     }
 
 }

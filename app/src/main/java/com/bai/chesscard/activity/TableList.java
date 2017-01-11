@@ -116,9 +116,9 @@ public class TableList extends BaseActivity {
                     return;
                 }
                 Bean_Table beanTable = new Gson().fromJson(response, Bean_Table.class);
-                if (beanTable != null && beanTable.status && beanTable.data != null && beanTable.data.size() > 0) {
+                if (beanTable != null && beanTable.id>0 && beanTable.result != null && beanTable.result.size() > 0) {
                     tabList.clear();
-                    tabList.addAll(beanTable.data);
+                    tabList.addAll(beanTable.result);
                     tabAdapter.notifyDataSetChanged();
                 }
             }

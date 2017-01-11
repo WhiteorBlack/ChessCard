@@ -397,7 +397,9 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
     @Override
     public void getInGameSuccess(String result) {
-
+        Bean_TableDetial bean_tableDetial=new Gson().fromJson(result,Bean_TableDetial.class);
+        ConstentNew.GAMEROUND=bean_tableDetial.ver;
+        gameOprateView.setTableInfo(bean_tableDetial);
     }
 
     @Override
@@ -406,6 +408,18 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     }
 
     @Override
-    public void betMoneySuccess() {
+    public void betMoneySuccess(String result) {
+
     }
+
+    @Override
+    public void gameOutFail() {
+
+    }
+
+    @Override
+    public void gameOutSuccess() {
+
+    }
+
 }

@@ -2,6 +2,7 @@ package com.bai.chesscard.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,7 @@ public class PersonalPop extends BasePopupwind {
         imgPhoto=(ImageView)view.findViewById(R.id.img_head);
         txtMoney=(TextView)view.findViewById(R.id.txt_user_money);
         txtAccount.setText("账号: "+AppPrefrence.getUserPhone(context));
-        txtName.setText("昵称: "+AppPrefrence.getUserName(context));
+        txtName.setText("昵称: "+(TextUtils.isEmpty(AppPrefrence.getUserName(context))?AppPrefrence.getUserPhone(context):AppPrefrence.getUserName(context)));
         txtNo.setText("编号: "+AppPrefrence.getUserNo(context));
         txtMoney.setText(AppPrefrence.getAmount(context)+"");
 

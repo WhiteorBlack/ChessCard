@@ -69,9 +69,9 @@ public class EditNamePop extends BasePopupwind {
 
     private void editName(final String name) {
         Map<String, String> params = new HashMap<>();
-        params.put("nick_name", name);
+        params.put("nickname", name);
         params.put("token", AppPrefrence.getToken(context));
-        PostTools.postData(CommonUntilities.MAIN_URL + "edituser", params, new PostCallBack() {
+        PostTools.postData(CommonUntilities.MAIN_URL + "EditUserNick", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -80,7 +80,7 @@ public class EditNamePop extends BasePopupwind {
                     return;
                 }
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
-                if (baseBean.status) {
+                if (baseBean.id>0) {
                     Bundle bundle = new Bundle();
                     bundle.putString("name", name);
                     TIMFriendshipManager.getInstance().setNickName(name, null);

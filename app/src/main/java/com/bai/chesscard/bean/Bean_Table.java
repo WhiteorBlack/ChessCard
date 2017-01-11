@@ -9,7 +9,7 @@ import java.util.List;
  * TODO:
  */
 public class Bean_Table extends BaseBean {
-    public List<Table> data;
+    public List<Table> result;
 
     public static class Table {
         public String id;
@@ -25,6 +25,7 @@ public class Bean_Table extends BaseBean {
         public int stay_user_num;
         public int four_point_count;
         public int total_user_count;
+        public int gamestatus;
         public String add_time;
     }
 

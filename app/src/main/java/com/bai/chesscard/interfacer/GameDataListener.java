@@ -26,5 +26,8 @@ public interface GameDataListener {
     /**
      * 押注成功
      */
-    void betMoneySuccess();
+    void betMoneySuccess(String result);
+
+    void gameOutFail();
+    void gameOutSuccess();
 }

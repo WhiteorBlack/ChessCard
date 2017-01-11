@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.bai.chesscard.interfacer.GameDataListener;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.ConstentNew;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +27,9 @@ public class GameOprateData {
      */
     public void getInGame() {
         Map<String, String> params = new HashMap<>();
-
-        PostTools.postData(CommonUntilities.MAIN_URL, params, new PostCallBack() {
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("TOKEN",CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL+"TableDetial", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -35,6 +37,24 @@ public class GameOprateData {
                     gameDataListener.getInGameFail();
                     return;
                 }
+                gameDataListener.getInGameSuccess(response);
+            }
+        });
+    }
+
+    public void gameOut(){
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("TOKEN",CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL+"LevelTable", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    gameDataListener.gameOutFail();
+                    return;
+                }
+                gameDataListener.gameOutSuccess();
             }
         });
     }
