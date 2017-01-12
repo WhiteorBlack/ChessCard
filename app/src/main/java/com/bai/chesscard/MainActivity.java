@@ -291,6 +291,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
         Map<String, String> params = new HashMap<>();
         params.put("username", phone);
         params.put("password", pwd);
+        params.put("deviceid",Tools.getDeviceId(context));
         PostTools.postData(CommonUntilities.MAIN_URL + "login", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {

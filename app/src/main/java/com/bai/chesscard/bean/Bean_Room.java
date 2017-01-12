@@ -19,5 +19,6 @@ public class Bean_Room extends BaseBean {
         public int max_point;
         public String point_str;
         public int ext1;
+        public int sz_point;
     }
 }

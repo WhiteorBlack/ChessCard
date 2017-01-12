@@ -24,10 +24,14 @@ import com.bai.chesscard.BaseActivity;
 import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.GameChessAdapter;
+import com.bai.chesscard.bean.Bean_Message;
 import com.bai.chesscard.bean.Bean_TableDetial;
 import com.bai.chesscard.dialog.DiscontectNotifyPop;
 import com.bai.chesscard.dialog.PersonalPop;
+import com.bai.chesscard.dialog.PersonalPopInfo;
 import com.bai.chesscard.dialog.SettingPop;
+import com.bai.chesscard.dialog.UpBankerNotifyPop;
+import com.bai.chesscard.dialog.UpTableNotifyPop;
 import com.bai.chesscard.interfacer.GameOprateViewNew;
 import com.bai.chesscard.interfacer.PopInterfacer;
 import com.bai.chesscard.presenter.GamePresenterNew;
@@ -180,6 +184,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     private SettingPop settingPop;
     private PersonalPop personalPop;
     private DiscontectNotifyPop discontectNotifyPop;
+    private PersonalPopInfo personalPopInfo;
+    private UpBankerNotifyPop upBankerNotifyPop;
+    private UpTableNotifyPop upTableNotifyPop;
 
     private int[] chessRes = new int[]{R.mipmap.chess_one, R.mipmap.chess_two, R.mipmap.chess_three, R.mipmap.chess_four, R.mipmap.chess_five, R.mipmap.chess_six, R.mipmap.chess_seven,
             R.mipmap.chess_eight, R.mipmap.chess_nine};
@@ -207,6 +214,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     private void initData() {
         ConstentNew.TABLE_ID = getIntent().getStringExtra("tableId");
         ConstentNew.ROOM_ID = getIntent().getStringExtra("roomId");
+        ConstentNew.USER_ID = AppPrefrence.getUserNo(context);
         invisCountTime();
         invisBetMoney();
         invisChess();
@@ -318,7 +326,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     private void glideImg(String path, ImageView imageView) {
-        Glide.with(this).load(path).into(imageView);
+        Glide.with(this).load(path).error(R.mipmap.icon_default_head).into(imageView);
     }
 
     @Override
@@ -402,12 +410,29 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void upBanker() {
-
+        if (AppPrefrence.getAmount(context) < ConstentNew.BANKER_LIMIT_MONEY) {
+            Tools.toastMsgCenter(context, "账户余额不足");
+            return;
+        }
+        if (upBankerNotifyPop == null)
+            upBankerNotifyPop = new UpBankerNotifyPop(context);
+        upBankerNotifyPop.showPop(txtBankerMoney);
+        upBankerNotifyPop.setPopInterfacer(this, ConstentNew.UPBANKER_POP);
     }
 
     @Override
     public void downTable() {
 
+    }
+
+    @Override
+    public void upTable(int pos) {
+        if (upTableNotifyPop == null)
+            upTableNotifyPop = new UpTableNotifyPop(context);
+        upTableNotifyPop.setTitle("上桌");
+        upTableNotifyPop.setPos(pos);
+        upTableNotifyPop.showPop(txtBankerMoney);
+        upTableNotifyPop.setPopInterfacer(this, ConstentNew.UPTABLE_POP);
     }
 
     @Override
@@ -649,12 +674,12 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void setTableInfo(Bean_TableDetial bean_tableDetial) {
-        if (bean_tableDetial.first_user != null) {
-            txtBankerMoney.setText(bean_tableDetial.first_user.lookmonery + "");
+        if (bean_tableDetial.firstuser != null&&!TextUtils.isEmpty(bean_tableDetial.firstuser.id)) {
+            txtBankerMoney.setText(bean_tableDetial.firstuser.lookmonery + "");
             txtBankerMoney.setVisibility(View.VISIBLE);
-            glideImg(bean_tableDetial.first_user.user_logo, imgHeadTop);
+            glideImg(bean_tableDetial.firstuser.user_logo, imgHeadTop);
             ConstentNew.IS_HAS_GAMER[0] = true;
-            if (TextUtils.equals(bean_tableDetial.first_user.id, AppPrefrence.getUserNo(context)))
+            if (TextUtils.equals(bean_tableDetial.firstuser.id, AppPrefrence.getUserNo(context)))
                 ConstentNew.IS_BANKER = true;
             else {
                 ConstentNew.IS_GAMER = true;
@@ -665,14 +690,15 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             glideImg(R.mipmap.site_empty, imgHeadTop);
             ConstentNew.IS_HAS_GAMER[0] = false;
             ConstentNew.IS_BANKER = false;
+            ConstentNew.IS_GAMER = false;
         }
 
-        if (bean_tableDetial.second_user != null) {
-            txtLeftMoney.setText(bean_tableDetial.second_user.lookmonery + "");
+        if (bean_tableDetial.seconduser != null&&!TextUtils.isEmpty(bean_tableDetial.seconduser.id)) {
+            txtLeftMoney.setText(bean_tableDetial.seconduser.lookmonery + "");
             txtLeftMoney.setVisibility(View.VISIBLE);
-            glideImg(bean_tableDetial.second_user.user_logo, imgHeadLeft);
+            glideImg(bean_tableDetial.seconduser.user_logo, imgHeadLeft);
             ConstentNew.IS_HAS_GAMER[1] = true;
-            if (TextUtils.equals(bean_tableDetial.second_user.id, AppPrefrence.getUserNo(context))) {
+            if (TextUtils.equals(bean_tableDetial.seconduser.id, AppPrefrence.getUserNo(context))) {
                 ConstentNew.IS_GAMER = true;
                 ConstentNew.IS_BANKER = false;
             } else {
@@ -687,12 +713,12 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             ConstentNew.IS_GAMER = false;
         }
 
-        if (bean_tableDetial.third_user != null) {
-            txtMidMoney.setText(bean_tableDetial.third_user.lookmonery + "");
+        if (bean_tableDetial.thirduser != null&&!TextUtils.isEmpty(bean_tableDetial.thirduser.id)) {
+            txtMidMoney.setText(bean_tableDetial.thirduser.lookmonery + "");
             txtMidMoney.setVisibility(View.VISIBLE);
-            glideImg(bean_tableDetial.third_user.user_logo, imgHeadBottom);
+            glideImg(bean_tableDetial.thirduser.user_logo, imgHeadBottom);
             ConstentNew.IS_HAS_GAMER[2] = true;
-            if (TextUtils.equals(bean_tableDetial.second_user.id, AppPrefrence.getUserNo(context))) {
+            if (TextUtils.equals(bean_tableDetial.seconduser.id, AppPrefrence.getUserNo(context))) {
                 ConstentNew.IS_GAMER = true;
                 ConstentNew.IS_BANKER = false;
             } else {
@@ -707,25 +733,34 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             ConstentNew.IS_GAMER = false;
         }
 
-        if (bean_tableDetial.four_user!=null){
-            txtRightMoney.setText(bean_tableDetial.four_user.lookmonery + "");
+        if (bean_tableDetial.fouruser != null&&!TextUtils.isEmpty(bean_tableDetial.fouruser.id)) {
+            txtRightMoney.setText(bean_tableDetial.fouruser.lookmonery + "");
             txtRightMoney.setVisibility(View.VISIBLE);
-            glideImg(bean_tableDetial.four_user.user_logo, imgHeadRight);
+            glideImg(bean_tableDetial.fouruser.user_logo, imgHeadRight);
             ConstentNew.IS_HAS_GAMER[3] = true;
-            if (TextUtils.equals(bean_tableDetial.four_user.id, AppPrefrence.getUserNo(context))) {
+            if (TextUtils.equals(bean_tableDetial.fouruser.id, AppPrefrence.getUserNo(context))) {
                 ConstentNew.IS_GAMER = true;
                 ConstentNew.IS_BANKER = false;
             } else {
                 ConstentNew.IS_GAMER = false;
                 ConstentNew.IS_BANKER = false;
             }
-        }else {
+        } else {
             invisTabelMoney(3);
-            glideImg(R.mipmap.site_empty, imgHeadBottom);
+            glideImg(R.mipmap.site_empty, imgHeadRight);
             ConstentNew.IS_HAS_GAMER[3] = false;
             ConstentNew.IS_BANKER = false;
             ConstentNew.IS_GAMER = false;
         }
+    }
+
+    @Override
+    public void showUserInfo(Bean_TableDetial.TableUser userInfo) {
+        if (personalPopInfo == null)
+            personalPopInfo = new PersonalPopInfo(context);
+        personalPopInfo.setInfo(userInfo);
+        personalPopInfo.setPopInterfacer(this, ConstentNew.USERINFO_POP);
+        personalPopInfo.showPop(txtBankerMoney);
     }
 
     @Override
@@ -740,6 +775,15 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case ConstentNew.SETTING_POP:
                 settingPop = null;
                 break;
+            case ConstentNew.USERINFO_POP:
+                personalPopInfo = null;
+                break;
+            case ConstentNew.UPBANKER_POP:
+                upBankerNotifyPop = null;
+                break;
+            case ConstentNew.UPTABLE_POP:
+                upTableNotifyPop = null;
+                break;
         }
     }
 
@@ -752,6 +796,34 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 if (bundle.getBoolean("type")) {
                     ChessCardApplication.getInstance().playBack();
                 } else ChessCardApplication.getInstance().stopBack();
+                break;
+            case ConstentNew.UPBANKER_POP:
+                if (bundle == null || !bundle.getBoolean("result"))
+                    return;
+                Bean_Message bean_message = new Bean_Message();
+                bean_message.gamerPos = 0;
+                bean_message.type = ConstentNew.TYPE_SITE_DOWN;
+                Bean_TableDetial.TableUser bankerUser=new Bean_TableDetial.TableUser();
+                bankerUser.user_logo = AppPrefrence.getAvatar(context);
+                bankerUser.id = AppPrefrence.getUserNo(context);
+                bankerUser.nick_name = AppPrefrence.getUserName(context);
+                bankerUser.lookmonery = bundle.getInt("money");
+                bean_message.tableUser=bankerUser;
+                gamePresenterNew.sendMessage(bean_message);
+                break;
+            case ConstentNew.UPTABLE_POP:
+                if (bundle == null || !bundle.getBoolean("result"))
+                    return;
+                Bean_Message messageTable = new Bean_Message();
+                messageTable.gamerPos = ConstentNew.USERPOS;
+                messageTable.type = ConstentNew.TYPE_SITE_DOWN;
+                Bean_TableDetial.TableUser tableUser = new Bean_TableDetial.TableUser();
+                tableUser.user_logo = AppPrefrence.getAvatar(context);
+                tableUser.id = AppPrefrence.getUserNo(context);
+                tableUser.nick_name = AppPrefrence.getUserName(context);
+                tableUser.lookmonery = bundle.getInt("money");
+                messageTable.tableUser = tableUser;
+                gamePresenterNew.sendMessage(messageTable);
                 break;
         }
     }
@@ -774,18 +846,19 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
+                gamePresenterNew.back();
                 break;
             case R.id.rel_head_bottom:
-                
+                gamePresenterNew.selectSite(3);
                 break;
             case R.id.rel_head_right:
-
+                gamePresenterNew.selectSite(4);
                 break;
             case R.id.rel_head_top:
-
+                gamePresenterNew.selectSite(1);
                 break;
             case R.id.rel_head_left:
-
+                gamePresenterNew.selectSite(2);
                 break;
             case R.id.img_gameing_user:
                 break;

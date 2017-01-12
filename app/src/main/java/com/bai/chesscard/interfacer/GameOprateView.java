@@ -127,7 +127,7 @@ public interface GameOprateView {
      *
      * @param tableInfo
      */
-    void setTableInfo(Bean_TableDetial.TableDetial tableInfo);
+    void setTableInfo(Bean_TableDetial tableInfo);
 
     /**
      * 用户下注之后本地更改用户金币数量

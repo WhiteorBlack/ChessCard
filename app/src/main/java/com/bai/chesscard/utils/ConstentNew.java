@@ -36,6 +36,7 @@ public class ConstentNew {
      */
     public static int GAMEROUND=0;
 
+    public static int BANKERCOUNT=1;
     /**
      * 三个筹码的数额
      */
@@ -46,6 +47,9 @@ public class ConstentNew {
      * 庄家的点数
      */
     public static int BANKER_POINT;
+
+    public static int USERPOS=-1;
+    public static int BETPOS=-1;
     /**
      * 庄家是否为对子
      */
@@ -127,4 +131,7 @@ public class ConstentNew {
     public static final int SETTING_POP = 0;
     public static final int PERSONAL_POP = 1;
     public static final int DISCONTECT_POP = 2;
+    public static final int USERINFO_POP=3;
+    public static final int UPBANKER_POP=4;
+    public static final int UPTABLE_POP=5;
 }

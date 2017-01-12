@@ -23,7 +23,7 @@ public class AudienceAdapter extends BaseRecyAdapter {
         super.onBindViewHolder(holder, position);
         ViewHolder mHolder= (ViewHolder) holder;
         Bean_Audience.Audience audience= (Bean_Audience.Audience) dataList.get(position);
-        mHolder.setImage(R.id.img_head, CommonUntilities.PIC_URL+audience.userinfo.avatar);
+        mHolder.setImage(R.id.img_head,audience.userinfo.user_logo);
     }
 
     @Override

@@ -16,7 +16,9 @@ public class Bean_Message {
     public int diceNum1;  //筛子的数目
     public int time; //时间数
     public String chessPoint;
-    public Bean_TableDetial.TableDetial gameStatue;
+    public Bean_TableDetial gameStatue;
+
+    public Bean_TableDetial.TableUser tableUser;
 
     public int status;
     public int state;

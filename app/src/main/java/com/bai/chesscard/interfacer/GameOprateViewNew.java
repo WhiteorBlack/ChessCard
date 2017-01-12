@@ -59,6 +59,8 @@ public interface GameOprateViewNew {
      */
     void downTable();
 
+    void upTable(int pos);
+
     /**
      * 庄家续庄
      */
@@ -125,5 +127,7 @@ public interface GameOprateViewNew {
     void reContect();
 
     void setTableInfo(Bean_TableDetial bean_tableDetial);
+
+    void showUserInfo(Bean_TableDetial.TableUser userInfo);
 
 }

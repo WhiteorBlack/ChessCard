@@ -3,31 +3,22 @@ package com.bai.chesscard.dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.AudienceAdapter;
 import com.bai.chesscard.adapter.BaseRecyAdapter;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.Bean_Audience;
-import com.bai.chesscard.bean.Bean_TableDetial;
 import com.bai.chesscard.interfacer.PostCallBack;
-import com.bai.chesscard.presenter.GamePresenter;
-import com.bai.chesscard.utils.AppPrefrence;
+import com.bai.chesscard.presenter.GamePresenterNew;
 import com.bai.chesscard.utils.CommonUntilities;
-import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.xrecycleview.XRecyclerView;
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -44,7 +35,7 @@ public class AudiencelPop extends BasePopupwind implements XRecyclerView.Loading
     private XRecyclerView recyclerView;
     private List<Bean_Audience.Audience> audienceList;
     private AudienceAdapter audienceAdapter;
-    private GamePresenter gamePresenter;
+    private GamePresenterNew gamePresenter;
     private int pageIndex=1,pageSize=20;
     private String id;
 
@@ -89,7 +80,7 @@ public class AudiencelPop extends BasePopupwind implements XRecyclerView.Loading
         this.id=id;
     }
 
-    public void setPresenter(GamePresenter gamePresenter) {
+    public void setPresenter(GamePresenterNew gamePresenter) {
         this.gamePresenter = gamePresenter;
     }
 

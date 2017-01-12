@@ -36,6 +36,7 @@ import com.bai.chesscard.interfacer.GameOprateView;
 import com.bai.chesscard.interfacer.GameOprateViewNew;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.service.MessageEvent;
+import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.ConstentNew;
@@ -113,6 +114,80 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
      */
     public void showPersonalPop() {
         gameOprateView.showMinePop();
+    }
+
+    /**
+     * 选择座位坐下
+     *
+     * @param pos
+     */
+    public void selectSite(int pos) {
+        Tools.debug("selectSite--" + pos);
+        switch (pos) {
+            case 1:
+                if (bean_tableDetial == null || bean_tableDetial.firstuser == null||!ConstentNew.IS_HAS_GAMER[pos-1])
+                    gameOprateView.upBanker();
+                else gameOprateView.showUserInfo(bean_tableDetial.firstuser);
+                break;
+            case 2:
+                if (bean_tableDetial == null || bean_tableDetial.seconduser == null||!ConstentNew.IS_HAS_GAMER[pos-1])
+                    gameOprateView.upTable(pos);
+                else gameOprateView.showUserInfo(bean_tableDetial.seconduser);
+                break;
+            case 3:
+                if (bean_tableDetial == null || bean_tableDetial.thirduser == null||!ConstentNew.IS_HAS_GAMER[pos-1])
+                    gameOprateView.upTable(pos);
+                else gameOprateView.showUserInfo(bean_tableDetial.thirduser);
+                break;
+            case 4:
+                if (bean_tableDetial == null || bean_tableDetial.fouruser == null||!ConstentNew.IS_HAS_GAMER[pos-1])
+                    gameOprateView.upTable(pos);
+                else gameOprateView.showUserInfo(bean_tableDetial.fouruser);
+                break;
+        }
+    }
+
+    public void back() {
+        if (ConstentNew.IS_BANKER)
+            gameOprateView.downBanker();
+        if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER)
+            gameOprateView.downTable();
+    }
+
+
+    /**
+     * 发送消息
+     *
+     * @param bean_message
+     */
+    public void sendMessage(Bean_Message bean_message) {
+        if (bean_message == null)
+            return;
+        String msg = new Gson().toJson(bean_message, Bean_Message.class);
+        TIMMessage message = new TIMMessage();
+        TIMTextElem elem = new TIMTextElem();
+        elem.setText(msg);
+        message.addElement(elem);
+        conversation.sendMessage(message, new TIMValueCallBack<TIMMessage>() {
+            @Override
+            public void onError(int i, String s) {
+                Tools.debug("send fail " + s);
+            }
+
+            @Override
+            public void onSuccess(TIMMessage timMessage) {
+                Tools.debug("send success");
+            }
+        });
+    }
+
+    /**
+     * 展示用户信息
+     *
+     * @param userInfo
+     */
+    public void showUserInfo(Bean_TableDetial.TableUser userInfo) {
+        gameOprateView.showUserInfo(userInfo);
     }
 
     /**
@@ -294,6 +369,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                     if (elemType == TIMElemType.Text) {
                         Bean_Message bean_message = null;
                         TIMTextElem elemText = (TIMTextElem) elem;
+                        Tools.debug("UserMessage" + elemText.getText());
                         try {
                             bean_message = new Gson().fromJson(elemText.getText(), Bean_Message.class);
                         } catch (JsonSyntaxException e) {
@@ -303,7 +379,24 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                         if (bean_message == null)
                             return;
                         switch (bean_message.type) {
-
+                            case ConstentNew.TYPE_SITE_DOWN:
+                                ConstentNew.IS_HAS_GAMER[bean_message.gamerPos] = true;
+                                switch (bean_message.gamerPos) {
+                                    case 1:
+                                        bean_tableDetial.firstuser = bean_message.tableUser;
+                                        break;
+                                    case 2:
+                                        bean_tableDetial.seconduser = bean_message.tableUser;
+                                        break;
+                                    case 3:
+                                        bean_tableDetial.thirduser = bean_message.tableUser;
+                                        break;
+                                    case 4:
+                                        bean_tableDetial.fouruser = bean_message.tableUser;
+                                        break;
+                                }
+                                gameOprateView.setTableInfo(bean_tableDetial);
+                                break;
                         }
                     }
                 }
@@ -313,7 +406,6 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                     TIMElem elem = msg.getElement(i);
                     TIMElemType elemType = elem.getType();
                     if (elemType == TIMElemType.GroupSystem) {
-
                         TIMGroupSystemElem elemText = (TIMGroupSystemElem) elem;
                         Tools.debug("SystemMessage" + new String(elemText.getUserData()));
                         Bean_Message bean_message = new Gson().fromJson(new String(elemText.getUserData()), Bean_Message.class);
@@ -392,13 +484,15 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
     @Override
     public void getInGameFail() {
-
+        GameOprateData.getInstance(this).getInGame();
     }
+
+    Bean_TableDetial bean_tableDetial;
 
     @Override
     public void getInGameSuccess(String result) {
-        Bean_TableDetial bean_tableDetial=new Gson().fromJson(result,Bean_TableDetial.class);
-        ConstentNew.GAMEROUND=bean_tableDetial.ver;
+        bean_tableDetial = new Gson().fromJson(result, Bean_TableDetial.class);
+        ConstentNew.GAMEROUND = bean_tableDetial.ver;
         gameOprateView.setTableInfo(bean_tableDetial);
     }
 
@@ -419,7 +513,6 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
     @Override
     public void gameOutSuccess() {
-
     }
 
 }

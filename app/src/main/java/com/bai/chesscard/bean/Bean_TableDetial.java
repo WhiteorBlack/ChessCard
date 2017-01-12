@@ -5,21 +5,17 @@ package com.bai.chesscard.bean;
  */
 
 public class Bean_TableDetial extends BaseBean {
-//    public TableDetial data;
-//
-//    public static class TableDetial {
-        public String pointstr;
-        public TableUser first_user;
-        public TableUser second_user;
-        public TableUser third_user;
-        public TableUser four_user;
-        public int game_status;
-        public int secordbet;
-        public int thirdbet;
-        public int fourbet;
-        public int round;
-        public int ver;
-//    }
+    public String pointstr;
+    public TableUser firstuser;
+    public TableUser seconduser;
+    public TableUser thirduser;
+    public TableUser fouruser;
+    public int game_status;
+    public int secordbet;
+    public int thirdbet;
+    public int fourbet;
+    public int round;
+    public int ver;
 
     public static class TableUser {
         public String id;

@@ -14,8 +14,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.os.ResultReceiver;
+import android.provider.Settings;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -50,6 +53,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,6 +76,51 @@ public class Tools {
             Log.e(DEBUG_TAG, str + "");
         }
     }
+
+    public static String getDeviceId(Context context) {
+        String deviceId = "";
+        if (deviceId != null && !"".equals(deviceId)) {
+            return deviceId;
+        }
+
+        if (deviceId == null || "".equals(deviceId)) {
+            try {
+                deviceId = getAndroidId(context);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (deviceId == null || "".equals(deviceId)) {
+
+            if (deviceId == null || "".equals(deviceId)) {
+                UUID uuid = UUID.randomUUID();
+                deviceId = uuid.toString().replace("-", "");
+            }
+        }
+        if (deviceId == null || "".equals(deviceId)) {
+            try {
+                deviceId = getLocalMac(context).replace(":", "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return deviceId;
+    }
+    // Mac地址
+    private static String getLocalMac(Context context) {
+        WifiManager wifi = (WifiManager) context
+                .getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = wifi.getConnectionInfo();
+        return info.getMacAddress();
+    }
+
+    // Android Id
+    private static String getAndroidId(Context context) {
+        String androidId = Settings.Secure.getString(
+                context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        return androidId;
+    }
+
 
     public static ProgressDialog getDialog(Context context, String msg) {
         ProgressDialog progressDialog = new ProgressDialog(context);

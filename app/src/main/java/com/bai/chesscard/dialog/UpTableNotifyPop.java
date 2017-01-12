@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -19,7 +18,6 @@ import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
 import com.google.gson.Gson;
-import com.tencent.TIMGroupManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +26,13 @@ import java.util.Map;
  * Created by Administrator on 2016/11/9.
  */
 
-public class UpBankerNotifyPop extends BasePopupwind {
+public class UpTableNotifyPop extends BasePopupwind {
     private View view;
     private EditText edtMoney;
     private int money;
+    private TextView txtTitle;
 
-    public UpBankerNotifyPop(Context context) {
+    public UpTableNotifyPop(Context context) {
         super(context);
         initView();
     }
@@ -44,7 +43,8 @@ public class UpBankerNotifyPop extends BasePopupwind {
         view.findViewById(R.id.btn_up_banker).setOnClickListener(this);
         view.findViewById(R.id.btn_cancel).setOnClickListener(this);
         edtMoney = (EditText) view.findViewById(R.id.edt_money);
-        money = ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCOUNT;
+        txtTitle = (TextView) view.findViewById(R.id.txt_title);
+        money = ConstentNew.LEFTPOINT;
         edtMoney.setText(money + "");
         view.findViewById(R.id.btn_add).setOnClickListener(this);
         this.setContentView(view);
@@ -64,8 +64,8 @@ public class UpBankerNotifyPop extends BasePopupwind {
                     Tools.toastMsgCenter(context, "请输入金额");
                     return;
                 }
-                if (Integer.parseInt(moneyString) < ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCOUNT) {
-                    Tools.toastMsgCenter(context, "坐庄金额必须大于" + ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCOUNT);
+                if (Integer.parseInt(moneyString) < ConstentNew.LEFTPOINT) {
+                    Tools.toastMsgCenter(context, "上桌金额必须大于" + ConstentNew.LEFTPOINT);
                     return;
                 }
                 money = Integer.parseInt(moneyString);
@@ -83,11 +83,21 @@ public class UpBankerNotifyPop extends BasePopupwind {
         }
     }
 
+    private int pos;
+
+    public void setPos(int pos) {
+        this.pos = pos;
+    }
+
+    public void setTitle(String title) {
+        txtTitle.setText(title);
+    }
+
     private void upBanker() {
         Map<String, String> params = new HashMap<>();
         params.put("table_id", ConstentNew.TABLE_ID);
         params.put("token", CommonUntilities.TOKEN);
-        params.put("seat", "1");
+        params.put("seat", pos + "");
         params.put("lookmonery", money + "");
         PostTools.postData(CommonUntilities.MAIN_URL + "UserSiteDown", params, new PostCallBack() {
             @Override
@@ -100,12 +110,10 @@ public class UpBankerNotifyPop extends BasePopupwind {
                 if (siteTable.id > 0) {
                     bundle.putBoolean("result", true);
                     bundle.putInt("mone", money);
-                    ConstentNew.IS_HAS_GAMER[0] = true;
-                    ConstentNew.IS_BANKER = true;
+                    ConstentNew.IS_HAS_GAMER[pos-1] = true;
+                    ConstentNew.IS_BANKER = false;
                     ConstentNew.IS_GAMER = true;
-                    ConstentNew.USERPOS = 1;
-                    if (popInterfacer != null)
-                        popInterfacer.OnConfirm(flag, bundle);
+                    ConstentNew.USERPOS = pos;
                     dismiss();
                 } else {
                     bundle.putBoolean("result", false);

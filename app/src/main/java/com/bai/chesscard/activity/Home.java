@@ -249,18 +249,21 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                 if (roomList.size() == 0)
                     return;
                 dealPoint(roomList.get(0).point_str);
+                ConstentNew.BANKER_LIMIT_MONEY=roomList.get(0).sz_point;
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(0).id).putExtra("point", roomList.get(0).min_piont), 0);
                 break;
             case R.id.fl_mid_room:
                 if (roomList.size() == 0)
                     return;
                 dealPoint(roomList.get(1).point_str);
+                ConstentNew.BANKER_LIMIT_MONEY=roomList.get(1).sz_point;
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(1).id).putExtra("point", roomList.get(1).min_piont), 1);
                 break;
             case R.id.fl_hig_room:
                 if (roomList.size() < 2)
                     return;
                 dealPoint(roomList.get(2).point_str);
+                ConstentNew.BANKER_LIMIT_MONEY=roomList.get(2).sz_point;
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(2).id).putExtra("point", roomList.get(2).min_piont), 2);
                 break;
             case R.id.img_start:

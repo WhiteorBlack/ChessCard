@@ -3,30 +3,18 @@ package com.bai.chesscard.dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bai.chesscard.R;
-import com.bai.chesscard.adapter.AudienceAdapter;
-import com.bai.chesscard.adapter.BaseRecyAdapter;
 import com.bai.chesscard.async.PostTools;
-import com.bai.chesscard.bean.Bean_Audience;
 import com.bai.chesscard.interfacer.PostCallBack;
-import com.bai.chesscard.presenter.GamePresenter;
 import com.bai.chesscard.utils.CommonUntilities;
-import com.bai.chesscard.widget.xrecycleview.XRecyclerView;
-import com.google.gson.Gson;
 import com.tencent.TIMGroupManager;
-import com.tencent.TIMManager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
