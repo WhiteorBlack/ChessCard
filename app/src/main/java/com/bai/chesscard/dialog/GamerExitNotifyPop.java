@@ -3,6 +3,8 @@ package com.bai.chesscard.dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +12,12 @@ import android.widget.TextView;
 
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
+import com.google.gson.Gson;
 import com.tencent.TIMGroupManager;
 
 import java.util.HashMap;
@@ -25,7 +30,6 @@ import java.util.Map;
 public class GamerExitNotifyPop extends BasePopupwind {
     private View view;
     private TextView txtContent;
-    private String userId = "", tableId = "", houseId = "", num = "";
 
     public GamerExitNotifyPop(Context context) {
         super(context);
@@ -45,21 +49,10 @@ public class GamerExitNotifyPop extends BasePopupwind {
         this.setAnimationStyle(R.style.audi_anim);
     }
 
-    @Override
-    public void showPop(View parent) {
-        this.showAtLocation(parent, Gravity.LEFT, 0, 0);
-    }
-
     public void setNotify(String notify) {
         txtContent.setText(notify);
     }
 
-    public void setIds(String tableId, String roomId, String userId, String num) {
-        this.tableId = tableId;
-        this.houseId = roomId;
-        this.num = num;
-        this.userId = userId;
-    }
 
     @Override
     public void onClick(View v) {
@@ -67,32 +60,60 @@ public class GamerExitNotifyPop extends BasePopupwind {
         switch (v.getId()) {
             case R.id.img_cancle:
                 //下桌
-                getAudiunce();
-                if (popInterfacer != null)
-                    popInterfacer.OnConfirm(flag, null);
+                downTable();
+
                 break;
             case R.id.btn_confirm:
                 //直接退出游戏
-                TIMGroupManager.getInstance().quitGroup(tableId, null);
+                TIMGroupManager.getInstance().quitGroup(ConstentNew.TABLE_ID, null);
                 getAudiunce();
                 if (popInterfacer != null)
                     popInterfacer.OnCancle(flag);
                 break;
         }
-        dismiss();
+
+    }
+
+    private void downTable() {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("token", CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL + "UserSiteUp", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response))
+                    return;
+                BaseBean baseBean=new Gson().fromJson(response,BaseBean.class);
+                if (baseBean.id>0){
+                    Bundle bundle=new Bundle();
+                    bundle.putInt("type",1);
+                    if (popInterfacer != null)
+                        popInterfacer.OnConfirm(flag, bundle);
+                    dismiss();
+                }else Tools.toastMsgCenter(context,baseBean.msg);
+            }
+        });
     }
 
     private void getAudiunce() {
         Map<String, String> params = new HashMap<>();
-        params.put("table_id", tableId);
-        params.put("house_id", houseId);
-        params.put("user_id", userId);
-        params.put("num", num);
-        PostTools.postData(CommonUntilities.MAIN_URL + "gameout", params, new PostCallBack() {
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("token", CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL + "LevelTable", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
-                Tools.debug("gameOut--"+response);
+                if (TextUtils.isEmpty(response))
+                    return;
+                BaseBean baseBean=new Gson().fromJson(response,BaseBean.class);
+                if (baseBean.id>0){
+                    Bundle bundle=new Bundle();
+                    bundle.putInt("type",2);
+                    if (popInterfacer != null)
+                        popInterfacer.OnConfirm(flag, bundle);
+                    dismiss();
+                }else Tools.toastMsgCenter(context,baseBean.msg);
             }
         });
     }

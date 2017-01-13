@@ -18,6 +18,7 @@ import com.bai.chesscard.bean.Bean_Audience;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.presenter.GamePresenterNew;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.widget.xrecycleview.XRecyclerView;
 import com.google.gson.Gson;
 
@@ -36,8 +37,7 @@ public class AudiencelPop extends BasePopupwind implements XRecyclerView.Loading
     private List<Bean_Audience.Audience> audienceList;
     private AudienceAdapter audienceAdapter;
     private GamePresenterNew gamePresenter;
-    private int pageIndex=1,pageSize=20;
-    private String id;
+    private int pageIndex = 1, pageSize = 20;
 
     public AudiencelPop(Context context) {
         super(context);
@@ -59,7 +59,7 @@ public class AudiencelPop extends BasePopupwind implements XRecyclerView.Loading
             @Override
             public void onItemClickListener(View view, int position) {
                 if (gamePresenter != null)
-                    gamePresenter.showUserInfo(audienceList.get(position-1).userinfo);
+                    gamePresenter.showUserInfo(audienceList.get(position - 1).userinfo);
             }
 
             @Override
@@ -76,17 +76,13 @@ public class AudiencelPop extends BasePopupwind implements XRecyclerView.Loading
         this.setAnimationStyle(R.style.audi_anim);
     }
 
-    public void setId(String id){
-        this.id=id;
-    }
-
     public void setPresenter(GamePresenterNew gamePresenter) {
         this.gamePresenter = gamePresenter;
     }
 
     @Override
     public void showPop(View parent) {
-        this.showAtLocation(parent,Gravity.LEFT,0,0);
+        this.showAtLocation(parent, Gravity.LEFT, 0, 0);
         getAudiunce();
     }
 
@@ -102,21 +98,21 @@ public class AudiencelPop extends BasePopupwind implements XRecyclerView.Loading
     }
 
     private void getAudiunce() {
-        Map<String,String> params=new HashMap<>();
-        params.put("table_id",id);
-        params.put("Pageindex",pageIndex+"");
-        params.put("Pagesize",pageSize+"");
-        PostTools.postData(CommonUntilities.MAIN_URL+"userlist",params,new PostCallBack(){
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("Pageindex", pageIndex + "");
+        params.put("Pagesize", pageSize + "");
+        PostTools.postData(CommonUntilities.MAIN_URL + "LookUserList", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
                 if (TextUtils.isEmpty(response))
                     return;
-                if (pageIndex==1)
+                if (pageIndex == 1)
                     audienceList.clear();
-                Bean_Audience beanAudience=new Gson().fromJson(response,Bean_Audience.class);
-                if (beanAudience.status){
-                    if (beanAudience.data!=null&&beanAudience.data.size()>0){
+                Bean_Audience beanAudience = new Gson().fromJson(response, Bean_Audience.class);
+                if (beanAudience.status) {
+                    if (beanAudience.data != null && beanAudience.data.size() > 0) {
                         audienceList.addAll(beanAudience.data);
                         audienceAdapter.notifyDataSetChanged();
                     }

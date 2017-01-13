@@ -125,35 +125,46 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         Tools.debug("selectSite--" + pos);
         switch (pos) {
             case 1:
-                if (bean_tableDetial == null || bean_tableDetial.firstuser == null||!ConstentNew.IS_HAS_GAMER[pos-1])
+                if (bean_tableDetial == null || bean_tableDetial.firstuser == null || !ConstentNew.IS_HAS_GAMER[pos - 1])
                     gameOprateView.upBanker();
                 else gameOprateView.showUserInfo(bean_tableDetial.firstuser);
                 break;
             case 2:
-                if (bean_tableDetial == null || bean_tableDetial.seconduser == null||!ConstentNew.IS_HAS_GAMER[pos-1])
+                if (bean_tableDetial == null || bean_tableDetial.seconduser == null || !ConstentNew.IS_HAS_GAMER[pos - 1])
                     gameOprateView.upTable(pos);
                 else gameOprateView.showUserInfo(bean_tableDetial.seconduser);
                 break;
             case 3:
-                if (bean_tableDetial == null || bean_tableDetial.thirduser == null||!ConstentNew.IS_HAS_GAMER[pos-1])
+                if (bean_tableDetial == null || bean_tableDetial.thirduser == null || !ConstentNew.IS_HAS_GAMER[pos - 1])
                     gameOprateView.upTable(pos);
                 else gameOprateView.showUserInfo(bean_tableDetial.thirduser);
                 break;
             case 4:
-                if (bean_tableDetial == null || bean_tableDetial.fouruser == null||!ConstentNew.IS_HAS_GAMER[pos-1])
+                if (bean_tableDetial == null || bean_tableDetial.fouruser == null || !ConstentNew.IS_HAS_GAMER[pos - 1])
                     gameOprateView.upTable(pos);
                 else gameOprateView.showUserInfo(bean_tableDetial.fouruser);
                 break;
         }
     }
 
+    /**
+     * 返回操作
+     */
     public void back() {
         if (ConstentNew.IS_BANKER)
             gameOprateView.downBanker();
         if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER)
             gameOprateView.downTable();
+        if (!ConstentNew.IS_BANKER && !ConstentNew.IS_GAMER)
+            gameOprateView.exitTable();
     }
 
+    public void addMoney() {
+        if (ConstentNew.IS_BANKER)
+            gameOprateView.bankerCharge();
+        if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER)
+            gameOprateView.gamerCharge();
+    }
 
     /**
      * 发送消息
@@ -393,6 +404,23 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                         break;
                                     case 4:
                                         bean_tableDetial.fouruser = bean_message.tableUser;
+                                        break;
+                                }
+                                gameOprateView.setTableInfo(bean_tableDetial);
+                                break;
+                            case ConstentNew.TYPE_EXIT_GAME:
+                                switch (bean_message.gamerPos) {
+                                    case 1:
+                                        bean_tableDetial.firstuser = null;
+                                        break;
+                                    case 2:
+                                        bean_tableDetial.seconduser = null;
+                                        break;
+                                    case 3:
+                                        bean_tableDetial.thirduser = null;
+                                        break;
+                                    case 4:
+                                        bean_tableDetial.fouruser = null;
                                         break;
                                 }
                                 gameOprateView.setTableInfo(bean_tableDetial);

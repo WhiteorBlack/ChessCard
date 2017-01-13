@@ -12,8 +12,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bai.chesscard.R;
+import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.BaseBean;
+import com.bai.chesscard.bean.Bean_SiteTable;
+import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.AppPrefrence;
+import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.Constent;
+import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2016/11/9.
@@ -21,8 +32,12 @@ import com.bai.chesscard.utils.Tools;
 
 public class LackBankerNotifyPop extends BasePopupwind {
     private View view;
+    private TextView txtTitle;
     private TextView txtContent;
+    private EditText edtMoney;
     private int countTime = 10;
+    private int money = 0;
+    private boolean isCharge = false;
 
     public LackBankerNotifyPop(Context context) {
         super(context);
@@ -34,22 +49,26 @@ public class LackBankerNotifyPop extends BasePopupwind {
             view = LayoutInflater.from(context).inflate(R.layout.lack_banker_pop, null);
         view.findViewById(R.id.img_confirm).setOnClickListener(this);
         view.findViewById(R.id.img_exit).setOnClickListener(this);
-        txtContent = (TextView) view.findViewById(R.id.txt_notify);
+        txtTitle = (TextView) view.findViewById(R.id.txt_title);
+        txtContent = (TextView) view.findViewById(R.id.txt_content);
+        money = ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCHARGECOUNT;
+        edtMoney = (EditText) view.findViewById(R.id.edt_money);
+        edtMoney.setText(money + "");
+        view.findViewById(R.id.img_add).setOnClickListener(this);
         this.setContentView(view);
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
         this.setOutsideTouchable(true);
     }
 
-    public void setContent(String content) {
+    public void setTitle(String content) {
         if (!TextUtils.isEmpty(content))
-            txtContent.setText(content);
+            txtTitle.setText(content);
     }
 
-    public void setContent(int content) {
-        txtContent.setText(content);
+    public void setTitle(int content) {
+        txtTitle.setText(content);
     }
-
 
     @Override
     public void showPop(View parent) {
@@ -62,18 +81,20 @@ public class LackBankerNotifyPop extends BasePopupwind {
     }
 
     private void startCount() {
-        new CountDownTimer(countTime*1000, 1000) {
+        new CountDownTimer(countTime * 1000, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
+                if (isCharge)
+                    cancel();
                 txtContent.setText("是否续庄\n" + millisUntilFinished / 1000 + "秒后未续系统将您下庄");
             }
 
             @Override
             public void onFinish() {
-                if (popInterfacer != null)
-                    popInterfacer.OnCancle(flag);
-                dismiss();
+                if (!isCharge)
+                    downTable();
+
             }
         }.start();
 
@@ -84,17 +105,79 @@ public class LackBankerNotifyPop extends BasePopupwind {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.img_confirm:
-                if (popInterfacer != null)
-                    popInterfacer.OnConfirm(flag, null);
-                dismiss();
+                String moneyString = edtMoney.getText().toString();
+                if (TextUtils.isEmpty(moneyString)) {
+                    Tools.toastMsgCenter(context, "请输入金额");
+                    return;
+                }
+                isCharge = true;
+                upBanker(Integer.parseInt(moneyString));
+
                 break;
             case R.id.img_exit:
-                if (popInterfacer != null)
-                    popInterfacer.OnCancle(flag);
-                dismiss();
+                isCharge = true;
+                downTable();
+                break;
+            case R.id.img_add:
+                if (AppPrefrence.getAmount(context) < ConstentNew.BANKER_LIMIT_MONEY) {
+                    Tools.toastMsgCenter(context, "账户余额不足");
+                    return;
+                }
+                AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - ConstentNew.BANKER_LIMIT_MONEY);
+                money += ConstentNew.BANKER_LIMIT_MONEY;
+                edtMoney.setText(money + "");
                 break;
         }
 
     }
 
+    private void upBanker(final int money) {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("token", CommonUntilities.TOKEN);
+        params.put("seat", "1");
+        params.put("point", money + "");
+        PostTools.postData(CommonUntilities.MAIN_URL + "UserRenewal", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response))
+                    return;
+                Bean_SiteTable siteTable = new Gson().fromJson(response, Bean_SiteTable.class);
+                if (siteTable.id > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type", 1);
+                    ConstentNew.GAMER_TABLE_MONEY += money;
+                    if (popInterfacer != null)
+                        popInterfacer.OnConfirm(flag, bundle);
+                    dismiss();
+                } else {
+                    Tools.toastMsgCenter(context, siteTable.msg);
+                }
+
+            }
+        });
+    }
+
+    private void downTable() {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("token", CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL + "UserSiteUp", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response))
+                    return;
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.id > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type", 2);
+                    if (popInterfacer != null)
+                        popInterfacer.OnConfirm(flag, bundle);
+                    dismiss();
+                } else Tools.toastMsgCenter(context, baseBean.msg);
+            }
+        });
+    }
 }

@@ -3,6 +3,8 @@ package com.bai.chesscard.dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +12,12 @@ import android.widget.TextView;
 
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,30 +74,31 @@ public class BankerExitNotifyPop extends BasePopupwind {
                 break;
             case R.id.img_cancle:
                 //下庄
-                bankerDown();
+                downTable();
                 if (popInterfacer != null)
                     popInterfacer.OnCancle(flag);
                 break;
         }
-        dismiss();
     }
 
-    private void bankerDown() {
+    private void downTable() {
         Map<String, String> params = new HashMap<>();
-        params.put("table_id", tableId);
-        params.put("house_id", houseId);
-        params.put("user_id", userId);
-        PostTools.postData(CommonUntilities.MAIN_URL + "down", params, new PostCallBack() {
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("token", CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL + "UserSiteUp", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
-                Tools.debug("bankerDown--" + response);
-            }
-
-            @Override
-            public void onError(Call call, Exception e) {
-                super.onError(call, e);
-                Tools.debug("bankerDown--" + e.toString());
+                if (TextUtils.isEmpty(response))
+                    return;
+                BaseBean baseBean=new Gson().fromJson(response,BaseBean.class);
+                if (baseBean.id>0){
+                    Bundle bundle=new Bundle();
+                    bundle.putInt("type",1);
+                    if (popInterfacer != null)
+                        popInterfacer.OnConfirm(flag, bundle);
+                    dismiss();
+                }else Tools.toastMsgCenter(context,baseBean.msg);
             }
         });
     }
@@ -100,13 +106,21 @@ public class BankerExitNotifyPop extends BasePopupwind {
     private void getAudiunce() {
         Map<String, String> params = new HashMap<>();
         params.put("table_id", tableId);
-        params.put("house_id", houseId);
-        params.put("user_id", userId);
-        params.put("num", num);
-        PostTools.postData(CommonUntilities.MAIN_URL + "gameout", params, new PostCallBack() {
+        params.put("token", CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL + "LevelTable", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
+                if (TextUtils.isEmpty(response))
+                    return;
+                BaseBean baseBean=new Gson().fromJson(response,BaseBean.class);
+                if (baseBean.id>0){
+                    Bundle bundle=new Bundle();
+                    bundle.putInt("type",2);
+                    if (popInterfacer != null)
+                        popInterfacer.OnConfirm(flag, bundle);
+                    dismiss();
+                }else Tools.toastMsgCenter(context,baseBean.msg);
             }
         });
     }

@@ -12,8 +12,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bai.chesscard.R;
+import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.BaseBean;
+import com.bai.chesscard.bean.Bean_SiteTable;
+import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.AppPrefrence;
+import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2016/11/9.
@@ -21,10 +31,12 @@ import com.bai.chesscard.utils.Tools;
 
 public class LackMoneyNotifyPop extends BasePopupwind {
     private View view;
+    private TextView txtTitle;
     private TextView txtContent;
     private EditText edtMoney;
-    private int countMoney = 0;
     private int countTime = 10;
+    private int money = 0;
+    private boolean isCharge = false;
 
     public LackMoneyNotifyPop(Context context) {
         super(context);
@@ -35,10 +47,12 @@ public class LackMoneyNotifyPop extends BasePopupwind {
         if (view == null)
             view = LayoutInflater.from(context).inflate(R.layout.lack_money_pop, null);
         view.findViewById(R.id.img_confirm).setOnClickListener(this);
-        view.findViewById(R.id.img_add).setOnClickListener(this);
         view.findViewById(R.id.img_exit).setOnClickListener(this);
+        txtTitle = (TextView) view.findViewById(R.id.txt_title);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
         edtMoney = (EditText) view.findViewById(R.id.edt_money);
+        edtMoney.setText(ConstentNew.LEFTPOINT + "");
+        view.findViewById(R.id.img_add).setOnClickListener(this);
         this.setContentView(view);
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
@@ -57,18 +71,19 @@ public class LackMoneyNotifyPop extends BasePopupwind {
     }
 
     private void startCount() {
-        new CountDownTimer(countTime*1000, 1000) {
+        new CountDownTimer(countTime * 1000, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
+                if (isCharge)
+                    cancel();
                 txtContent.setText("桌面金币不足,请续金币\n" + millisUntilFinished / 1000 + "秒后未续金币将下桌");
             }
 
             @Override
             public void onFinish() {
-                if (popInterfacer != null)
-                    popInterfacer.OnCancle(flag);
-                dismiss();
+                if (!isCharge)
+                    downTable();
             }
         }.start();
 
@@ -79,39 +94,77 @@ public class LackMoneyNotifyPop extends BasePopupwind {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.img_confirm:
-                String money1 = edtMoney.getText().toString();
-                if (TextUtils.isEmpty(money1)) {
-                    dismiss();
-                    return;
-                } else countMoney = Integer.parseInt(money1.trim());
-                if (countMoney > AppPrefrence.getAmount(context)) {
-                    Tools.toastMsgCenter(context, "账户余额不足,请充值");
+                String moneyString = edtMoney.getText().toString();
+                if (TextUtils.isEmpty(moneyString)) {
+                    Tools.toastMsgCenter(context, "请输入金额");
                     return;
                 }
-                AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - countMoney);
-                Bundle bundle = new Bundle();
-                bundle.putInt("money", countMoney);
-                if (popInterfacer != null)
-                    popInterfacer.OnConfirm(flag, bundle);
-                dismiss();
-                break;
-            case R.id.img_add:
-                String money = edtMoney.getText().toString();
-                if (TextUtils.isEmpty(money)) {
-                    countMoney += 100;
-                } else {
-                    countMoney = Integer.parseInt(money.trim());
-                    countMoney += 100;
-                }
-                edtMoney.setText(countMoney + "");
+                upBanker(Integer.parseInt(moneyString));
+                isCharge = true;
                 break;
             case R.id.img_exit:
-                if (popInterfacer != null)
-                    popInterfacer.OnCancle(flag);
-                dismiss();
+                isCharge = true;
+                downTable();
+                break;
+            case R.id.img_add:
+                if (AppPrefrence.getAmount(context) < ConstentNew.LEFTPOINT) {
+                    Tools.toastMsgCenter(context, "账户余额不足");
+                    return;
+                }
+                AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - ConstentNew.LEFTPOINT);
+                money += ConstentNew.LEFTPOINT;
+                edtMoney.setText(money + "");
                 break;
         }
 
     }
 
+    private void upBanker(final int money) {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("token", CommonUntilities.TOKEN);
+        params.put("seat", ConstentNew.USERPOS + "");
+        params.put("point", money + "");
+        PostTools.postData(CommonUntilities.MAIN_URL + "UserRenewal", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response))
+                    return;
+                Bean_SiteTable siteTable = new Gson().fromJson(response, Bean_SiteTable.class);
+                if (siteTable.id > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type", 2);
+                    ConstentNew.GAMER_TABLE_MONEY += money;
+                    if (popInterfacer != null)
+                        popInterfacer.OnConfirm(flag, bundle);
+                    dismiss();
+                } else {
+                    Tools.toastMsgCenter(context, siteTable.msg);
+                }
+            }
+        });
+    }
+
+    private void downTable() {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("token", CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL + "UserSiteUp", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response))
+                    return;
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.id > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type", 2);
+                    if (popInterfacer != null)
+                        popInterfacer.OnConfirm(flag, bundle);
+                    dismiss();
+                } else Tools.toastMsgCenter(context, baseBean.msg);
+            }
+        });
+    }
 }

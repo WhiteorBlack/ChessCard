@@ -48,8 +48,11 @@ public class ConstentNew {
      */
     public static int BANKER_POINT;
 
+    public static int GAMER_TABLE_MONEY=0;
+
     public static int USERPOS=-1;
     public static int BETPOS=-1;
+    public static int BANKERCHARGECOUNT=0;
     /**
      * 庄家是否为对子
      */
@@ -134,4 +137,10 @@ public class ConstentNew {
     public static final int USERINFO_POP=3;
     public static final int UPBANKER_POP=4;
     public static final int UPTABLE_POP=5;
+    public static final int GAMEREXITPOP=6;
+    public static final int BANKEREXITPOP=7;
+    public static final int EXITGAMER=8;
+    public static final int AUDIENCEPOP=9;
+    public static final int LACKBANKERPOP=10;
+    public static final int LACKGAMERPOP=11;
 }

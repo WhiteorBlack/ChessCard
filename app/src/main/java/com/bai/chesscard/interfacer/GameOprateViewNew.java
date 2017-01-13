@@ -130,4 +130,7 @@ public interface GameOprateViewNew {
 
     void showUserInfo(Bean_TableDetial.TableUser userInfo);
 
+    void bankerCharge();
+
+    void gamerCharge();
 }

@@ -13,25 +13,62 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/txt_notify"
+            android:id="@+id/txt_title"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:text="是否续庄"
+            android:textColor="@color/postionYellow"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/dp20"
-            android:layout_marginRight="@dimen/dp20"
-            android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColor="@color/textYellow"
-            android:textSize="14sp" />
+            android:orientation="horizontal">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="最低限额:"
+                android:textColor="@color/textYellow"
+                android:textSize="14sp" />
 
+            <EditText
+                android:id="@+id/edt_money"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:background="@mipmap/bg_edit_code"
+                android:gravity="center"
+                android:inputType="number"
+                android:text="100"
+                android:textColor="@color/settingYellow"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btn_add"
+                android:layout_width="@dimen/dp30"
+                android:layout_height="@dimen/dp30"
+                android:layout_marginLeft="10dp"
+                android:background="@mipmap/icon_add" />
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_content"
+            android:textSize="12sp"
+            android:textColor="@color/textInfoYellow"
+            android:text="哈哈"
+            android:gravity="center"
+            android:layout_marginBottom="20dp"/>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginBottom="@dimen/dp20"
-            android:layout_marginTop="@dimen/dp30"
             android:paddingLeft="@dimen/dp20"
             android:paddingRight="@dimen/dp20">
 

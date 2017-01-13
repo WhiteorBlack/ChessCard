@@ -3,6 +3,7 @@ package com.bai.chesscard.dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,11 @@ import android.widget.TextView;
 
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.Tools;
+import com.google.gson.Gson;
 import com.tencent.TIMGroupManager;
 
 import java.util.HashMap;
@@ -66,19 +70,19 @@ public class ExitNotifyPop extends BasePopupwind {
         switch (v.getId()) {
             case R.id.btn_confirm:
                 getAudiunce();
-                if (popInterfacer != null)
-                    popInterfacer.OnConfirm(flag, null);
+
                 break;
             case R.id.btn_cancel:
+                dismiss();
                 if (popInterfacer != null)
                     popInterfacer.OnCancle(flag);
                 break;
         }
-        dismiss();
+
     }
 
     private void getAudiunce() {
-        TIMGroupManager.getInstance().quitGroup(tableId,null);
+        TIMGroupManager.getInstance().quitGroup(tableId, null);
         Map<String, String> params = new HashMap<>();
         params.put("table_id", tableId);
         params.put("house_id", houseId);
@@ -88,6 +92,13 @@ public class ExitNotifyPop extends BasePopupwind {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
+                if (TextUtils.isEmpty(response))
+                    return;
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.id > 0) {
+                    if (popInterfacer != null)
+                        popInterfacer.OnConfirm(flag, null);
+                } else Tools.toastMsgCenter(context, baseBean.msg);
             }
         });
     }
