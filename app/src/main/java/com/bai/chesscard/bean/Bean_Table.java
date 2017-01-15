@@ -14,6 +14,7 @@ public class Bean_Table extends BaseBean {
     public static class Table {
         public String id;
         public String house_id;
+        public String groupname;
         public String first_user_id;
         public int first_point_count;
         public String second_user_id;

@@ -32,6 +32,10 @@ public class ConstentNew {
      */
     public static String ROOM_ID;
     /**
+     * 群id
+     */
+    public static String GROUP_ID;
+    /**
      * 记录当前游戏轮数
      */
     public static int GAMEROUND=0;
@@ -56,9 +60,10 @@ public class ConstentNew {
     /**
      * 庄家是否为对子
      */
-    public static int DICE_COUNT=-1;
+    public static int DICE_COUNT=0;
     public static boolean[] SETTLE_RESULT = new boolean[]{false, false, true, false};
     public static boolean IS_BANKER_MUTIL = false;
+    public static int[] CHESSLIST=new int[36];
     /**
      * 坐庄最低限额
      */
@@ -143,4 +148,5 @@ public class ConstentNew {
     public static final int AUDIENCEPOP=9;
     public static final int LACKBANKERPOP=10;
     public static final int LACKGAMERPOP=11;
+    public static final int BANKERNOTIFYPOP=12;
 }

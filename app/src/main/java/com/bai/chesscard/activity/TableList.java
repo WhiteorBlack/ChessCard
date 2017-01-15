@@ -28,6 +28,7 @@ import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Constent;
+import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
 import com.google.gson.Gson;
 import com.tencent.TIMCallBack;
@@ -92,7 +93,7 @@ public class TableList extends BaseActivity {
     protected void onStart() {
         super.onStart();
         getTableData(id);
-        Tools.debug("onstart");
+        Tools.debug("onstart--"+id);
     }
 
 
@@ -135,7 +136,8 @@ public class TableList extends BaseActivity {
             @Override
             public void onItemClickListener(View view, final int position) {
                 ChessCardApplication.getInstance().playBtnSound();
-                TIMGroupManager.getInstance().applyJoinGroup(tabList.get(position).id, "", new TIMCallBack() {
+                ConstentNew.GROUP_ID=tabList.get(position).groupname;
+                TIMGroupManager.getInstance().applyJoinGroup(tabList.get(position).groupname, "", new TIMCallBack() {
                     @Override
                     public void onError(int i, String s) {
                         Tools.debug("onError--"+s);
@@ -145,6 +147,7 @@ public class TableList extends BaseActivity {
 
                     @Override
                     public void onSuccess() {
+                        Tools.debug("successful ---"+ConstentNew.GROUP_ID);
                         startActivity(new Intent(context, GamingActivityNew.class).putExtra("roomId", tabList.get(position).house_id).
                                 putExtra("tableId", tabList.get(position).id).putExtra("point", minPoint));
                     }

@@ -28,7 +28,7 @@ public interface GameOprateViewNew {
     /**
      * 摇色子
      */
-    void shakeDice();
+    void shakeDice(int one,int two);
 
     /**
      * 展示设置窗口
@@ -133,4 +133,12 @@ public interface GameOprateViewNew {
     void bankerCharge();
 
     void gamerCharge();
+
+    /**
+     * 第三轮询问庄家
+     */
+    void BankerNotify();
+
+    void startBetMoney();
+    void endBetMoeny();
 }

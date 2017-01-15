@@ -24,10 +24,12 @@ import com.bai.chesscard.BaseActivity;
 import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.GameChessAdapter;
+import com.bai.chesscard.bean.Bean_ChessList;
 import com.bai.chesscard.bean.Bean_Message;
 import com.bai.chesscard.bean.Bean_TableDetial;
 import com.bai.chesscard.dialog.AudiencelPop;
 import com.bai.chesscard.dialog.BankerExitNotifyPop;
+import com.bai.chesscard.dialog.BankerNotify;
 import com.bai.chesscard.dialog.DiscontectNotifyPop;
 import com.bai.chesscard.dialog.ExitGamerNotifyPop;
 import com.bai.chesscard.dialog.GamerExitNotifyPop;
@@ -199,6 +201,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     private AudiencelPop audiencePop;
     private LackBankerNotifyPop lackBankerNotifyPop;
     private LackMoneyNotifyPop lackMoneyNotifyPop;
+    private BankerNotify bankerNotify;
 
     private int[] chessRes = new int[]{R.mipmap.chess_one, R.mipmap.chess_two, R.mipmap.chess_three, R.mipmap.chess_four, R.mipmap.chess_five, R.mipmap.chess_six, R.mipmap.chess_seven,
             R.mipmap.chess_eight, R.mipmap.chess_nine};
@@ -404,8 +407,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     @Override
-    public void shakeDice() {
-
+    public void shakeDice(int one, int two) {
+        int[] startPoint = new int[2];
+        relHeadTop.getLocationInWindow(startPoint);
+        gamePresenterNew.startDice(this, one, two, startPoint);
     }
 
     @Override
@@ -491,7 +496,12 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void resetChess() {
-
+        chessList.clear();
+        for (int i = 0; i < ConstentNew.CHESSLIST.length; i++) {
+            Bean_ChessList.Chess chess = new Bean_ChessList.Chess();
+            chess.isVisiable = false;
+            chessList.add(chess);
+        }
     }
 
     @Override
@@ -807,6 +817,24 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     @Override
+    public void BankerNotify() {
+        if (bankerNotify == null)
+            bankerNotify = new BankerNotify(context);
+        bankerNotify.showPop(txtBankerMoney);
+        bankerNotify.setPopInterfacer(this, ConstentNew.BANKERNOTIFYPOP);
+    }
+
+    @Override
+    public void startBetMoney() {
+
+    }
+
+    @Override
+    public void endBetMoeny() {
+
+    }
+
+    @Override
     public void OnDismiss(int flag) {
         switch (flag) {
             case ConstentNew.DISCONTECT_POP:
@@ -911,7 +939,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 }
                 break;
             case ConstentNew.EXITGAMER:
-                resetUserStatue();
+//                resetUserStatue();
                 finish();
                 break;
             case ConstentNew.LACKBANKERPOP:
@@ -942,6 +970,23 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                     resetUserStatue();
                 }
                 break;
+            case ConstentNew.BANKERNOTIFYPOP:
+                if (bundle == null)
+                    return;
+                switch (bundle.getInt("type")) {
+                    case 1:
+
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
+                        break;
+                }
+                Bean_Message message = new Bean_Message();
+
+                gamePresenterNew.sendMessage(message);
         }
     }
 

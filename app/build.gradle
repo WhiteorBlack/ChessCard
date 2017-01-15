@@ -6,7 +6,8 @@ android {
         config {
             keyAlias 'chesscard'
             keyPassword 'chesscard2016'
-            storeFile file('F:\\myProject\\ChessCard\\chessCard.jks')
+//            storeFile file('F:\\myProject\\ChessCard\\chessCard.jks')
+            storeFile file('E:\\androidApp\\ChessCard\\chessCard.jks')
             storePassword 'chesscard2016'
         }
     }

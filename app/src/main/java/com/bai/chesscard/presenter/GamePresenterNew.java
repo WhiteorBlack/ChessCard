@@ -74,7 +74,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
     public GamePresenterNew(GameOprateViewNew gameOprateView) {
         this.gameOprateView = gameOprateView;
-        conversation = TIMManager.getInstance().getConversation(TIMConversationType.Group, ConstentNew.TABLE_ID);
+        conversation = TIMManager.getInstance().getConversation(TIMConversationType.Group, ConstentNew.GROUP_ID);
         conversation.disableStorage();
     }
 
@@ -391,7 +391,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                             return;
                         switch (bean_message.type) {
                             case ConstentNew.TYPE_SITE_DOWN:
-                                ConstentNew.IS_HAS_GAMER[bean_message.gamerPos] = true;
+                                ConstentNew.IS_HAS_GAMER[bean_message.gamerPos - 1] = true;
                                 switch (bean_message.gamerPos) {
                                     case 1:
                                         bean_tableDetial.firstuser = bean_message.tableUser;
@@ -442,16 +442,24 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                             return;
                         switch (bean_message.type) {
                             case ConstentNew.TYPE_RESET_CHESS: //洗牌
-
+                                gameOprateView.countDownTime(10, ConstentNew.TYPE_RESET_CHESS);
+                                String[] chessString = bean_message.chessList.split(",");
+                                if (chessString != null && chessString.length > 0)
+                                    for (int j = 0; j < chessString.length; j++) {
+                                        ConstentNew.CHESSLIST[i] = Integer.parseInt(chessString[i]);
+                                    }
+                                gameOprateView.resetChess();
                                 break;
                             case ConstentNew.TYPE_BET_MONEY: //押注时间
-
+                                gameOprateView.countDownTime(10, ConstentNew.TYPE_BET_MONEY);
+                                if (!ConstentNew.IS_BANKER)
+                                    gameOprateView.startBetMoney();
                                 break;
                             case ConstentNew.TYPE_CURRENT_STATUE: //当前游戏状态
 
                                 break;
                             case ConstentNew.TYPE_DEAL_CHESS: //发牌
-
+                                gameOprateView.countDownTime(10, ConstentNew.TYPE_DEAL_CHESS);
                                 break;
                             case ConstentNew.TYPE_DOWN_BANKER: //下庄
 
@@ -460,6 +468,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
                                 break;
                             case ConstentNew.TYPE_GET_RESULT: //结算
+                                gameOprateView.countDownTime(10, ConstentNew.TYPE_GET_RESULT);
                                 settleResult();
                                 break;
                             case ConstentNew.TYPE_NOTIFY_BANKER: //通知庄家进行选择
@@ -472,13 +481,13 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
                                 break;
                             case ConstentNew.TYPE_SHAKE_DICE: //摇色子
-
+                                gameOprateView.shakeDice(bean_message.chessPointOne, bean_message.chessPointTwo);
                                 break;
                             case ConstentNew.TYPE_UP_BANKER: //上庄
 
                                 break;
                             case ConstentNew.TYPE_WAIT_TIME: //等待时间
-
+                                gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_WAIT_TIME);
                                 break;
                             case ConstentNew.TYPE_SITE_DOWN: //玩儿家坐下
 

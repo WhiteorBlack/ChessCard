@@ -71,4 +71,8 @@
         <item name="android:windowExitAnimation">@anim/audi_left_out</item>
     </style>
 
+    <style name="popBtn">
+        <item name="android:layout_width">@dimen/dp30</item>
+    </style>
+
 </resources>

@@ -12,10 +12,11 @@ public class Bean_Message {
     public int betPoint; //下注的数量
     public int gamerPos; //玩儿家 位置
     public int chesscount; //牌的数量
-    public int diceNum;  //筛子的数目
-    public int diceNum1;  //筛子的数目
+    public int chessPointOne;  //筛子的数目
+    public int chessPointTwo;  //筛子的数目
     public int time; //时间数
     public String chessPoint;
+    public String chessList;
     public Bean_TableDetial gameStatue;
 
     public Bean_TableDetial.TableUser tableUser;
