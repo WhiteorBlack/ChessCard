@@ -11,4 +11,5 @@ public class BaseBean {
     public boolean status;
     public String msg;
     public String token;
+    public int amount;
 }

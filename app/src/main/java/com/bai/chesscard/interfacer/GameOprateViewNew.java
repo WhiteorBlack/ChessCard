@@ -165,4 +165,6 @@ public interface GameOprateViewNew {
      * 重置桌面数据
      */
     void resetTable();
+
+    void betMoney(int pos,int money);
 }

@@ -232,6 +232,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     private void initData() {
+        txtMoneyLeft.setText(ConstentNew.LEFTPOINT + "");
+        txtMoneyMid.setText(ConstentNew.MIDPOINT + "");
+        txtMoneyRight.setText(ConstentNew.RIGHTPOINT + "");
         txtMoney.setText(AppPrefrence.getAmount(context) + "");
         ConstentNew.TABLE_ID = getIntent().getStringExtra("tableId");
         ConstentNew.ROOM_ID = getIntent().getStringExtra("roomId");
@@ -954,6 +957,37 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         invisPoint();
         invisTablePoint();
         initBetCount();
+    }
+
+    @Override
+    public void betMoney(int pos, int money) {
+        switch (pos) {
+            case 2:
+                String moneyString = txtTotalLeft.getText().toString();
+                if (!TextUtils.isEmpty(moneyString)) {
+                    money += Integer.parseInt(moneyString);
+                    txtTotalLeft.setText(money + "");
+                    imgBgLeft.setVisibility(View.VISIBLE);
+                }
+                break;
+            case 3:
+                String moneyString1 = txtTotalLeft.getText().toString();
+                if (!TextUtils.isEmpty(moneyString1)) {
+                    money += Integer.parseInt(moneyString1);
+                    txtTotalMid.setText(money + "");
+                    imgBgMid.setVisibility(View.VISIBLE);
+                }
+                break;
+
+            case 4:
+                String moneyString2 = txtTotalLeft.getText().toString();
+                if (!TextUtils.isEmpty(moneyString2)) {
+                    money += Integer.parseInt(moneyString2);
+                    txtTotalRight.setText(money + "");
+                    imgBgRight.setVisibility(View.VISIBLE);
+                }
+                break;
+        }
     }
 
     /**
