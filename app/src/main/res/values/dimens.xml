@@ -45,4 +45,6 @@
     <dimen name="point_height">30dp</dimen>
     <dimen name="mutil_width">30dp</dimen>
     <dimen name="mutil_height">20dp</dimen>
+    <dimen name="chess_wide">30dp</dimen>
+    <dimen name="chess_height">45dp</dimen>
 </resources>

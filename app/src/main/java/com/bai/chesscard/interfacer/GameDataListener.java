@@ -30,4 +30,7 @@ public interface GameDataListener {
 
     void gameOutFail();
     void gameOutSuccess();
+
+    void getResultFail();
+    void getResultSuccess(String result);
 }

@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/img_chess"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp10"
+        android:layout_height="16dp"
         android:layout_marginRight="-1dp"
         android:layout_marginBottom="-5dp"
         android:background="@mipmap/game_chess" />

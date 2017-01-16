@@ -29,6 +29,9 @@ import java.util.Map;
  * Created by Administrator on 2016/11/9.
  */
 
+/**
+ * 系统提示三个玩儿家充值的窗口
+ */
 public class LackMoneyNotifyPop extends BasePopupwind {
     private View view;
     private TextView txtTitle;
@@ -52,7 +55,7 @@ public class LackMoneyNotifyPop extends BasePopupwind {
         txtContent = (TextView) view.findViewById(R.id.txt_content);
         edtMoney = (EditText) view.findViewById(R.id.edt_money);
         edtMoney.setText(ConstentNew.LEFTPOINT + "");
-        view.findViewById(R.id.img_add).setOnClickListener(this);
+        view.findViewById(R.id.btn_add).setOnClickListener(this);
         this.setContentView(view);
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
@@ -136,6 +139,7 @@ public class LackMoneyNotifyPop extends BasePopupwind {
                     Bundle bundle = new Bundle();
                     bundle.putInt("type", 2);
                     ConstentNew.GAMER_TABLE_MONEY += money;
+                    AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - money);
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
                     dismiss();

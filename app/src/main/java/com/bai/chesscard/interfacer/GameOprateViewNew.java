@@ -28,7 +28,9 @@ public interface GameOprateViewNew {
     /**
      * 摇色子
      */
-    void shakeDice(int one,int two);
+    void shakeDice(int one, int two);
+
+    void endDice();
 
     /**
      * 展示设置窗口
@@ -62,14 +64,18 @@ public interface GameOprateViewNew {
     void upTable(int pos);
 
     /**
-     * 庄家续庄
+     * 系统提示 庄家续庄
+     *
+     * @param time
      */
-    void renewMoneyBanker();
+    void renewMoneyBanker(int time);
 
     /**
      * 玩儿家续费
+     *
+     * @param time
      */
-    void renewMoneyGamer();
+    void renewMoneyGamer(int time);
 
     /**
      * 洗牌
@@ -130,6 +136,9 @@ public interface GameOprateViewNew {
 
     void showUserInfo(Bean_TableDetial.TableUser userInfo);
 
+    /**
+     * 玩儿家点击充值按钮
+     */
     void bankerCharge();
 
     void gamerCharge();
@@ -140,5 +149,20 @@ public interface GameOprateViewNew {
     void BankerNotify();
 
     void startBetMoney();
+
     void endBetMoeny();
+
+    void updateMoney(int pos, int money);
+
+    /**
+     * 玩儿家退出游戏
+     *
+     * @param pos
+     */
+    void gamerExit(int pos);
+
+    /**
+     * 重置桌面数据
+     */
+    void resetTable();
 }

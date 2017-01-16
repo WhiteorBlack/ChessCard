@@ -42,6 +42,7 @@ import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoActivity;
 import com.jph.takephoto.model.TResult;
 import com.tencent.TIMFriendshipManager;
+import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
 
 import java.io.File;
@@ -239,6 +240,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
     protected void onDestroy() {
         super.onDestroy();
         MessageEvent.getInstance().clear();
+        TIMManager.getInstance().logout();
     }
 
     @OnClick({R.id.fl_pre_room, R.id.fl_mid_room, R.id.fl_hig_room, R.id.img_start, R.id.img_user_photo, R.id.txt_help, R.id.txt_setting})

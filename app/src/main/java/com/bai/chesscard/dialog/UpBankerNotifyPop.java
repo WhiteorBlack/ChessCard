@@ -15,6 +15,7 @@ import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.Bean_SiteTable;
 import com.bai.chesscard.interfacer.PostCallBack;
+import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
@@ -31,6 +32,7 @@ import java.util.Map;
 public class UpBankerNotifyPop extends BasePopupwind {
     private View view;
     private EditText edtMoney;
+    private TextView txtTitle;
     private int money;
 
     public UpBankerNotifyPop(Context context) {
@@ -45,6 +47,7 @@ public class UpBankerNotifyPop extends BasePopupwind {
         view.findViewById(R.id.btn_cancel).setOnClickListener(this);
         edtMoney = (EditText) view.findViewById(R.id.edt_money);
         money = ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCOUNT;
+        txtTitle = (TextView) view.findViewById(R.id.txt_title);
         edtMoney.setText(money + "");
         view.findViewById(R.id.btn_add).setOnClickListener(this);
         this.setContentView(view);
@@ -52,6 +55,10 @@ public class UpBankerNotifyPop extends BasePopupwind {
         this.setFocusable(true);
         this.setOutsideTouchable(true);
         this.setAnimationStyle(R.style.audi_anim);
+    }
+
+    public void setTitle(String title) {
+        txtTitle.setText(title);
     }
 
     @Override
@@ -99,7 +106,8 @@ public class UpBankerNotifyPop extends BasePopupwind {
                 Bundle bundle = new Bundle();
                 if (siteTable.id > 0) {
                     bundle.putBoolean("result", true);
-                    bundle.putInt("mone", money);
+                    bundle.putInt("money", money);
+                    AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - money);
                     ConstentNew.IS_HAS_GAMER[0] = true;
                     ConstentNew.IS_BANKER = true;
                     ConstentNew.IS_GAMER = true;

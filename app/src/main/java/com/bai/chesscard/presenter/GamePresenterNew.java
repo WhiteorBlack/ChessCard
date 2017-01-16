@@ -15,6 +15,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -98,8 +99,8 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     /**
      * 用户投注
      */
-    public void betMoney() {
-        GameOprateData.getInstance(this).betMoney();
+    public void betMoney(int money) {
+        GameOprateData.getInstance(this).betMoney(money);
     }
 
     /**
@@ -249,6 +250,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     private int pos;
 
     public void settleResult() {
+        GameOprateData.getInstance(this).getResult();
         pos = ConstentNew.DICE_COUNT;
         for (int i = 0; i < 3; i++) {
             if (pos == 0)
@@ -275,7 +277,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     }
 
     public void startDice(final Activity context, final int one, final int two, int[] startPoint) {
-        final int[] endPoint = new int[]{(int) (Tools.getScreenWide(context) / 2), (int) (Tools.getScreenHeight(context) / 2)};
+        final int[] endPoint = new int[]{(int) (Tools.getScreenWide(context) / 2 - Tools.dip2px(context, 50)), (int) (Tools.getScreenHeight(context) / 2 - Tools.dip2px(context, 50))};
         final ImageView imgOne = new ImageView(context);
         final ImageView imgTwo = new ImageView(context);
         ViewGroup.LayoutParams params = new FrameLayout.LayoutParams(Tools.dip2px(context, 30), Tools.dip2px(context, 30));
@@ -324,16 +326,41 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                imgOne.setBackgroundResource(diceRes[one]);
-                imgTwo.setBackgroundResource(diceRes[two]);
+                imgOne.setBackgroundResource(diceRes[one - 1]);
+                imgTwo.setBackgroundResource(diceRes[two - 1]);
 
                 imgOne.setY(endPoint[1]);
-                imgOne.setX(endPoint[0] - Tools.dip2px(context, 15));
+                imgOne.setX(endPoint[0] - Tools.dip2px(context, 5));
 
                 imgTwo.setY(endPoint[1]);
-                imgTwo.setX(endPoint[0]);
+                imgTwo.setX(endPoint[0] + Tools.dip2px(context, 35));
                 imgOne.clearAnimation();
                 imgTwo.clearAnimation();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        imgOne.setVisibility(View.GONE);
+                        imgTwo.setVisibility(View.GONE);
+                    }
+                }, 1000);
+                Tools.debug("dice _count--" + ConstentNew.DICE_COUNT);
+                switch (ConstentNew.DICE_COUNT) {
+                    case 0:
+                        Tools.toastMsgCenter(context, "尾门开");
+                        break;
+                    case 1:
+                        Tools.toastMsgCenter(context, "庄家开");
+                        break;
+                    case 2:
+                        Tools.toastMsgCenter(context, "初门开");
+                        break;
+                    case 3:
+                        Tools.toastMsgCenter(context, "天门开");
+                        break;
+                    case 4:
+                        Tools.toastMsgCenter(context, "尾门开");
+                        break;
+                }
             }
 
             @Override
@@ -341,7 +368,10 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
             }
         });
+    }
 
+    public void endDice(Context context) {
+        createAnimLayout((Activity) context).removeAllViews();
     }
 
     /**
@@ -362,7 +392,15 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
     public void endCountTime(int type) {
         switch (type) {
-
+            case ConstentNew.TYPE_SHAKE_DICE:
+                gameOprateView.endDice();
+                break;
+            case ConstentNew.TYPE_BET_MONEY:
+                gameOprateView.endBetMoeny();
+                break;
+            case ConstentNew.TYPE_GET_RESULT:
+                gameOprateView.resetTable();
+                break;
         }
     }
 
@@ -425,6 +463,12 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 }
                                 gameOprateView.setTableInfo(bean_tableDetial);
                                 break;
+                            case ConstentNew.TYPE_GET_RESULT:
+                                gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betPoint);
+                                break;
+                            case ConstentNew.TYPE_NOTIFY_BANKER:
+                                gameOprateView.updateMoney(bean_message.gamerPos,bean_message.betPoint);
+                                break;
                         }
                     }
                 }
@@ -437,12 +481,12 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                         TIMGroupSystemElem elemText = (TIMGroupSystemElem) elem;
                         Tools.debug("SystemMessage" + new String(elemText.getUserData()));
                         Bean_Message bean_message = new Gson().fromJson(new String(elemText.getUserData()), Bean_Message.class);
-
+                        ConstentNew.GAMEROUND = bean_message.ver;
                         if (bean_message == null)
                             return;
                         switch (bean_message.type) {
                             case ConstentNew.TYPE_RESET_CHESS: //洗牌
-                                gameOprateView.countDownTime(10, ConstentNew.TYPE_RESET_CHESS);
+                                gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_RESET_CHESS);
                                 String[] chessString = bean_message.chessList.split(",");
                                 if (chessString != null && chessString.length > 0)
                                     for (int j = 0; j < chessString.length; j++) {
@@ -451,7 +495,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 gameOprateView.resetChess();
                                 break;
                             case ConstentNew.TYPE_BET_MONEY: //押注时间
-                                gameOprateView.countDownTime(10, ConstentNew.TYPE_BET_MONEY);
+                                gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_BET_MONEY);
                                 if (!ConstentNew.IS_BANKER)
                                     gameOprateView.startBetMoney();
                                 break;
@@ -459,29 +503,53 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
                                 break;
                             case ConstentNew.TYPE_DEAL_CHESS: //发牌
-                                gameOprateView.countDownTime(10, ConstentNew.TYPE_DEAL_CHESS);
+                                ConstentNew.CURRENTROUND = bean_message.round;
+                                gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_DEAL_CHESS);
+                                gameOprateView.dealChess(ConstentNew.DICE_COUNT);
                                 break;
                             case ConstentNew.TYPE_DOWN_BANKER: //下庄
 
                                 break;
                             case ConstentNew.TYPE_EXIT_GAME: //退出游戏
-
+                                gameOprateView.gamerExit(bean_message.gamerPos);
                                 break;
                             case ConstentNew.TYPE_GET_RESULT: //结算
-                                gameOprateView.countDownTime(10, ConstentNew.TYPE_GET_RESULT);
+                                gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_GET_RESULT);
                                 settleResult();
                                 break;
                             case ConstentNew.TYPE_NOTIFY_BANKER: //通知庄家进行选择
-
+                                gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_NOTIFY_BANKER);
+                                gameOprateView.BankerNotify();
                                 break;
                             case ConstentNew.TYPE_OPEN_CHESS: //开牌
+                                gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_OPEN_CHESS);
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("bankerOne", getChessPoint(bean_message.p1)[0]);
+                                bundle.putInt("bankerTwo", getChessPoint(bean_message.p1)[1]);
 
+                                bundle.putInt("leftOne", getChessPoint(bean_message.p2)[0]);
+                                bundle.putInt("leftTwo", getChessPoint(bean_message.p2)[1]);
+
+                                bundle.putInt("bottomOne", getChessPoint(bean_message.p3)[0]);
+                                bundle.putInt("bottomTwo", getChessPoint(bean_message.p3)[1]);
+
+                                bundle.putInt("rightOne", getChessPoint(bean_message.p4)[0]);
+                                bundle.putInt("rightTwo", getChessPoint(bean_message.p4)[1]);
+                                gameOprateView.openChess(bundle);
                                 break;
                             case ConstentNew.TYPE_RENEW_MONEY: //续费
-
+                                gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_RENEW_MONEY);
+                                if (ConstentNew.IS_BANKER)
+                                    gameOprateView.renewMoneyBanker(bean_message.time);
+                                if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER)
+                                    gameOprateView.renewMoneyGamer(bean_message.time);
                                 break;
                             case ConstentNew.TYPE_SHAKE_DICE: //摇色子
+                                ConstentNew.DICE_COUNT = bean_message.chessPointOne + bean_message.chessPointTwo;
+                                if (ConstentNew.DICE_COUNT > 4)
+                                    ConstentNew.DICE_COUNT = ConstentNew.DICE_COUNT % 4;
                                 gameOprateView.shakeDice(bean_message.chessPointOne, bean_message.chessPointTwo);
+                                gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_SHAKE_DICE);
                                 break;
                             case ConstentNew.TYPE_UP_BANKER: //上庄
 
@@ -550,6 +618,36 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
     @Override
     public void gameOutSuccess() {
+    }
+
+    @Override
+    public void getResultFail() {
+
+    }
+
+    @Override
+    public void getResultSuccess(String result) {
+        BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
+        if (baseBean.id > 0) {
+            if (ConstentNew.IS_GAMER) {
+                ConstentNew.GAMER_TABLE_MONEY += Integer.parseInt(baseBean.msg);
+                Bean_Message message = new Bean_Message();
+                message.type = ConstentNew.TYPE_GET_RESULT;
+                message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
+                message.gamerPos = ConstentNew.USERPOS;
+                sendMessage(message);
+            } else gameOprateView.updateMoney(0, Integer.parseInt(baseBean.msg));
+        }
+    }
+
+    private int[] getChessPoint(String point) {
+        int[] pointInt = new int[]{0, 0};
+        if (!TextUtils.isEmpty(point)) {
+            String[] pointString = point.split(",");
+            pointInt[0] = Integer.parseInt(pointString[0]);
+            pointInt[1] = Integer.parseInt(pointString[1]);
+        }
+        return pointInt;
     }
 
 }

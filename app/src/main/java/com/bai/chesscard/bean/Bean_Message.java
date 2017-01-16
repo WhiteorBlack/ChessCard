@@ -17,6 +17,12 @@ public class Bean_Message {
     public int time; //时间数
     public String chessPoint;
     public String chessList;
+    public String p1;
+    public String p2;
+    public String p3;
+    public String p4;
+    public int round; //游戏轮数
+    public int ver;
     public Bean_TableDetial gameStatue;
 
     public Bean_TableDetial.TableUser tableUser;

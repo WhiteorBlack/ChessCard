@@ -28,8 +28,8 @@ public class GameOprateData {
     public void getInGame() {
         Map<String, String> params = new HashMap<>();
         params.put("table_id", ConstentNew.TABLE_ID);
-        params.put("TOKEN",CommonUntilities.TOKEN);
-        PostTools.postData(CommonUntilities.MAIN_URL+"TableDetial", params, new PostCallBack() {
+        params.put("TOKEN", CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL + "TableDetial", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -42,11 +42,14 @@ public class GameOprateData {
         });
     }
 
-    public void gameOut(){
+    /**
+     * 退出游戏
+     */
+    public void gameOut() {
         Map<String, String> params = new HashMap<>();
         params.put("table_id", ConstentNew.TABLE_ID);
-        params.put("TOKEN",CommonUntilities.TOKEN);
-        PostTools.postData(CommonUntilities.MAIN_URL+"LevelTable", params, new PostCallBack() {
+        params.put("TOKEN", CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL + "LevelTable", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
                 super.onResponse(response);
@@ -59,18 +62,84 @@ public class GameOprateData {
         });
     }
 
-    public void betMoney() {
-        Map<String, String> params = new HashMap<>();
-
-        PostTools.postData(CommonUntilities.MAIN_URL, params, new PostCallBack() {
-            @Override
-            public void onResponse(String response) {
-                super.onResponse(response);
-                if (TextUtils.isEmpty(response)) {
-                    gameDataListener.betMoneyFial();
-                    return;
+    /**
+     * 下注
+     *
+     * @param money
+     */
+    public void betMoney(int money) {
+        if (ConstentNew.IS_GAMER) {
+            Map<String, String> params = new HashMap<>();
+            params.put("table_id", ConstentNew.TABLE_ID);
+            params.put("token", CommonUntilities.TOKEN);
+            params.put("seat", ConstentNew.USERPOS + "");
+            params.put("bet", money + "");
+            params.put("ver", ConstentNew.GAMEROUND + "");
+            PostTools.postData(CommonUntilities.MAIN_URL + "UserBetting", params, new PostCallBack() {
+                @Override
+                public void onResponse(String response) {
+                    super.onResponse(response);
+                    if (TextUtils.isEmpty(response)) {
+                        gameDataListener.betMoneyFial();
+                        return;
+                    }
+                    gameDataListener.betMoneySuccess(response);
                 }
-            }
-        });
+            });
+        } else {
+            Map<String, String> params = new HashMap<>();
+            params.put("table_id", ConstentNew.TABLE_ID);
+            params.put("token", CommonUntilities.TOKEN);
+            params.put("seat", ConstentNew.USERPOS + "");
+            params.put("bet", money + "");
+            params.put("ver", ConstentNew.GAMEROUND + "");
+            PostTools.postData(CommonUntilities.MAIN_URL + "LookUserBetting", params, new PostCallBack() {
+                @Override
+                public void onResponse(String response) {
+                    super.onResponse(response);
+                    if (TextUtils.isEmpty(response)) {
+                        gameDataListener.betMoneyFial();
+                        return;
+                    }
+                    gameDataListener.betMoneySuccess(response);
+                }
+            });
+        }
+    }
+
+    public void getResult() {
+        if (ConstentNew.IS_GAMER) {
+            Map<String, String> params = new HashMap<>();
+            params.put("table_id", ConstentNew.TABLE_ID);
+            params.put("token", CommonUntilities.TOKEN);
+            params.put("ver", ConstentNew.GAMEROUND + "");
+            PostTools.postData(CommonUntilities.MAIN_URL + "GetUserSellete", params, new PostCallBack() {
+                @Override
+                public void onResponse(String response) {
+                    super.onResponse(response);
+                    if (TextUtils.isEmpty(response)) {
+                        gameDataListener.betMoneyFial();
+                        return;
+                    }
+                    gameDataListener.betMoneySuccess(response);
+                }
+            });
+        }else {
+            Map<String, String> params = new HashMap<>();
+            params.put("table_id", ConstentNew.TABLE_ID);
+            params.put("token", CommonUntilities.TOKEN);
+            params.put("ver", ConstentNew.GAMEROUND + "");
+            PostTools.postData(CommonUntilities.MAIN_URL + "GetLookUserSellete", params, new PostCallBack() {
+                @Override
+                public void onResponse(String response) {
+                    super.onResponse(response);
+                    if (TextUtils.isEmpty(response)) {
+                        gameDataListener.betMoneyFial();
+                        return;
+                    }
+                    gameDataListener.betMoneySuccess(response);
+                }
+            });
+        }
     }
 }

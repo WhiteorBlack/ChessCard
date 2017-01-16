@@ -18,7 +18,6 @@ import com.bai.chesscard.bean.Bean_SiteTable;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
-import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
 import com.google.gson.Gson;
@@ -33,23 +32,21 @@ import java.util.Map;
 /**
  * 系统提示庄家续庄的窗口
  */
-public class LackBankerNotifyPop extends BasePopupwind {
+public class ChargeBankerNotifyPop extends BasePopupwind {
     private View view;
     private TextView txtTitle;
     private TextView txtContent;
     private EditText edtMoney;
-    private int countTime = 10;
     private int money = 0;
-    private boolean isCharge = false;
 
-    public LackBankerNotifyPop(Context context) {
+    public ChargeBankerNotifyPop(Context context) {
         super(context);
         initView();
     }
 
     private void initView() {
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.lack_banker_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.charge_money_pop, null);
         view.findViewById(R.id.img_confirm).setOnClickListener(this);
         view.findViewById(R.id.img_exit).setOnClickListener(this);
         txtTitle = (TextView) view.findViewById(R.id.txt_title);
@@ -73,34 +70,13 @@ public class LackBankerNotifyPop extends BasePopupwind {
         txtTitle.setText(content);
     }
 
+    public void setContent(int content) {
+        txtContent.setText(content);
+    }
+
     @Override
     public void showPop(View parent) {
         super.showPop(parent);
-        startCount();
-    }
-
-    public void setCountTime(int time) {
-        this.countTime = time;
-    }
-
-    private void startCount() {
-        new CountDownTimer(countTime * 1000, 1000) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                if (isCharge)
-                    cancel();
-                txtContent.setText("是否续庄\n" + millisUntilFinished / 1000 + "秒后未续系统将您下庄");
-            }
-
-            @Override
-            public void onFinish() {
-                if (!isCharge)
-                    downTable();
-
-            }
-        }.start();
-
     }
 
     @Override
@@ -113,13 +89,11 @@ public class LackBankerNotifyPop extends BasePopupwind {
                     Tools.toastMsgCenter(context, "请输入金额");
                     return;
                 }
-                isCharge = true;
                 upBanker(Integer.parseInt(moneyString));
 
                 break;
             case R.id.img_exit:
-                isCharge = true;
-                downTable();
+                dismiss();
                 break;
             case R.id.img_add:
                 if (AppPrefrence.getAmount(context) < ConstentNew.BANKER_LIMIT_MONEY) {
@@ -152,6 +126,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
                     bundle.putInt("type", 1);
                     ConstentNew.GAMER_TABLE_MONEY += money;
                     AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - money);
+                    bundle.putInt("money", ConstentNew.GAMER_TABLE_MONEY);
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
                     dismiss();
@@ -159,28 +134,6 @@ public class LackBankerNotifyPop extends BasePopupwind {
                     Tools.toastMsgCenter(context, siteTable.msg);
                 }
 
-            }
-        });
-    }
-
-    private void downTable() {
-        Map<String, String> params = new HashMap<>();
-        params.put("table_id", ConstentNew.TABLE_ID);
-        params.put("token", CommonUntilities.TOKEN);
-        PostTools.postData(CommonUntilities.MAIN_URL + "UserSiteUp", params, new PostCallBack() {
-            @Override
-            public void onResponse(String response) {
-                super.onResponse(response);
-                if (TextUtils.isEmpty(response))
-                    return;
-                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
-                if (baseBean.id > 0) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("type", 2);
-                    if (popInterfacer != null)
-                        popInterfacer.OnConfirm(flag, bundle);
-                    dismiss();
-                } else Tools.toastMsgCenter(context, baseBean.msg);
             }
         });
     }

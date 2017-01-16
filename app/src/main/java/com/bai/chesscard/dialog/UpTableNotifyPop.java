@@ -14,6 +14,7 @@ import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.Bean_SiteTable;
 import com.bai.chesscard.interfacer.PostCallBack;
+import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
@@ -109,7 +110,8 @@ public class UpTableNotifyPop extends BasePopupwind {
                 Bundle bundle = new Bundle();
                 if (siteTable.id > 0) {
                     bundle.putBoolean("result", true);
-                    bundle.putInt("mone", money);
+                    bundle.putInt("money", money);
+                    AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - money);
                     ConstentNew.IS_HAS_GAMER[pos-1] = true;
                     ConstentNew.IS_BANKER = false;
                     ConstentNew.IS_GAMER = true;

@@ -38,32 +38,37 @@ public class ConstentNew {
     /**
      * 记录当前游戏轮数
      */
-    public static int GAMEROUND=0;
+    public static int CURRENTROUND = 1;
+    /**
+     * 当前游戏的轮数标识,用于结算使用
+     */
+    public static int GAMEROUND = 0;
 
-    public static int BANKERCOUNT=1;
+    public static int BANKERCOUNT = 1;
     /**
      * 三个筹码的数额
      */
-    public static int LEFTPOINT=0;
-    public static int MIDPOINT=0;
-    public static int RIGHTPOINT=0;
+    public static int LEFTPOINT = 0;
+    public static int MIDPOINT = 0;
+    public static int RIGHTPOINT = 0;
     /**
      * 庄家的点数
      */
     public static int BANKER_POINT;
 
-    public static int GAMER_TABLE_MONEY=0;
+    public static int GAMER_TABLE_MONEY = 0;
 
-    public static int USERPOS=-1;
-    public static int BETPOS=-1;
-    public static int BANKERCHARGECOUNT=0;
+    public static int USERPOS = -1;
+    public static int BETPOS = -1;
+    public static int BANKERCHARGECOUNT = 0;
+
+    public static int DICE_COUNT = 0;
+    public static boolean[] SETTLE_RESULT = new boolean[]{false, false, true, false};
     /**
      * 庄家是否为对子
      */
-    public static int DICE_COUNT=0;
-    public static boolean[] SETTLE_RESULT = new boolean[]{false, false, true, false};
     public static boolean IS_BANKER_MUTIL = false;
-    public static int[] CHESSLIST=new int[36];
+    public static int[] CHESSLIST = new int[36];
     /**
      * 坐庄最低限额
      */
@@ -139,14 +144,16 @@ public class ConstentNew {
     public static final int SETTING_POP = 0;
     public static final int PERSONAL_POP = 1;
     public static final int DISCONTECT_POP = 2;
-    public static final int USERINFO_POP=3;
-    public static final int UPBANKER_POP=4;
-    public static final int UPTABLE_POP=5;
-    public static final int GAMEREXITPOP=6;
-    public static final int BANKEREXITPOP=7;
-    public static final int EXITGAMER=8;
-    public static final int AUDIENCEPOP=9;
-    public static final int LACKBANKERPOP=10;
-    public static final int LACKGAMERPOP=11;
-    public static final int BANKERNOTIFYPOP=12;
+    public static final int USERINFO_POP = 3;
+    public static final int UPBANKER_POP = 4;
+    public static final int UPTABLE_POP = 5;
+    public static final int GAMEREXITPOP = 6;
+    public static final int BANKEREXITPOP = 7;
+    public static final int EXITGAMER = 8;
+    public static final int AUDIENCEPOP = 9;
+    public static final int LACKBANKERPOP = 10;
+    public static final int LACKGAMERPOP = 11;
+    public static final int BANKERNOTIFYPOP = 12;
+    public static final int BANKERCHARGEMONEY=13;
+    public static final int GAMERCHARGEMONEY=14;
 }

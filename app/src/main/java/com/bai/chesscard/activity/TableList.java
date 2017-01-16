@@ -100,7 +100,7 @@ public class TableList extends BaseActivity {
     private void getTableData(String id) {
 
         Map<String, String> params = new HashMap<>();
-        params.put("house_id", id);
+        params.put("houseid", id);
         params.put("user_id", AppPrefrence.getUserNo(context));
         PostTools.postData(CommonUntilities.MAIN_URL + "TableList", params, new PostCallBack() {
             @Override

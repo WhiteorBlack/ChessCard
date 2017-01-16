@@ -58,7 +58,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/dp3"
-                        android:background="@mipmap/text_start" />
+                        android:background="@mipmap/text_start"
+                        android:visibility="gone" />
+
+                    <com.bai.chesscard.widget.StrokeTextView
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="@dimen/dp3"
+                        android:id="@+id/txt_time_statue"
+                        android:textSize="16sp"
+                        android:textColor="#945127"
+                        app:innnerColor="#945127"
+                        app:outerColor="@color/settingYellow"
+                        android:textStyle="bold"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <FrameLayout
@@ -75,13 +87,13 @@
 
                         <ImageView
                             android:id="@+id/img_top_left"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_width="@dimen/chess_wide"
+                            android:layout_height="@dimen/chess_height" />
 
                         <ImageView
                             android:id="@+id/img_top_right"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_width="@dimen/chess_wide"
+                            android:layout_height="@dimen/chess_height" />
                     </LinearLayout>
 
 
@@ -128,13 +140,13 @@
 
                     <ImageView
                         android:id="@+id/img_chess_left_one"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="@dimen/chess_wide"
+                        android:layout_height="@dimen/chess_height" />
 
                     <ImageView
                         android:id="@+id/img_chess_left_two"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="@dimen/chess_wide"
+                        android:layout_height="@dimen/chess_height" />
                 </LinearLayout>
 
                 <FrameLayout
@@ -193,13 +205,13 @@
 
                     <ImageView
                         android:id="@+id/img_chess_mid_one"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="@dimen/chess_wide"
+                        android:layout_height="@dimen/chess_height" />
 
                     <ImageView
                         android:id="@+id/img_chess_mid_two"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="@dimen/chess_wide"
+                        android:layout_height="@dimen/chess_height" />
                 </LinearLayout>
 
                 <FrameLayout
@@ -257,13 +269,13 @@
 
                     <ImageView
                         android:id="@+id/img_chess_right_one"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="@dimen/chess_wide"
+                        android:layout_height="@dimen/chess_height" />
 
                     <ImageView
                         android:id="@+id/img_chess_right_two"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="@dimen/chess_wide"
+                        android:layout_height="@dimen/chess_height" />
                 </LinearLayout>
 
                 <FrameLayout
@@ -302,8 +314,7 @@
             android:layout_width="@dimen/dp50"
             android:layout_height="@dimen/dp44"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/ll_table"
-            >
+            android:layout_toLeftOf="@id/ll_table">
 
             <FrameLayout
                 android:id="@+id/fl_head_left"
@@ -318,8 +329,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:background="@mipmap/site_empty"
-                    android:layout_margin="2dp" />
+                    android:layout_margin="2dp"
+                    android:background="@mipmap/site_empty" />
 
                 <TextView
                     android:id="@+id/txt_left_money"
@@ -369,7 +380,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_margin="2dp" />
+                    android:layout_margin="2dp"
+                    android:background="@mipmap/site_empty" />
 
                 <TextView
                     android:id="@+id/txt_mid_money"
@@ -404,8 +416,7 @@
             android:layout_width="@dimen/dp50"
             android:layout_height="@dimen/dp50"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/ll_table"
-            >
+            android:layout_toRightOf="@id/ll_table">
 
             <FrameLayout
                 android:id="@+id/fl_head_right"
@@ -420,7 +431,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_margin="2dp" />
+                    android:layout_margin="2dp"
+                    android:background="@mipmap/site_empty" />
 
                 <TextView
                     android:id="@+id/txt_right_money"
@@ -470,7 +482,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_margin="2dp" />
+                    android:layout_margin="2dp"
+                    android:background="@mipmap/site_empty" />
 
                 <TextView
                     android:id="@+id/txt_banker_money"
