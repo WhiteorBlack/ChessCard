@@ -53,7 +53,6 @@ public class GamerExitNotifyPop extends BasePopupwind {
         txtContent.setText(notify);
     }
 
-
     @Override
     public void onClick(View v) {
         super.onClick(v);
@@ -61,7 +60,6 @@ public class GamerExitNotifyPop extends BasePopupwind {
             case R.id.img_cancle:
                 //下桌
                 downTable();
-
                 break;
             case R.id.btn_confirm:
                 //直接退出游戏

@@ -46,7 +46,7 @@ public class UpBankerNotifyPop extends BasePopupwind {
         view.findViewById(R.id.btn_up_banker).setOnClickListener(this);
         view.findViewById(R.id.btn_cancel).setOnClickListener(this);
         edtMoney = (EditText) view.findViewById(R.id.edt_money);
-        money = ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCOUNT;
+        money = ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCHARGECOUNT;
         txtTitle = (TextView) view.findViewById(R.id.txt_title);
         edtMoney.setText(money + "");
         view.findViewById(R.id.btn_add).setOnClickListener(this);
@@ -71,8 +71,8 @@ public class UpBankerNotifyPop extends BasePopupwind {
                     Tools.toastMsgCenter(context, "请输入金额");
                     return;
                 }
-                if (Integer.parseInt(moneyString) < ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCOUNT) {
-                    Tools.toastMsgCenter(context, "坐庄金额必须大于" + ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCOUNT);
+                if (Integer.parseInt(moneyString) < ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCHARGECOUNT) {
+                    Tools.toastMsgCenter(context, "坐庄金额必须大于" + ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCHARGECOUNT);
                     return;
                 }
                 money = Integer.parseInt(moneyString);
@@ -84,6 +84,10 @@ public class UpBankerNotifyPop extends BasePopupwind {
                 dismiss();
                 break;
             case R.id.btn_add:
+                if (AppPrefrence.getAmount(context) < ConstentNew.BANKER_LIMIT_MONEY) {
+                    Tools.toastMsgCenter(context, "账户余额不足");
+                    return;
+                }
                 money += ConstentNew.BANKER_LIMIT_MONEY;
                 edtMoney.setText(money + "");
                 break;
@@ -108,6 +112,7 @@ public class UpBankerNotifyPop extends BasePopupwind {
                     bundle.putBoolean("result", true);
                     bundle.putInt("money", money);
                     AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - money);
+                    ConstentNew.GAMER_TABLE_MONEY=money;
                     ConstentNew.IS_HAS_GAMER[0] = true;
                     ConstentNew.IS_BANKER = true;
                     ConstentNew.IS_GAMER = true;

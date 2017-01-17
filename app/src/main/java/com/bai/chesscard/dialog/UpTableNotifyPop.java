@@ -78,7 +78,7 @@ public class UpTableNotifyPop extends BasePopupwind {
                 dismiss();
                 break;
             case R.id.btn_add:
-                money += ConstentNew.BANKER_LIMIT_MONEY;
+                money += ConstentNew.LEFTPOINT;
                 edtMoney.setText(money + "");
                 break;
         }
@@ -111,6 +111,7 @@ public class UpTableNotifyPop extends BasePopupwind {
                 if (siteTable.id > 0) {
                     bundle.putBoolean("result", true);
                     bundle.putInt("money", money);
+                    ConstentNew.GAMER_TABLE_MONEY=money;
                     AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - money);
                     ConstentNew.IS_HAS_GAMER[pos-1] = true;
                     ConstentNew.IS_BANKER = false;

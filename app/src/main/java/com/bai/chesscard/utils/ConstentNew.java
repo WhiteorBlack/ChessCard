@@ -60,7 +60,7 @@ public class ConstentNew {
 
     public static int USERPOS = -1;
     public static int BETPOS = -1;
-    public static int BANKERCHARGECOUNT = 0;
+    public static int BANKERCHARGECOUNT = 1;
 
     public static int DICE_COUNT = 0;
     public static boolean[] SETTLE_RESULT = new boolean[]{false, false, true, false};
@@ -156,4 +156,5 @@ public class ConstentNew {
     public static final int BANKERNOTIFYPOP = 12;
     public static final int BANKERCHARGEMONEY=13;
     public static final int GAMERCHARGEMONEY=14;
+    public static final int KICKOUTPOP=15;
 }

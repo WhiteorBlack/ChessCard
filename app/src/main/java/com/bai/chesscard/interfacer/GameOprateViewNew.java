@@ -3,6 +3,7 @@ package com.bai.chesscard.interfacer;
 import android.os.Bundle;
 
 import com.bai.chesscard.bean.Bean_ChessList;
+import com.bai.chesscard.bean.Bean_Message;
 import com.bai.chesscard.bean.Bean_TableDetial;
 
 import java.util.List;
@@ -166,5 +167,9 @@ public interface GameOprateViewNew {
      */
     void resetTable();
 
-    void betMoney(int pos,int money);
+    void betMoney(int pos, int money);
+
+    void setUserInfo(Bean_Message message);
+
+    void kickOut();
 }
