@@ -63,7 +63,7 @@ public class ConstentNew {
     public static int BANKERCHARGECOUNT = 1;
 
     public static int DICE_COUNT = 0;
-    public static boolean[] SETTLE_RESULT = new boolean[]{false, false, true, false};
+    public static boolean[] SETTLE_RESULT = new boolean[]{false, false, false, false};
     /**
      * 庄家是否为对子
      */
@@ -140,6 +140,11 @@ public class ConstentNew {
      * 玩儿家坐下
      */
     public static final int TYPE_SITE_DOWN = 13;
+
+    /**
+     * 交換位置
+     */
+    public static final int EXCHANGE_POS=14;
 
     public static final int SETTING_POP = 0;
     public static final int PERSONAL_POP = 1;

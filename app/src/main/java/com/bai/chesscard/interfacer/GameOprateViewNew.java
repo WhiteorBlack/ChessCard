@@ -172,4 +172,6 @@ public interface GameOprateViewNew {
     void setUserInfo(Bean_Message message);
 
     void kickOut();
+
+    void setUserMoney(int pos, Bean_TableDetial.TableUser user);
 }

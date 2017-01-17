@@ -254,27 +254,30 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     private int pos;
 
     public void settleResult() {
-        GameOprateData.getInstance(this).getResult();
+        if (!ConstentNew.IS_GAMER)
+            GameOprateData.getInstance(this).getResult();
         pos = ConstentNew.DICE_COUNT;
-        for (int i = 0; i < 4; i++) {
+        if (pos>3)
+            pos=3;
+        for (int i = 0; i < 3; i++) {
             if (pos == 0)
                 pos = 1;
-            if (!ConstentNew.SETTLE_RESULT[pos - 1]) {
-                gameOprateView.settleResult(pos, ConstentNew.SETTLE_RESULT[pos - 1]);
+            if (!ConstentNew.SETTLE_RESULT[pos]) {
+                gameOprateView.settleResult(pos, ConstentNew.SETTLE_RESULT[pos]);
             }
             pos++;
-            if (pos > 4)
+            if (pos > 3)
                 pos = 1;
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             if (pos == 0)
                 pos = 1;
-            if (ConstentNew.SETTLE_RESULT[pos - 1]) {
-                gameOprateView.settleResult(pos, ConstentNew.SETTLE_RESULT[pos - 1]);
+            if (ConstentNew.SETTLE_RESULT[pos]) {
+                gameOprateView.settleResult(pos, ConstentNew.SETTLE_RESULT[pos]);
             }
             pos++;
-            if (pos > 4)
+            if (pos > 3)
                 pos = 1;
         }
 
@@ -347,7 +350,6 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                         imgTwo.setVisibility(View.GONE);
                     }
                 }, 1000);
-                Tools.debug("dice _count--" + ConstentNew.DICE_COUNT);
                 switch (ConstentNew.DICE_COUNT) {
                     case 0:
                         Tools.toastMsgCenter(context, "尾门开");
@@ -475,8 +477,10 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betPoint);
                                 break;
                             case ConstentNew.TYPE_BET_MONEY:
+                                //更新玩兒傢的桌面金幣書和賬號數目
                                 gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betPoint);
-                                gameOprateView.betMoney(bean_message.gamerPos, bean_message.betPoint);
+                                //更新桌面投注的狀態
+                                gameOprateView.betMoney(bean_message.gamerPos, bean_message.betNum);
                                 break;
                         }
                     }
@@ -489,7 +493,11 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                     if (elemType == TIMElemType.GroupSystem) {
                         TIMGroupSystemElem elemText = (TIMGroupSystemElem) elem;
                         Tools.debug("SystemMessage" + new String(elemText.getUserData()));
-                        Bean_Message bean_message = new Gson().fromJson(new String(elemText.getUserData()), Bean_Message.class);
+                        Bean_Message bean_message = null;
+                        try {
+                            bean_message = new Gson().fromJson(new String(elemText.getUserData()), Bean_Message.class);
+                        } catch (Exception e) {
+                        }
 
                         if (bean_message == null)
                             return;
@@ -531,10 +539,16 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                             case ConstentNew.TYPE_GET_RESULT: //结算
                                 gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_GET_RESULT);
                                 settleResult();
+                                gameOprateView.setUserMoney(1, bean_message.firstuser);
+                                gameOprateView.setUserMoney(2, bean_message.seconduser);
+                                gameOprateView.setUserMoney(3, bean_message.thirduser);
+                                gameOprateView.setUserMoney(4, bean_message.fouruser);
                                 break;
                             case ConstentNew.TYPE_NOTIFY_BANKER: //通知庄家进行选择
+                                if (ConstentNew.IS_BANKER)
+                                    gameOprateView.BankerNotify();
                                 gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_NOTIFY_BANKER);
-                                gameOprateView.BankerNotify();
+
                                 break;
                             case ConstentNew.TYPE_OPEN_CHESS: //开牌
                                 ConstentNew.GAMEROUND = bean_message.ver;
@@ -555,16 +569,16 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 break;
                             case ConstentNew.TYPE_RENEW_MONEY: //续费
                                 gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_RENEW_MONEY);
-                                if (ConstentNew.IS_BANKER) {
+                                if (ConstentNew.IS_BANKER&&TextUtils.equals(ConstentNew.USER_ID,bean_message.userId)) {
                                     gameOprateView.renewMoneyBanker(bean_message.time);
-                                    ConstentNew.BANKERCHARGECOUNT=bean_message.seatnumber;
+                                    ConstentNew.BANKERCHARGECOUNT = bean_message.seatnumber;
                                 }
-                                if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER)
+                                if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER&&TextUtils.equals(ConstentNew.USER_ID,bean_message.userId))
                                     gameOprateView.renewMoneyGamer(bean_message.time);
                                 break;
                             case ConstentNew.TYPE_SHAKE_DICE: //摇色子
                                 ConstentNew.DICE_COUNT = bean_message.chessPointOne + bean_message.chessPointTwo;
-                                if (ConstentNew.DICE_COUNT > 4)
+                                if (ConstentNew.DICE_COUNT > 3)
                                     ConstentNew.DICE_COUNT = ConstentNew.DICE_COUNT % 4;
                                 gameOprateView.shakeDice(bean_message.chessPointOne, bean_message.chessPointTwo);
                                 gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_SHAKE_DICE);
@@ -577,6 +591,13 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 break;
                             case ConstentNew.TYPE_SITE_DOWN: //玩儿家坐下
 
+                                break;
+                            case ConstentNew.EXCHANGE_POS:
+                                bean_tableDetial.firstuser=bean_message.firstuser;
+                                bean_tableDetial.seconduser=bean_message.seconduser;
+                                bean_tableDetial.thirduser=bean_message.thirduser;
+                                bean_tableDetial.fouruser=bean_message.fouruser;
+                                gameOprateView.setTableInfo(bean_tableDetial);
                                 break;
                         }
                     }
@@ -628,18 +649,20 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     public void betMoneySuccess(String result) {
         BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
         if (baseBean.id > 0) {
+
             Bean_Message message = new Bean_Message();
-            message.gamerPos = ConstentNew.USERPOS;
             message.type = ConstentNew.TYPE_BET_MONEY;
-            message.betPoint = baseBean.amount;
-            sendMessage(message);
+            message.gamerPos = ConstentNew.USERPOS;
+            message.betNum = baseBean.totalpoint;
             if (ConstentNew.IS_GAMER) {
                 ConstentNew.GAMER_TABLE_MONEY -= baseBean.amount;
                 gameOprateView.updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
+                message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
+                sendMessage(message);
             } else {
                 gameOprateView.updateMoney(0, -baseBean.amount);
             }
-            gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.amount);
+            gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
         }
     }
 
@@ -662,12 +685,13 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
         if (baseBean.id > 0) {
             if (ConstentNew.IS_GAMER) {
-                ConstentNew.GAMER_TABLE_MONEY += Integer.parseInt(baseBean.msg);
-                Bean_Message message = new Bean_Message();
-                message.type = ConstentNew.TYPE_GET_RESULT;
-                message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
-                message.gamerPos = ConstentNew.USERPOS;
-                sendMessage(message);
+//                ConstentNew.GAMER_TABLE_MONEY = Integer.parseInt(baseBean.msg);
+//                Bean_Message message = new Bean_Message();
+//                message.type = ConstentNew.TYPE_GET_RESULT;
+//                message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
+//                message.gamerPos = ConstentNew.USERPOS;
+//                gameOprateView.updateMoney(ConstentNew.USERPOS,ConstentNew.GAMER_TABLE_MONEY);
+//                sendMessage(message);
             } else gameOprateView.updateMoney(0, Integer.parseInt(baseBean.msg));
         }
     }

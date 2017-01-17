@@ -137,6 +137,7 @@ public class TableList extends BaseActivity {
             public void onItemClickListener(View view, final int position) {
                 ChessCardApplication.getInstance().playBtnSound();
                 ConstentNew.GROUP_ID=tabList.get(position).groupname;
+                ConstentNew.TABLE_ID=tabList.get(position).id;
                 TIMGroupManager.getInstance().applyJoinGroup(tabList.get(position).groupname, "", new TIMCallBack() {
                     @Override
                     public void onError(int i, String s) {

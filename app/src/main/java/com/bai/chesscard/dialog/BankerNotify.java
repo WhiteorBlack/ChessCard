@@ -81,8 +81,8 @@ public class BankerNotify extends BasePopupwind {
                     bundle.putInt("type", type);
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
-                    dismiss();
                 }
+                dismiss();
 
             }
         });

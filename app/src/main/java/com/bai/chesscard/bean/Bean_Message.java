@@ -1,5 +1,7 @@
 package com.bai.chesscard.bean;
 
+import com.bai.chesscard.utils.Constent;
+
 /**
  * Created by Administrator on 2016/12/8.
  */
@@ -26,6 +28,11 @@ public class Bean_Message {
     public int ver;
     public Bean_TableDetial gameStatue;
     public int seatnumber;
+
+    public Bean_TableDetial.TableUser firstuser;
+    public Bean_TableDetial.TableUser seconduser;
+    public Bean_TableDetial.TableUser thirduser;
+    public Bean_TableDetial.TableUser fouruser;
 
     public Bean_TableDetial.TableUser tableUser;
 

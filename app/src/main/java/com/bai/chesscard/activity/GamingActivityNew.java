@@ -237,6 +237,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         txtMoneyLeft.setText(ConstentNew.LEFTPOINT + "");
         txtMoneyMid.setText(ConstentNew.MIDPOINT + "");
         txtMoneyRight.setText(ConstentNew.RIGHTPOINT + "");
+        initUserData();
         txtMoney.setText(AppPrefrence.getAmount(context) + "");
         ConstentNew.TABLE_ID = getIntent().getStringExtra("tableId");
         ConstentNew.ROOM_ID = getIntent().getStringExtra("roomId");
@@ -248,6 +249,19 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         invisMutil();
         initBetCount();
         invisTabelMoney(-1);
+        endBetMoeny();
+    }
+
+    private void initUserData() {
+        ConstentNew.IS_BANKER = false;
+        ConstentNew.IS_GAMER = false;
+        ConstentNew.IS_HAS_GAMER[0] = false;
+        ConstentNew.IS_HAS_GAMER[1] = false;
+        ConstentNew.IS_HAS_GAMER[1] = false;
+        ConstentNew.IS_HAS_GAMER[1] = false;
+        ConstentNew.BANKERCHARGECOUNT = 1;
+        ConstentNew.USER_ID = AppPrefrence.getUserNo(context);
+        ConstentNew.USERPOS = 0;
     }
 
     private void invisTabelMoney(int pos) {
@@ -475,6 +489,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         if (bankerExitNotifyPop == null)
             bankerExitNotifyPop = new BankerExitNotifyPop(context);
         bankerExitNotifyPop.showPop(txtBankerMoney);
+        bankerExitNotifyPop.setNotify("是否下莊？");
         bankerExitNotifyPop.setPopInterfacer(this, ConstentNew.BANKEREXITPOP);
     }
 
@@ -582,6 +597,11 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                             glideImg(R.mipmap.bg_chess_back, imgChessLeftTwo);
                             imgChessLeftOne.setVisibility(View.VISIBLE);
                             imgChessLeftTwo.setVisibility(View.VISIBLE);
+                            try {
+                                chessList.get(((ConstentNew.CURRENTROUND - 1) * 4) + currentI).isVisiable = false;
+                                gameChessAdapter.notifyDataSetChanged();
+                            } catch (Exception e) {
+                            }
                             chessList.get(((ConstentNew.CURRENTROUND - 1) * 4) + currentI).isVisiable = false;
                             gameChessAdapter.notifyDataSetChanged();
                         }
@@ -677,10 +697,18 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void showPoint(int pos, int point, boolean isGray) {
         switch (pos) {
             case 0:
+                if (point == 10) {
+                    showMutil(pos, 1);
+                    return;
+                }
                 glideImg(pointRes[point], imgChessTopCount);
                 imgChessTopCount.setVisibility(View.VISIBLE);
                 break;
             case 1:
+                if (point == 10) {
+                    showMutil(pos, 1);
+                    return;
+                }
                 if (isGray)
                     glideImg(pointGrayRes[point], imgChessLeftCount);
                 else
@@ -688,6 +716,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 imgChessLeftCount.setVisibility(View.VISIBLE);
                 break;
             case 2:
+                if (point == 10) {
+                    showMutil(pos, 1);
+                    return;
+                }
                 if (isGray)
                     glideImg(pointGrayRes[point], imgChessMidCount);
                 else
@@ -695,6 +727,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 imgChessMidCount.setVisibility(View.VISIBLE);
                 break;
             case 3:
+                if (point == 10) {
+                    showMutil(pos, 1);
+                    return;
+                }
                 if (isGray)
                     glideImg(pointGrayRes[point], imgChessRightCount);
                 else
@@ -729,16 +765,14 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         final int[] gamerPoint = new int[2];
         flHeadTop.getLocationInWindow(bankerPoint);
         switch (pos) {
-            case 1:
 
-                break;
-            case 2:
+            case 1:
                 flHeadLeft.getLocationInWindow(gamerPoint);
                 break;
-            case 3:
+            case 2:
                 flHeadBottom.getLocationInWindow(gamerPoint);
                 break;
-            case 4:
+            case 3:
                 flHeadRight.getLocationInWindow(gamerPoint);
                 break;
         }
@@ -923,29 +957,50 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     @Override
-    public void updateMoney(int pos, int money) {
-        setUserMoney();
-        String moneyString = "" + ConstentNew.GAMER_TABLE_MONEY;
-        if (ConstentNew.GAMER_TABLE_MONEY > 10000)
-            moneyString = ConstentNew.GAMER_TABLE_MONEY / 10000 + "万";
+    public void updateMoney(int pos, final int money) {
+        String moneyString;
         switch (pos) {
             case 0:
                 AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) + money);
                 txtMoney.setText(AppPrefrence.getAmount(context) + "");
                 break;
             case 1:
-                txtBankerMoney.setText(moneyString);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtBankerMoney.setText(money + "");
+                    }
+                });
                 break;
             case 2:
-                txtLeftMoney.setText(moneyString);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtLeftMoney.setText(money + "");
+                    }
+                });
+
                 break;
             case 3:
-                txtMidMoney.setText(moneyString);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtMidMoney.setText(money + "");
+                    }
+                });
+
                 break;
             case 4:
-                txtRightMoney.setText(moneyString);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtRightMoney.setText(money + "");
+                    }
+                });
+
                 break;
         }
+        setUserMoney();
     }
 
     @Override
@@ -966,29 +1021,17 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void betMoney(int pos, int money) {
         switch (pos) {
             case 2:
-                String moneyString = txtTotalLeft.getText().toString();
-                if (!TextUtils.isEmpty(moneyString)) {
-                    money += Integer.parseInt(moneyString);
-                    txtTotalLeft.setText(money + "");
-                    imgBgLeft.setVisibility(View.VISIBLE);
-                }
+                txtTotalLeft.setText(money + "");
+                imgBgLeft.setVisibility(View.VISIBLE);
                 break;
             case 3:
-                String moneyString1 = txtTotalLeft.getText().toString();
-                if (!TextUtils.isEmpty(moneyString1)) {
-                    money += Integer.parseInt(moneyString1);
-                    txtTotalMid.setText(money + "");
-                    imgBgMid.setVisibility(View.VISIBLE);
-                }
+                txtTotalMid.setText(money + "");
+                imgBgMid.setVisibility(View.VISIBLE);
                 break;
 
             case 4:
-                String moneyString2 = txtTotalLeft.getText().toString();
-                if (!TextUtils.isEmpty(moneyString2)) {
-                    money += Integer.parseInt(moneyString2);
-                    txtTotalRight.setText(money + "");
-                    imgBgRight.setVisibility(View.VISIBLE);
-                }
+                txtTotalRight.setText(money + "");
+                imgBgRight.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -1077,6 +1120,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 bean_message.tableUser = bankerUser;
                 gamePresenterNew.sendMessage(bean_message);
                 setUserInfo(bean_message);
+                invisBetPoint();
                 break;
             case ConstentNew.UPTABLE_POP:
                 if (bundle == null || !bundle.getBoolean("result"))
@@ -1240,7 +1284,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 glideImg(AppPrefrence.getAvatar(context), imgHeadTop);
                 txtBankerMoney.setVisibility(View.VISIBLE);
                 txtBankerMoney.setText(bean_message.tableUser.lookmonery + "");
-                invisBetPoint();
                 break;
             case 2:
                 glideImg(AppPrefrence.getAvatar(context), imgHeadLeft);
@@ -1269,6 +1312,28 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             kickOutNotifyPop = new KickOutNotifyPop(this);
         kickOutNotifyPop.showPop(txtBankerMoney);
         kickOutNotifyPop.setPopInterfacer(this, ConstentNew.KICKOUTPOP);
+    }
+
+    @Override
+    public void setUserMoney(int pos, Bean_TableDetial.TableUser user) {
+        switch (pos) {
+            case 1:
+                txtBankerMoney.setVisibility(View.VISIBLE);
+                txtBankerMoney.setText(user.lookmonery + "");
+                break;
+            case 2:
+                txtLeftMoney.setVisibility(View.VISIBLE);
+                txtLeftMoney.setText(user.lookmonery + "");
+                break;
+            case 3:
+                txtMidMoney.setVisibility(View.VISIBLE);
+                txtMidMoney.setText(user.lookmonery + "");
+                break;
+            case 4:
+                txtRightMoney.setVisibility(View.VISIBLE);
+                txtRightMoney.setText(user.lookmonery+"");
+                break;
+        }
     }
 
     @Override
@@ -1320,6 +1385,14 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                     Tools.toastMsgCenter(context, "选择要投注的用户");
                     return;
                 }
+                if (ConstentNew.IS_GAMER && ConstentNew.GAMER_TABLE_MONEY < ConstentNew.LEFTPOINT) {
+                    Tools.toastMsgCenter(context, "金幣不足");
+                    return;
+                }
+                if (!ConstentNew.IS_GAMER && AppPrefrence.getAmount(context) < ConstentNew.LEFTPOINT) {
+                    Tools.toastMsgCenter(context, "金幣不足");
+                    return;
+                }
                 gamePresenterNew.betMoney(ConstentNew.LEFTPOINT);
                 int[] leftPoint = new int[2];
                 txtMoneyLeft.getLocationInWindow(leftPoint);
@@ -1330,6 +1403,14 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                     Tools.toastMsgCenter(context, "选择要投注的用户");
                     return;
                 }
+                if (ConstentNew.IS_GAMER && ConstentNew.GAMER_TABLE_MONEY < ConstentNew.MIDPOINT) {
+                    Tools.toastMsgCenter(context, "金幣不足");
+                    return;
+                }
+                if (!ConstentNew.IS_GAMER && AppPrefrence.getAmount(context) < ConstentNew.MIDPOINT) {
+                    Tools.toastMsgCenter(context, "金幣不足");
+                    return;
+                }
                 gamePresenterNew.betMoney(ConstentNew.MIDPOINT);
                 int[] midPoint = new int[2];
                 txtMoneyMid.getLocationInWindow(midPoint);
@@ -1338,6 +1419,14 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case R.id.txt_money_right:
                 if (ConstentNew.USERPOS < 1 && !ConstentNew.IS_GAMER) {
                     Tools.toastMsgCenter(context, "选择要投注的用户");
+                    return;
+                }
+                if (ConstentNew.IS_GAMER && ConstentNew.GAMER_TABLE_MONEY < ConstentNew.RIGHTPOINT) {
+                    Tools.toastMsgCenter(context, "金幣不足");
+                    return;
+                }
+                if (!ConstentNew.IS_GAMER && AppPrefrence.getAmount(context) < ConstentNew.RIGHTPOINT) {
+                    Tools.toastMsgCenter(context, "金幣不足");
                     return;
                 }
                 gamePresenterNew.betMoney(ConstentNew.RIGHTPOINT);
@@ -1416,6 +1505,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     public void betMoneyAnim(int[] startPoint, int pos) {
+
         ChessCardApplication.getInstance().playGoldSound();
         int height = Tools.dip2px(context, 40);
         int centerX = (int) (Tools.getScreenWide(context) / 2);

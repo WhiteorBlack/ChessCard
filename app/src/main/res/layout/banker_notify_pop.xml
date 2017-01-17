@@ -16,7 +16,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:id="@+id/txt_notify"
-            android:textSize="14sp"
+            android:textSize="16sp"
+            android:text="莊家選擇"
             android:textColor="@color/textYellow"/>
         <FrameLayout
             android:layout_width="match_parent"
@@ -26,14 +27,14 @@
                 android:id="@+id/btn_go_on"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/btn_banker_exit"
+                android:background="@mipmap/btn_go_on"
                 />
             <ImageView
                 android:id="@+id/btn_reset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@mipmap/btn_banker_exit"
+                android:background="@mipmap/btn_refresh_chess"
                 />
             <ImageView
                 android:id="@+id/btn_down_banker"
