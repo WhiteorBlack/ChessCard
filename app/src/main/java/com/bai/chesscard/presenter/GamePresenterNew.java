@@ -100,10 +100,6 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
      * 用户投注
      */
     public void betMoney(int money) {
-        if (ConstentNew.GAMER_TABLE_MONEY < money) {
-            gameOprateView.toastMsg("金币不足");
-            return;
-        }
         GameOprateData.getInstance(this).betMoney(money);
     }
 
@@ -649,7 +645,6 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     public void betMoneySuccess(String result) {
         BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
         if (baseBean.id > 0) {
-
             Bean_Message message = new Bean_Message();
             message.type = ConstentNew.TYPE_BET_MONEY;
             message.gamerPos = ConstentNew.USERPOS;

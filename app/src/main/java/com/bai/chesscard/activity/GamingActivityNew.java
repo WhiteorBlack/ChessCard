@@ -486,11 +486,17 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void downBanker() {
-        if (bankerExitNotifyPop == null)
-            bankerExitNotifyPop = new BankerExitNotifyPop(context);
-        bankerExitNotifyPop.showPop(txtBankerMoney);
-        bankerExitNotifyPop.setNotify("是否下莊？");
-        bankerExitNotifyPop.setPopInterfacer(this, ConstentNew.BANKEREXITPOP);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (bankerExitNotifyPop == null)
+                    bankerExitNotifyPop = new BankerExitNotifyPop(context);
+                bankerExitNotifyPop.showPop(txtBankerMoney);
+                bankerExitNotifyPop.setNotify("是否下莊？");
+                bankerExitNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.BANKEREXITPOP);
+            }
+        });
+
     }
 
     @Override
@@ -499,47 +505,77 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             Tools.toastMsgCenter(context, "账户余额不足");
             return;
         }
-        if (upBankerNotifyPop == null)
-            upBankerNotifyPop = new UpBankerNotifyPop(context);
-        upBankerNotifyPop.showPop(txtBankerMoney);
-        upBankerNotifyPop.setPopInterfacer(this, ConstentNew.UPBANKER_POP);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (upBankerNotifyPop == null)
+                    upBankerNotifyPop = new UpBankerNotifyPop(context);
+                upBankerNotifyPop.showPop(txtBankerMoney);
+                upBankerNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.UPBANKER_POP);
+            }
+        });
+
     }
 
     @Override
     public void downTable() {
-        if (gamerExitNotifyPop == null)
-            gamerExitNotifyPop = new GamerExitNotifyPop(context);
-        gamerExitNotifyPop.showPop(txtBankerMoney);
-        gamerExitNotifyPop.setPopInterfacer(this, ConstentNew.GAMEREXITPOP);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (gamerExitNotifyPop == null)
+                    gamerExitNotifyPop = new GamerExitNotifyPop(context);
+                gamerExitNotifyPop.showPop(txtBankerMoney);
+                gamerExitNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.GAMEREXITPOP);
+            }
+        });
+
     }
 
     @Override
-    public void upTable(int pos) {
-        if (upTableNotifyPop == null)
-            upTableNotifyPop = new UpTableNotifyPop(context);
-        upTableNotifyPop.setTitle("上桌");
-        upTableNotifyPop.setPos(pos);
-        upTableNotifyPop.showPop(txtBankerMoney);
-        upTableNotifyPop.setPopInterfacer(this, ConstentNew.UPTABLE_POP);
+    public void upTable(final int pos) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (upTableNotifyPop == null)
+                    upTableNotifyPop = new UpTableNotifyPop(context);
+                upTableNotifyPop.setTitle("上桌");
+                upTableNotifyPop.setPos(pos);
+                upTableNotifyPop.showPop(txtBankerMoney);
+                upTableNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.UPTABLE_POP);
+            }
+        });
+
     }
 
     @Override
-    public void renewMoneyBanker(int time) {
-        if (lackBankerNotifyPop == null)
-            lackBankerNotifyPop = new LackBankerNotifyPop(context);
-        lackBankerNotifyPop.setCountTime(time);
-        lackBankerNotifyPop.showPop(txtBankerMoney);
-        lackBankerNotifyPop.setTitle("庄家续庄");
-        lackBankerNotifyPop.setPopInterfacer(this, ConstentNew.LACKBANKERPOP);
+    public void renewMoneyBanker(final int time) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (lackBankerNotifyPop == null)
+                    lackBankerNotifyPop = new LackBankerNotifyPop(context);
+                lackBankerNotifyPop.setCountTime(time);
+                lackBankerNotifyPop.showPop(txtBankerMoney);
+                lackBankerNotifyPop.setTitle("庄家续庄");
+                lackBankerNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.LACKBANKERPOP);
+            }
+        });
+
     }
 
     @Override
-    public void renewMoneyGamer(int time) {
-        if (lackMoneyNotifyPop == null)
-            lackMoneyNotifyPop = new LackMoneyNotifyPop(context);
-        lackMoneyNotifyPop.setCountTime(time);
-        lackMoneyNotifyPop.showPop(txtBankerMoney);
-        lackMoneyNotifyPop.setPopInterfacer(this, ConstentNew.LACKGAMERPOP);
+    public void renewMoneyGamer(final int time) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (lackMoneyNotifyPop == null)
+                    lackMoneyNotifyPop = new LackMoneyNotifyPop(context);
+                lackMoneyNotifyPop.setCountTime(time);
+                lackMoneyNotifyPop.showPop(txtBankerMoney);
+                lackMoneyNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.LACKGAMERPOP);
+            }
+        });
+
     }
 
     @Override
@@ -556,6 +592,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void dealChess(int userPos) {
+        if (chessList == null || chessList.size() == 0)
+            return;
         for (int i = 0; i < 4; i++) {
             final int currentI = i;
             if (userPos > 4)
@@ -697,18 +735,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void showPoint(int pos, int point, boolean isGray) {
         switch (pos) {
             case 0:
-                if (point == 10) {
-                    showMutil(pos, 1);
-                    return;
-                }
                 glideImg(pointRes[point], imgChessTopCount);
                 imgChessTopCount.setVisibility(View.VISIBLE);
                 break;
             case 1:
-                if (point == 10) {
-                    showMutil(pos, 1);
-                    return;
-                }
                 if (isGray)
                     glideImg(pointGrayRes[point], imgChessLeftCount);
                 else
@@ -716,10 +746,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 imgChessLeftCount.setVisibility(View.VISIBLE);
                 break;
             case 2:
-                if (point == 10) {
-                    showMutil(pos, 1);
-                    return;
-                }
                 if (isGray)
                     glideImg(pointGrayRes[point], imgChessMidCount);
                 else
@@ -727,10 +753,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 imgChessMidCount.setVisibility(View.VISIBLE);
                 break;
             case 3:
-                if (point == 10) {
-                    showMutil(pos, 1);
-                    return;
-                }
                 if (isGray)
                     glideImg(pointGrayRes[point], imgChessRightCount);
                 else
@@ -800,12 +822,12 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void toastMsg(String msg) {
-        Tools.toastMsgCenter(this, msg);
+        Tools.toastMsgCenter(context, msg);
     }
 
     @Override
     public void toastMsg(int resId) {
-        Tools.toastMsgCenter(this, resId);
+        Tools.toastMsgCenter(context, resId);
     }
 
     @Override
@@ -897,38 +919,62 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     @Override
-    public void showUserInfo(Bean_TableDetial.TableUser userInfo) {
-        if (personalPopInfo == null)
-            personalPopInfo = new PersonalPopInfo(context);
-        personalPopInfo.setInfo(userInfo);
-        personalPopInfo.setPopInterfacer(this, ConstentNew.USERINFO_POP);
-        personalPopInfo.showPop(txtBankerMoney);
+    public void showUserInfo(final Bean_TableDetial.TableUser userInfo) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (personalPopInfo == null)
+                    personalPopInfo = new PersonalPopInfo(context);
+                personalPopInfo.setInfo(userInfo);
+                personalPopInfo.setPopInterfacer(GamingActivityNew.this, ConstentNew.USERINFO_POP);
+                personalPopInfo.showPop(txtBankerMoney);
+            }
+        });
+
     }
 
     @Override
     public void bankerCharge() {
-        if (chargeBankerNotify == null)
-            chargeBankerNotify = new ChargeBankerNotifyPop(context);
-        chargeBankerNotify.setTitle("庄家续费");
-        chargeBankerNotify.showPop(txtBankerMoney);
-        chargeBankerNotify.setPopInterfacer(this, ConstentNew.BANKERCHARGEMONEY);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (chargeBankerNotify == null)
+                    chargeBankerNotify = new ChargeBankerNotifyPop(context);
+                chargeBankerNotify.setTitle("庄家续费");
+                chargeBankerNotify.showPop(txtBankerMoney);
+                chargeBankerNotify.setPopInterfacer(GamingActivityNew.this, ConstentNew.BANKERCHARGEMONEY);
+            }
+        });
+
     }
 
     @Override
     public void gamerCharge() {
-        if (chargeMoneyNotify == null)
-            chargeMoneyNotify = new ChargeMoneyNotifyPop(context);
-        chargeMoneyNotify.setTitle("玩儿续费");
-        chargeMoneyNotify.showPop(txtBankerMoney);
-        chargeMoneyNotify.setPopInterfacer(this, ConstentNew.BANKERCHARGEMONEY);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (chargeMoneyNotify == null)
+                    chargeMoneyNotify = new ChargeMoneyNotifyPop(context);
+                chargeMoneyNotify.setTitle("玩儿续费");
+                chargeMoneyNotify.showPop(txtBankerMoney);
+                chargeMoneyNotify.setPopInterfacer(GamingActivityNew.this, ConstentNew.BANKERCHARGEMONEY);
+            }
+        });
+
     }
 
     @Override
     public void BankerNotify() {
-        if (bankerNotify == null)
-            bankerNotify = new BankerNotify(context);
-        bankerNotify.showPop(txtBankerMoney);
-        bankerNotify.setPopInterfacer(this, ConstentNew.BANKERNOTIFYPOP);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (bankerNotify == null)
+                    bankerNotify = new BankerNotify(context);
+                bankerNotify.showPop(txtBankerMoney);
+                bankerNotify.setPopInterfacer(GamingActivityNew.this, ConstentNew.BANKERNOTIFYPOP);
+            }
+        });
+
     }
 
     @Override
@@ -1316,6 +1362,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void setUserMoney(int pos, Bean_TableDetial.TableUser user) {
+        if (pos == ConstentNew.USERPOS && ConstentNew.IS_GAMER)
+            ConstentNew.GAMER_TABLE_MONEY = user.lookmonery;
         switch (pos) {
             case 1:
                 txtBankerMoney.setVisibility(View.VISIBLE);
@@ -1331,7 +1379,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 break;
             case 4:
                 txtRightMoney.setVisibility(View.VISIBLE);
-                txtRightMoney.setText(user.lookmonery+"");
+                txtRightMoney.setText(user.lookmonery + "");
                 break;
         }
     }
