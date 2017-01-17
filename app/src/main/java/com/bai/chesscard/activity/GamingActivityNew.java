@@ -382,6 +382,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         if (exitGamerNotifyPop == null)
             exitGamerNotifyPop = new ExitGamerNotifyPop(context);
         exitGamerNotifyPop.showPop(txtBankerMoney);
+        exitGamerNotifyPop.setNotify("是否退出游戏?");
         exitGamerNotifyPop.setPopInterfacer(this, ConstentNew.EXITGAMER);
     }
 

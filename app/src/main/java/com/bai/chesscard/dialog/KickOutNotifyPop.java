@@ -46,8 +46,6 @@ public class KickOutNotifyPop extends BasePopupwind {
             view = LayoutInflater.from(context).inflate(R.layout.gamer_exit_pop, null);
         view.findViewById(R.id.btn_confirm).setOnClickListener(this);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
-
-        view.findViewById(R.id.btn_add).setOnClickListener(this);
         this.setContentView(view);
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
