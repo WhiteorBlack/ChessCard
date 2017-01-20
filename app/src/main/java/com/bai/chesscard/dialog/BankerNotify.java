@@ -64,10 +64,12 @@ public class BankerNotify extends BasePopupwind {
     }
 
     private void bankerSelect(final int type) {
+        Tools.debug("banker_notify---" + ConstentNew.TABLE_ID + "--ver--" + ConstentNew.GAMEROUND + "--type--" + type);
         Map<String, String> params = new HashMap<>();
         params.put("table_id", ConstentNew.TABLE_ID);
         params.put("token", CommonUntilities.TOKEN);
         params.put("ver", ConstentNew.GAMEROUND + "");
+//        params.put("ver", "30");
         params.put("type", type + "");
         PostTools.postData(CommonUntilities.MAIN_URL + "UserThirdRound", params, new PostCallBack() {
             @Override

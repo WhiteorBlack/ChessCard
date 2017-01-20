@@ -20,6 +20,7 @@ import com.bai.chesscard.dialog.LoginPop;
 import com.bai.chesscard.dialog.RegisterPop;
 import com.bai.chesscard.interfacer.PopInterfacer;
 import com.bai.chesscard.interfacer.PostCallBack;
+import com.bai.chesscard.service.MessageEvent;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.Tools;
@@ -27,16 +28,20 @@ import com.google.gson.Gson;
 import com.tencent.TIMCallBack;
 import com.tencent.TIMFriendshipManager;
 import com.tencent.TIMManager;
+import com.tencent.TIMMessage;
+import com.tencent.TIMTextElem;
 import com.tencent.TIMUser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.Call;
 
-public class MainActivity extends BaseActivity implements PopInterfacer {
+public class MainActivity extends BaseActivity implements PopInterfacer, Observer {
 
 
     @BindView(R.id.img_chess_left)
@@ -98,8 +103,8 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     return;
                 }
                 final Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
-                if (login.id>0) {
-                    CommonUntilities.TOKEN=login.result.token;
+                if (login.id ==1) {
+                    CommonUntilities.TOKEN = login.result.token;
                     TIMUser user = new TIMUser();
                     user.setAccountType(CommonUntilities.ACCOUNTTYPE);
                     user.setAppIdAt3rd(CommonUntilities.SDKAPPID + "");
@@ -107,7 +112,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     TIMManager.getInstance().login(CommonUntilities.SDKAPPID, user, login.result.sign, new TIMCallBack() {
                         @Override
                         public void onError(int i, String s) {
-                            Tools.debug("IM error--"+s);
+                            Tools.debug("IM error--" + s);
                         }
 
                         @Override
@@ -179,7 +184,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                 }
                 if (bundle.getInt("type", -1) == 2) {
                     //登录成功
-                    if (bundle.getInt("statue")>0) {
+                    if (bundle.getInt("statue") > 0) {
                         dismissPop();
                         startActivity(new Intent(context, Home.class));
                         finish();
@@ -225,7 +230,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     return;
                 }
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
-                if (baseBean.id>0) {
+                if (baseBean.id > 0) {
                     AppPrefrence.setUserPwd(context, pwd);
                     dismissPop();
                     if (loginPop == null)
@@ -255,10 +260,10 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                 }
                 Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
                 if (login.id > 0) {
-                    login(phone,pwd);
-                    AppPrefrence.setUserName(context,phone);
-                    AppPrefrence.setUserPhone(context,phone);
-                    AppPrefrence.setReferrer(context,man);
+                    login(phone, pwd);
+                    AppPrefrence.setUserName(context, phone);
+                    AppPrefrence.setUserPhone(context, phone);
+                    AppPrefrence.setReferrer(context, man);
 //                    AppPrefrence.setIsLogin(context, true);
 //                    AppPrefrence.setUserPhone(context, login.data.mobile);
 //                    AppPrefrence.setUserPwd(context, pwd);
@@ -291,7 +296,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
         Map<String, String> params = new HashMap<>();
         params.put("username", phone);
         params.put("password", pwd);
-        params.put("deviceid",Tools.getDeviceId(context));
+        params.put("deviceid", Tools.getDeviceId(context));
         PostTools.postData(CommonUntilities.MAIN_URL + "login", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
@@ -301,8 +306,8 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     return;
                 }
                 final Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
-                if (login.id>0) {
-                    CommonUntilities.TOKEN=login.result.token;
+                if (login.id > 0) {
+                    CommonUntilities.TOKEN = login.result.token;
                     AppPrefrence.setIsLogin(context, true);
                     AppPrefrence.setUserPhone(context, phone);
                     AppPrefrence.setUserPwd(context, pwd);
@@ -319,7 +324,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                     TIMManager.getInstance().login(CommonUntilities.SDKAPPID, user, login.result.sign, new TIMCallBack() {
                         @Override
                         public void onError(int i, String s) {
-                            Tools.debug("IM error--"+s);
+                            Tools.debug("IM error--" + s);
                         }
 
                         @Override
@@ -327,7 +332,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
                             TIMFriendshipManager.getInstance().setNickName(TextUtils.isEmpty(login.result.real_name) ? login.result.id : login.result.real_name, null);
                             if (!TextUtils.isEmpty(login.result.user_logo))
                                 TIMFriendshipManager.getInstance().setFaceUrl(login.result.user_logo, null);
-                            startActivity(new Intent(context,Home.class));
+                            startActivity(new Intent(context, Home.class));
                             finish();
                         }
                     });
@@ -359,4 +364,15 @@ public class MainActivity extends BaseActivity implements PopInterfacer {
         }
     }
 
+    @Override
+    public void update(Observable observable, Object data) {
+        if (observable instanceof MessageEvent) {
+            TIMMessage msg = (TIMMessage) data;
+            for (int i = 0; i < msg.getElementCount(); i++) {
+                TIMTextElem elem = (TIMTextElem) msg.getElement(i);
+                Tools.debug("home receive---" + elem.getText().toString());
+            }
+
+        }
+    }
 }

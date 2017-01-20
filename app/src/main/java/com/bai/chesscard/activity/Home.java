@@ -19,6 +19,7 @@ import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.MainActivity;
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
+import com.bai.chesscard.bean.BeanCharge;
 import com.bai.chesscard.bean.Bean_Avatar;
 import com.bai.chesscard.bean.Bean_Notify;
 import com.bai.chesscard.bean.Bean_Room;
@@ -44,6 +45,7 @@ import com.jph.takephoto.model.TResult;
 import com.tencent.TIMFriendshipManager;
 import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
+import com.tencent.TIMTextElem;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -224,6 +226,9 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
     @Override
     protected void onResume() {
         super.onResume();
+        if (isFinishing())
+            return;
+        Glide.with(this).load(AppPrefrence.getAvatar(context)).into(imgUserPhoto);
         txtUserName.setText("昵称: " + (TextUtils.isEmpty(AppPrefrence.getUserName(context)) ? AppPrefrence.getUserPhone(context) : AppPrefrence.getUserName(context)));
         txtUserNo.setText("编号: " + AppPrefrence.getUserNo(context));
         txtUserMoney.setText(AppPrefrence.getAmount(context) + "");
@@ -251,21 +256,21 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                 if (roomList.size() == 0)
                     return;
                 dealPoint(roomList.get(0).point_str);
-                ConstentNew.BANKER_LIMIT_MONEY=roomList.get(0).sz_point;
+                ConstentNew.BANKER_LIMIT_MONEY = roomList.get(0).sz_point;
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(0).id).putExtra("point", roomList.get(0).min_piont), 0);
                 break;
             case R.id.fl_mid_room:
                 if (roomList.size() == 0)
                     return;
                 dealPoint(roomList.get(1).point_str);
-                ConstentNew.BANKER_LIMIT_MONEY=roomList.get(1).sz_point;
+                ConstentNew.BANKER_LIMIT_MONEY = roomList.get(1).sz_point;
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(1).id).putExtra("point", roomList.get(1).min_piont), 1);
                 break;
             case R.id.fl_hig_room:
                 if (roomList.size() < 2)
                     return;
                 dealPoint(roomList.get(2).point_str);
-                ConstentNew.BANKER_LIMIT_MONEY=roomList.get(2).sz_point;
+                ConstentNew.BANKER_LIMIT_MONEY = roomList.get(2).sz_point;
                 startActivityForResult(new Intent(context, TableList.class).putExtra("id", roomList.get(2).id).putExtra("point", roomList.get(2).min_piont), 2);
                 break;
             case R.id.img_start:
@@ -296,10 +301,10 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
     private void dealPoint(String point_str) {
         if (TextUtils.isEmpty(point_str))
             return;
-        String[] point=point_str.split(",");
-        ConstentNew.LEFTPOINT=Integer.parseInt(point[0]);
-        ConstentNew.MIDPOINT=Integer.parseInt(point[1]);
-        ConstentNew.RIGHTPOINT=Integer.parseInt(point[2]);
+        String[] point = point_str.split(",");
+        ConstentNew.LEFTPOINT = Integer.parseInt(point[0]);
+        ConstentNew.MIDPOINT = Integer.parseInt(point[1]);
+        ConstentNew.RIGHTPOINT = Integer.parseInt(point[2]);
     }
 
     @Override
@@ -424,13 +429,13 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                     return;
                 }
                 Bean_Avatar baseBean = new Gson().fromJson(response, Bean_Avatar.class);
-                if (baseBean.id > 0) {
+                if (baseBean.id == 1) {
                     if (personalPop != null)
                         personalPop.setPhoto(picPath);
                     Glide.with(context).load(picPath).into(imgUserPhoto);
-                    AppPrefrence.setAvatar(context, CommonUntilities.PIC_URL + baseBean.data);
+                    AppPrefrence.setAvatar(context, baseBean.msg);
 
-                    TIMFriendshipManager.getInstance().setFaceUrl(CommonUntilities.PIC_URL + baseBean.data, null);
+                    TIMFriendshipManager.getInstance().setFaceUrl(baseBean.msg, null);
                 }
                 Tools.toastMsgCenter(context, baseBean.msg);
             }
@@ -446,7 +451,27 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
     public void update(Observable observable, Object data) {
         if (observable instanceof MessageEvent) {
             TIMMessage msg = (TIMMessage) data;
-            Tools.debug("home receive");
+            Tools.debug("home receive---" + msg.getConversation().getType() + "peer" + msg.getConversation().getPeer() + "ident" + msg.getConversation().getIdentifer());
+            if (msg != null && TextUtils.equals(msg.getConversation().getType().toString(), "C2C")) {
+                for (int i = 0; i < msg.getElementCount(); i++) {
+
+                    TIMTextElem elem = (TIMTextElem) msg.getElement(i);
+                    String msgString = elem.getText().toString();
+                    if (!TextUtils.isEmpty(msgString)) {
+                        final BeanCharge beanCharge = new Gson().fromJson(msgString, BeanCharge.class);
+                        if (beanCharge != null && beanCharge.type == 15) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AppPrefrence.setAmount(context, beanCharge.amount);
+                                }
+                            });
+                        }
+                    }
+
+                    Tools.debug("home receive---" + elem.getText().toString());
+                }
+            }
         }
     }
 

@@ -65,8 +65,6 @@ public class GamerExitNotifyPop extends BasePopupwind {
                 //直接退出游戏
                 TIMGroupManager.getInstance().quitGroup(ConstentNew.TABLE_ID, null);
                 getAudiunce();
-                if (popInterfacer != null)
-                    popInterfacer.OnCancle(flag);
                 break;
         }
 
@@ -82,14 +80,14 @@ public class GamerExitNotifyPop extends BasePopupwind {
                 super.onResponse(response);
                 if (TextUtils.isEmpty(response))
                     return;
-                BaseBean baseBean=new Gson().fromJson(response,BaseBean.class);
-                if (baseBean.id>0){
-                    Bundle bundle=new Bundle();
-                    bundle.putInt("type",1);
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.id > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type", 1);
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
                     dismiss();
-                }else Tools.toastMsgCenter(context,baseBean.msg);
+                } else Tools.toastMsgCenter(context, baseBean.msg);
             }
         });
     }
@@ -104,14 +102,14 @@ public class GamerExitNotifyPop extends BasePopupwind {
                 super.onResponse(response);
                 if (TextUtils.isEmpty(response))
                     return;
-                BaseBean baseBean=new Gson().fromJson(response,BaseBean.class);
-                if (baseBean.id>0){
-                    Bundle bundle=new Bundle();
-                    bundle.putInt("type",2);
+                BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
+                if (baseBean.id > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type", 2);
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
                     dismiss();
-                }else Tools.toastMsgCenter(context,baseBean.msg);
+                } else Tools.toastMsgCenter(context, baseBean.msg);
             }
         });
     }

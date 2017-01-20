@@ -71,8 +71,7 @@ public class UpTableNotifyPop extends BasePopupwind {
                 }
                 money = Integer.parseInt(moneyString);
                 upBanker();
-                if (popInterfacer != null)
-                    popInterfacer.OnConfirm(flag, null);
+
                 break;
             case R.id.btn_cancel:
                 dismiss();

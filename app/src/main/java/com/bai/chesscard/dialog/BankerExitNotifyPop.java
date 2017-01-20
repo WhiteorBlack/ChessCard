@@ -69,14 +69,10 @@ public class BankerExitNotifyPop extends BasePopupwind {
             case R.id.btn_confirm:
                 //直接退出
                 getAudiunce();
-                if (popInterfacer != null)
-                    popInterfacer.OnConfirm(flag, null);
                 break;
             case R.id.img_cancle:
                 //下庄
                 downTable();
-                if (popInterfacer != null)
-                    popInterfacer.OnCancle(flag);
                 break;
         }
     }

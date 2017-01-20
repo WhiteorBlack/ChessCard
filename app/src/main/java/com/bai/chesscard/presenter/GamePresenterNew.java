@@ -2,47 +2,32 @@ package com.bai.chesscard.presenter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.async.GameOprateData;
-import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.BaseBean;
-import com.bai.chesscard.bean.Bean_BetMoney;
-import com.bai.chesscard.bean.Bean_ChessList;
+import com.bai.chesscard.bean.BeanCharge;
 import com.bai.chesscard.bean.Bean_Message;
-import com.bai.chesscard.bean.Bean_Result;
-import com.bai.chesscard.bean.Bean_ShakeDice;
 import com.bai.chesscard.bean.Bean_TableDetial;
 import com.bai.chesscard.interfacer.GameDataListener;
-import com.bai.chesscard.interfacer.GameOprateView;
 import com.bai.chesscard.interfacer.GameOprateViewNew;
-import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.service.MessageEvent;
 import com.bai.chesscard.utils.AppPrefrence;
-import com.bai.chesscard.utils.CommonUntilities;
-import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.tencent.TIMConnListener;
@@ -53,13 +38,11 @@ import com.tencent.TIMElemType;
 import com.tencent.TIMGroupSystemElem;
 import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
+import com.tencent.TIMMessageListener;
 import com.tencent.TIMTextElem;
 import com.tencent.TIMValueCallBack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -212,10 +195,10 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     public void showPoint(int pos, int one, int two) {
         int point = one + two;
         int mutil = -1;
-        boolean isGray;
+        boolean isGray = false;
         if (point > 9)
             point -= 10;
-        else if (one == two) {
+        if (one == two) {
             mutil = 1;
             if (pos != 0)
                 gameOprateView.showMutil(pos, mutil);
@@ -223,29 +206,30 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         if (pos == 0) {
             ConstentNew.BANKER_POINT = point;
             ConstentNew.IS_BANKER_MUTIL = (mutil > 0);
-            gameOprateView.showPoint(pos, (mutil > 0) ? 10 : point, false);
-        }
-        if (mutil > 0) {
-            if (ConstentNew.IS_BANKER_MUTIL) {
-                if (point > ConstentNew.BANKER_POINT)
-                    isGray = false;
-                else isGray = true;
-            } else isGray = false;
         } else {
-            if (ConstentNew.IS_BANKER_MUTIL)
-                isGray = true;
-            else {
-                if (point > ConstentNew.BANKER_POINT)
-                    isGray = false;
-                else isGray = true;
+            if (mutil > 0) {
+                if (ConstentNew.IS_BANKER_MUTIL) {
+                    if (point > ConstentNew.BANKER_POINT)
+                        isGray = false;
+                    else isGray = true;
+                } else isGray = false;
+            } else {
+                if (ConstentNew.IS_BANKER_MUTIL)
+                    isGray = true;
+                else {
+                    if (point > ConstentNew.BANKER_POINT)
+                        isGray = false;
+                    else isGray = true;
+                }
             }
         }
+
         ConstentNew.SETTLE_RESULT[pos] = !isGray;
         gameOprateView.showPoint(pos, (mutil > 0) ? 10 : point, isGray);
     }
 
     /**
-     * 结算结果
+     * 结算结果f3az4
      */
     private int pos;
 
@@ -253,28 +237,31 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         if (!ConstentNew.IS_GAMER)
             GameOprateData.getInstance(this).getResult();
         pos = ConstentNew.DICE_COUNT;
-        if (pos>3)
-            pos=3;
+
         for (int i = 0; i < 3; i++) {
             if (pos == 0)
-                pos = 1;
-            if (!ConstentNew.SETTLE_RESULT[pos]) {
-                gameOprateView.settleResult(pos, ConstentNew.SETTLE_RESULT[pos]);
+                pos = 4;
+            if (pos == 1)
+                pos = 2;
+            if (!ConstentNew.SETTLE_RESULT[pos - 1]) {
+                gameOprateView.settleResult(pos, ConstentNew.SETTLE_RESULT[pos - 1]);
             }
             pos++;
-            if (pos > 3)
-                pos = 1;
+            if (pos > 4)
+                pos = 2;
         }
 
         for (int i = 0; i < 3; i++) {
             if (pos == 0)
-                pos = 1;
-            if (ConstentNew.SETTLE_RESULT[pos]) {
-                gameOprateView.settleResult(pos, ConstentNew.SETTLE_RESULT[pos]);
+                pos = 4;
+            if (pos == 1)
+                pos = 2;
+            if (ConstentNew.SETTLE_RESULT[pos - 1]) {
+                gameOprateView.settleResult(pos, ConstentNew.SETTLE_RESULT[pos - 1]);
             }
             pos++;
-            if (pos > 3)
-                pos = 1;
+            if (pos > 4)
+                pos = 2;
         }
 
     }
@@ -410,15 +397,33 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     public void update(Observable observable, Object data) {
         if (observable instanceof MessageEvent) {
             TIMMessage msg = (TIMMessage) data;
-            Tools.debug("elemType--" + "--" + msg.getConversation().getType() + "--" + msg.getConversation().getPeer());
+
+            if (msg != null && TextUtils.equals(msg.getConversation().getType().toString(), "C2C")) {
+                for (int i = 0; i < msg.getElementCount(); i++) {
+                    TIMTextElem elem = (TIMTextElem) msg.getElement(i);
+                    String msgString = elem.getText().toString();
+                    if (!TextUtils.isEmpty(msgString)) {
+                        final BeanCharge beanCharge = new Gson().fromJson(msgString, BeanCharge.class);
+                        if (beanCharge != null && beanCharge.type == 15) {
+
+                            gameOprateView.refreshUserMoney(beanCharge.amount);
+                        }
+                    }
+
+                    Tools.debug("home receive---" + elem.getText().toString());
+                }
+            }
+            Tools.debug("elemType--" + msg.getSender() + "--" + msg.getConversation().getType() + "--" + msg.getConversation().getPeer().toString());
             //群内用户发送的消息
-            if (msg == null || msg.getConversation().getPeer().equals(conversation.getPeer()) && msg.getConversation().getType() == conversation.getType()) {
+            if (msg != null || msg.getConversation().getPeer().equals(conversation.getPeer()) && msg.getConversation().getType() == conversation.getType()
+                    && TextUtils.equals(msg.getConversation().getPeer().toString(), ConstentNew.GROUP_ID)) {
                 for (int i = 0; i < msg.getElementCount(); i++) {
                     TIMElem elem = msg.getElement(i);
                     TIMElemType elemType = elem.getType();
 
                     if (elemType == TIMElemType.Text) {
                         Bean_Message bean_message = null;
+
                         TIMTextElem elemText = (TIMTextElem) elem;
                         Tools.debug("UserMessage" + elemText.getText());
                         try {
@@ -428,6 +433,8 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                         }
 
                         if (bean_message == null)
+                            return;
+                        if (!TextUtils.equals(bean_message.groupname, ConstentNew.GROUP_ID))
                             return;
                         switch (bean_message.type) {
                             case ConstentNew.TYPE_SITE_DOWN:
@@ -482,7 +489,8 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                     }
                 }
             }
-            if (msg != null && TextUtils.equals(msg.getConversation().getType().toString(), "System")) {
+            if (msg != null && TextUtils.equals(msg.getConversation().getType().toString(), "System")
+                    ) {
                 for (int i = 0; i < msg.getElementCount(); i++) {
                     TIMElem elem = msg.getElement(i);
                     TIMElemType elemType = elem.getType();
@@ -543,6 +551,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                             case ConstentNew.TYPE_NOTIFY_BANKER: //通知庄家进行选择
                                 if (ConstentNew.IS_BANKER)
                                     gameOprateView.BankerNotify();
+                                ConstentNew.GAMEROUND = bean_message.ver;
                                 gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_NOTIFY_BANKER);
 
                                 break;
@@ -565,11 +574,11 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 break;
                             case ConstentNew.TYPE_RENEW_MONEY: //续费
                                 gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_RENEW_MONEY);
-                                if (ConstentNew.IS_BANKER&&TextUtils.equals(ConstentNew.USER_ID,bean_message.userId)) {
+                                if (ConstentNew.IS_BANKER && TextUtils.equals(ConstentNew.USER_ID, bean_message.userId)) {
                                     gameOprateView.renewMoneyBanker(bean_message.time);
                                     ConstentNew.BANKERCHARGECOUNT = bean_message.seatnumber;
                                 }
-                                if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER&&TextUtils.equals(ConstentNew.USER_ID,bean_message.userId))
+                                if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER && TextUtils.equals(ConstentNew.USER_ID, bean_message.userId))
                                     gameOprateView.renewMoneyGamer(bean_message.time);
                                 break;
                             case ConstentNew.TYPE_SHAKE_DICE: //摇色子
@@ -589,11 +598,12 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
                                 break;
                             case ConstentNew.EXCHANGE_POS:
-                                bean_tableDetial.firstuser=bean_message.firstuser;
-                                bean_tableDetial.seconduser=bean_message.seconduser;
-                                bean_tableDetial.thirduser=bean_message.thirduser;
-                                bean_tableDetial.fouruser=bean_message.fouruser;
+                                bean_tableDetial.firstuser = bean_message.firstuser;
+                                bean_tableDetial.seconduser = bean_message.seconduser;
+                                bean_tableDetial.thirduser = bean_message.thirduser;
+                                bean_tableDetial.fouruser = bean_message.fouruser;
                                 gameOprateView.setTableInfo(bean_tableDetial);
+                                gameOprateView.toastMsg("已换庄,请注意位置变化");
                                 break;
                         }
                     }

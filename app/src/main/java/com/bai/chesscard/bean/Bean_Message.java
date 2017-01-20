@@ -28,6 +28,7 @@ public class Bean_Message {
     public int ver;
     public Bean_TableDetial gameStatue;
     public int seatnumber;
+    public String groupname;
 
     public Bean_TableDetial.TableUser firstuser;
     public Bean_TableDetial.TableUser seconduser;
