@@ -176,4 +176,6 @@ public interface GameOprateViewNew {
     void setUserMoney(int pos, Bean_TableDetial.TableUser user);
 
     void refreshUserMoney(int amount);
+
+    void changeBankerNotify();
 }

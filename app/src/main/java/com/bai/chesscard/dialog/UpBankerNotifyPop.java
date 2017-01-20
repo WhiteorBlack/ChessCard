@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class UpBankerNotifyPop extends BasePopupwind {
     private View view;
-    private EditText edtMoney;
+    private TextView edtMoney;
     private TextView txtTitle;
     private int money;
 
@@ -42,10 +42,10 @@ public class UpBankerNotifyPop extends BasePopupwind {
 
     private void initView() {
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.up_banker_pop, null);
+            view = LayoutInflater.from(context).inflate(R.layout.up_banker_notify, null);
         view.findViewById(R.id.btn_up_banker).setOnClickListener(this);
         view.findViewById(R.id.btn_cancel).setOnClickListener(this);
-        edtMoney = (EditText) view.findViewById(R.id.edt_money);
+        edtMoney = (TextView) view.findViewById(R.id.edt_money);
         money = ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCHARGECOUNT;
         txtTitle = (TextView) view.findViewById(R.id.txt_title);
         edtMoney.setText(money + "");

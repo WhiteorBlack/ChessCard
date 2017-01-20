@@ -74,7 +74,6 @@ public class ChargeMoneyNotifyPop extends BasePopupwind {
         txtContent.setText(content);
     }
 
-    @Override
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
@@ -89,7 +88,7 @@ public class ChargeMoneyNotifyPop extends BasePopupwind {
             case R.id.img_exit:
                 dismiss();
                 break;
-            case R.id.img_add:
+            case R.id.btn_add:
                 if (AppPrefrence.getAmount(context) < ConstentNew.LEFTPOINT) {
                     Tools.toastMsgCenter(context, "账户余额不足");
                     return;

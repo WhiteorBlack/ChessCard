@@ -64,6 +64,8 @@ public class ConstentNew {
 
     public static int DICE_COUNT = 0;
     public static boolean[] SETTLE_RESULT = new boolean[]{false, false, false, false};
+
+    public static int LAST_CHESS_POINT=0;
     /**
      * 庄家是否为对子
      */

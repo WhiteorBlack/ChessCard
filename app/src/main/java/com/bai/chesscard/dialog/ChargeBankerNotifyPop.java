@@ -36,7 +36,7 @@ public class ChargeBankerNotifyPop extends BasePopupwind {
     private View view;
     private TextView txtTitle;
     private TextView txtContent;
-    private EditText edtMoney;
+    private TextView edtMoney;
     private int money = 0;
 
     public ChargeBankerNotifyPop(Context context) {
@@ -46,13 +46,13 @@ public class ChargeBankerNotifyPop extends BasePopupwind {
 
     private void initView() {
         if (view == null)
-            view = LayoutInflater.from(context).inflate(R.layout.charge_money_pop, null);
-        view.findViewById(R.id.img_confirm).setOnClickListener(this);
-        view.findViewById(R.id.img_exit).setOnClickListener(this);
+            view = LayoutInflater.from(context).inflate(R.layout.up_banker_notify, null);
+        view.findViewById(R.id.btn_up_banker).setOnClickListener(this);
+        view.findViewById(R.id.btn_cancel).setOnClickListener(this);
         txtTitle = (TextView) view.findViewById(R.id.txt_title);
-        txtContent = (TextView) view.findViewById(R.id.txt_content);
+//        txtContent = (TextView) view.findViewById(R.id.txt_content);
         money = ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCHARGECOUNT;
-        edtMoney = (EditText) view.findViewById(R.id.edt_money);
+        edtMoney = (TextView) view.findViewById(R.id.edt_money);
         edtMoney.setText(money + "");
         view.findViewById(R.id.btn_add).setOnClickListener(this);
         this.setContentView(view);

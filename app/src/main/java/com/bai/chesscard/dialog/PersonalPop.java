@@ -79,6 +79,10 @@ public class PersonalPop extends BasePopupwind {
         txtName.setText(name);
     }
 
+    public void setPhotoInvis(){
+        view.findViewById(R.id.img_change_photo).setVisibility(View.INVISIBLE);
+    }
+
     @Override
     public void onClick(View v) {
         Bundle bundle = new Bundle();

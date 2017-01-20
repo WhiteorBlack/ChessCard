@@ -176,6 +176,24 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         });
     }
 
+    public void upTable(Bean_Message message) {
+        switch (message.gamerPos) {
+            case 1:
+                bean_tableDetial.firstuser = message.tableUser;
+                break;
+            case 2:
+                bean_tableDetial.seconduser = message.tableUser;
+                break;
+            case 3:
+                bean_tableDetial.thirduser = message.tableUser;
+                break;
+            case 4:
+                bean_tableDetial.fouruser = message.tableUser;
+                break;
+        }
+    }
+
+
     /**
      * 展示用户信息
      *
@@ -335,19 +353,19 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 }, 1000);
                 switch (ConstentNew.DICE_COUNT) {
                     case 0:
-                        Tools.toastMsgCenter(context, "尾门开");
+                        gameOprateView.toastMsg("尾门开牌");
                         break;
                     case 1:
-                        Tools.toastMsgCenter(context, "庄家开");
+                        gameOprateView.toastMsg("庄家开牌");
                         break;
                     case 2:
-                        Tools.toastMsgCenter(context, "初门开");
+                        gameOprateView.toastMsg("初门开牌");
                         break;
                     case 3:
-                        Tools.toastMsgCenter(context, "天门开");
+                        gameOprateView.toastMsg("天门开牌");
                         break;
                     case 4:
-                        Tools.toastMsgCenter(context, "尾门开");
+                        gameOprateView.toastMsg("尾门开牌");
                         break;
                 }
             }
@@ -434,8 +452,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
                         if (bean_message == null)
                             return;
-                        if (!TextUtils.equals(bean_message.groupname, ConstentNew.GROUP_ID))
-                            return;
+
                         switch (bean_message.type) {
                             case ConstentNew.TYPE_SITE_DOWN:
                                 ConstentNew.IS_HAS_GAMER[bean_message.gamerPos - 1] = true;
@@ -453,13 +470,13 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                         bean_tableDetial.fouruser = bean_message.tableUser;
                                         break;
                                 }
-//                                gameOprateView.setTableInfo(bean_tableDetial);
                                 gameOprateView.setUserInfo(bean_message);
                                 break;
                             case ConstentNew.TYPE_EXIT_GAME:
                                 switch (bean_message.gamerPos) {
                                     case 1:
                                         bean_tableDetial.firstuser = null;
+                                        gameOprateView.toastMsg("庄家已下庄");
                                         break;
                                     case 2:
                                         bean_tableDetial.seconduser = null;
@@ -489,8 +506,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                     }
                 }
             }
-            if (msg != null && TextUtils.equals(msg.getConversation().getType().toString(), "System")
-                    ) {
+            if (msg != null && TextUtils.equals(msg.getConversation().getType().toString(), "System")) {
                 for (int i = 0; i < msg.getElementCount(); i++) {
                     TIMElem elem = msg.getElement(i);
                     TIMElemType elemType = elem.getType();
@@ -505,6 +521,8 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
                         if (bean_message == null)
                             return;
+                        if (!TextUtils.equals(bean_message.groupname, ConstentNew.GROUP_ID))
+                            return;
                         switch (bean_message.type) {
                             case ConstentNew.TYPE_RESET_CHESS: //洗牌
                                 ConstentNew.GAMEROUND = bean_message.ver;
@@ -514,6 +532,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                     for (int j = 0; j < chessString.length; j++) {
                                         ConstentNew.CHESSLIST[i] = Integer.parseInt(chessString[i]);
                                     }
+                                ConstentNew.LAST_CHESS_POINT=Integer.parseInt(chessString[chessString.length-1]);
                                 gameOprateView.resetChess();
                                 break;
                             case ConstentNew.TYPE_BET_MONEY: //押注时间
@@ -598,6 +617,10 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
                                 break;
                             case ConstentNew.EXCHANGE_POS:
+                                if (TextUtils.equals(ConstentNew.USER_ID,bean_message.firstuser.id)){
+                                    //如果换庄的玩儿家是自己，那么弹窗提示用户
+                                    gameOprateView.changeBankerNotify();
+                                }
                                 bean_tableDetial.firstuser = bean_message.firstuser;
                                 bean_tableDetial.seconduser = bean_message.seconduser;
                                 bean_tableDetial.thirduser = bean_message.thirduser;

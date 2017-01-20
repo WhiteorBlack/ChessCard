@@ -29,7 +29,7 @@ public class GameChessAdapter extends BaseRecyAdapter {
 
         if (position == dataList.size() - 1) {
             mHolder.getView(R.id.img_chess).setVisibility(View.VISIBLE);
-            mHolder.setImage(R.id.img_chess, chessRes[ConstentNew.CHESSLIST[position]]);
+            mHolder.setImage(R.id.img_chess, chessRes[ConstentNew.LAST_CHESS_POINT-1]);
         } else {
             mHolder.setImage(R.id.img_chess, R.mipmap.game_chess);
             if (chess.isVisiable)

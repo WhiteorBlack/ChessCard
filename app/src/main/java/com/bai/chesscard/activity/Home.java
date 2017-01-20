@@ -436,7 +436,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                     AppPrefrence.setAvatar(context, baseBean.msg);
 
                     TIMFriendshipManager.getInstance().setFaceUrl(baseBean.msg, null);
-                }
+                }else
                 Tools.toastMsgCenter(context, baseBean.msg);
             }
         });

@@ -1,11 +1,15 @@
 package com.bai.chesscard.async;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.interfacer.GameDataListener;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.utils.CommonUntilities;
 import com.bai.chesscard.utils.ConstentNew;
+import com.bai.chesscard.utils.Tools;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -142,4 +146,6 @@ public class GameOprateData {
             });
         }
     }
+
+
 }

@@ -61,7 +61,9 @@ public class ExitGamerNotifyPop extends BasePopupwind {
         switch (v.getId()) {
             case R.id.btn_confirm:
                 levelTable();
-
+                dismiss();
+                if (popInterfacer != null)
+                    popInterfacer.OnConfirm(flag, null);
                 break;
         }
 
@@ -80,9 +82,7 @@ public class ExitGamerNotifyPop extends BasePopupwind {
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
                 if (baseBean.id > 0) {
                     TIMGroupManager.getInstance().quitGroup(ConstentNew.TABLE_ID, null);
-                    dismiss();
-                    if (popInterfacer != null)
-                        popInterfacer.OnConfirm(flag, null);
+
                 } else Tools.toastMsgCenter(context, baseBean.msg);
             }
         });

@@ -9,7 +9,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@mipmap/bg_notify_pop"
-        android:gravity="bottom"
         android:orientation="vertical">
 
         <TextView
@@ -18,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="15dp"
-            android:text="是否续庄"
+            android:text="是否上庄"
             android:textColor="@color/postionYellow"
             android:textSize="16sp" />
 
@@ -32,9 +31,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="最低限额:"
+                android:text="上庄限额:"
                 android:textColor="@color/textYellow"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <EditText
                 android:id="@+id/edt_money"
@@ -53,35 +52,26 @@
                 android:id="@+id/btn_add"
                 android:layout_width="@dimen/dp30"
                 android:layout_height="@dimen/dp30"
+                android:visibility="invisible"
                 android:layout_marginLeft="10dp"
                 android:background="@mipmap/icon_add" />
         </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/txt_content"
-            android:textSize="12sp"
-            android:textColor="@color/textInfoYellow"
-            android:text="哈哈"
-            android:gravity="center"
-            android:layout_marginBottom="20dp"/>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/dp20"
-            android:paddingLeft="@dimen/dp20"
-            android:paddingRight="@dimen/dp20">
+            android:paddingBottom="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
 
-            <ImageView
-                android:id="@+id/img_exit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:background="@mipmap/btn_banker_exit" />
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="@dimen/dp60"
+                android:layout_height="@dimen/dp25"
+                android:background="@mipmap/btn_cancle" />
 
-            <ImageView
-                android:id="@+id/img_confirm"
+            <Button
+                android:id="@+id/btn_up_banker"
                 android:layout_width="@dimen/dp60"
                 android:layout_height="@dimen/dp25"
                 android:layout_gravity="right"
