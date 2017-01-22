@@ -137,7 +137,7 @@ public class LackMoneyNotifyPop extends BasePopupwind {
                 Bean_SiteTable siteTable = new Gson().fromJson(response, Bean_SiteTable.class);
                 if (siteTable.id > 0) {
                     Bundle bundle = new Bundle();
-                    bundle.putInt("type", 2);
+                    bundle.putInt("type", 1);
                     ConstentNew.GAMER_TABLE_MONEY += money;
                     AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - money);
                     if (popInterfacer != null)

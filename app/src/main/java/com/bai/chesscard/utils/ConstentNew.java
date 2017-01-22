@@ -66,6 +66,11 @@ public class ConstentNew {
     public static boolean[] SETTLE_RESULT = new boolean[]{false, false, false, false};
 
     public static int LAST_CHESS_POINT=0;
+
+    /**
+     * 记录玩儿家是否下注,没有按最低金额扣除
+     */
+    public static boolean IS_BET_MONEY=false;
     /**
      * 庄家是否为对子
      */

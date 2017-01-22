@@ -270,10 +270,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         ConstentNew.TABLE_ID = getIntent().getStringExtra("tableId");
         ConstentNew.ROOM_ID = getIntent().getStringExtra("roomId");
         ConstentNew.USER_ID = AppPrefrence.getUserNo(context);
-        ConstentNew.IS_HAS_GAMER[0]=false;
-        ConstentNew.IS_HAS_GAMER[1]=false;
-        ConstentNew.IS_HAS_GAMER[2]=false;
-        ConstentNew.IS_HAS_GAMER[3]=false;
+        ConstentNew.IS_HAS_GAMER[0] = false;
+        ConstentNew.IS_HAS_GAMER[1] = false;
+        ConstentNew.IS_HAS_GAMER[2] = false;
+        ConstentNew.IS_HAS_GAMER[3] = false;
         invisCountTime();
         invisBetMoney();
         invisChess();
@@ -483,6 +483,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
             @Override
             public void onFinish() {
+                if (type == ConstentNew.TYPE_NOTIFY_BANKER && bankerSelectNotify != null && bankerSelectNotify.isShowing()) {
+                    bankerSelectNotify.dismiss();
+                    bankerSelectNotify = null;
+                }
                 gamePresenterNew.endCountTime(type);
                 invisCountTime();
             }
@@ -551,7 +555,13 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 bankerBackNotify.dismiss();
             }
         });
-        ((TextView) view.findViewById(R.id.txt_content)).setText("选择下庄将成为观众,退出将直接退出房间");
+        view.findViewById(R.id.btn_confirm).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bankerBackNotify.dismiss();
+            }
+        });
+        ((TextView) view.findViewById(R.id.txt_content)).setText("庄家中途不能退出游戏");
         bankerBackNotify.setView(view);
         bankerBackNotify.show();
 
@@ -943,7 +953,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     @Override
     public void setTableInfo(Bean_TableDetial bean_tableDetial) {
         if (bean_tableDetial.firstuser != null) {
-            if (!TextUtils.isEmpty(bean_tableDetial.firstuser.id)){
+            if (!TextUtils.isEmpty(bean_tableDetial.firstuser.id)) {
                 txtBankerMoney.setText(bean_tableDetial.firstuser.lookmonery + "");
                 txtBankerMoney.setVisibility(View.VISIBLE);
                 glideImg(bean_tableDetial.firstuser.user_logo, imgHeadTop);
@@ -954,8 +964,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 ConstentNew.IS_BANKER = true;
                 ConstentNew.USERPOS = 1;
                 invisBetPoint();
-            } else{
-                ConstentNew.IS_BANKER=false;
+            } else {
+                ConstentNew.IS_BANKER = false;
                 visBetPoint();
             }
         } else {
@@ -965,7 +975,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
         }
 
-        if (bean_tableDetial.seconduser != null){
+        if (bean_tableDetial.seconduser != null) {
             if (!TextUtils.isEmpty(bean_tableDetial.seconduser.id)) {
                 visBetPoint();
                 txtLeftMoney.setText(bean_tableDetial.seconduser.lookmonery + "");
@@ -985,13 +995,13 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             ConstentNew.IS_HAS_GAMER[1] = false;
         }
 
-        if (bean_tableDetial.thirduser != null ){
-        if( !TextUtils.isEmpty(bean_tableDetial.thirduser.id)) {
-            txtMidMoney.setText(bean_tableDetial.thirduser.lookmonery + "");
-            txtMidMoney.setVisibility(View.VISIBLE);
-            glideImg(bean_tableDetial.thirduser.user_logo, imgHeadBottom);
-            ConstentNew.IS_HAS_GAMER[2] = true;
-        }
+        if (bean_tableDetial.thirduser != null) {
+            if (!TextUtils.isEmpty(bean_tableDetial.thirduser.id)) {
+                txtMidMoney.setText(bean_tableDetial.thirduser.lookmonery + "");
+                txtMidMoney.setVisibility(View.VISIBLE);
+                glideImg(bean_tableDetial.thirduser.user_logo, imgHeadBottom);
+                ConstentNew.IS_HAS_GAMER[2] = true;
+            }
 
             if (TextUtils.equals(bean_tableDetial.thirduser.id, AppPrefrence.getUserNo(context))) {
                 ConstentNew.IS_GAMER = true;
@@ -1004,13 +1014,13 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             ConstentNew.IS_HAS_GAMER[2] = false;
         }
 
-        if (bean_tableDetial.fouruser != null){
-        if( !TextUtils.isEmpty(bean_tableDetial.fouruser.id)) {
-            txtRightMoney.setText(bean_tableDetial.fouruser.lookmonery + "");
-            txtRightMoney.setVisibility(View.VISIBLE);
-            glideImg(bean_tableDetial.fouruser.user_logo, imgHeadRight);
-            ConstentNew.IS_HAS_GAMER[3] = true;
-        }
+        if (bean_tableDetial.fouruser != null) {
+            if (!TextUtils.isEmpty(bean_tableDetial.fouruser.id)) {
+                txtRightMoney.setText(bean_tableDetial.fouruser.lookmonery + "");
+                txtRightMoney.setVisibility(View.VISIBLE);
+                glideImg(bean_tableDetial.fouruser.user_logo, imgHeadRight);
+                ConstentNew.IS_HAS_GAMER[3] = true;
+            }
 
             if (TextUtils.equals(bean_tableDetial.fouruser.id, AppPrefrence.getUserNo(context))) {
                 ConstentNew.IS_GAMER = true;
@@ -1479,19 +1489,16 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 glideImg(bean_message.tableUser.user_logo, imgHeadLeft);
                 txtLeftMoney.setVisibility(View.VISIBLE);
                 txtLeftMoney.setText(bean_message.tableUser.lookmonery + "");
-                visBetPoint();
                 break;
             case 3:
                 glideImg(bean_message.tableUser.user_logo, imgHeadBottom);
                 txtMidMoney.setVisibility(View.VISIBLE);
                 txtMidMoney.setText(bean_message.tableUser.lookmonery + "");
-                visBetPoint();
                 break;
             case 4:
                 glideImg(bean_message.tableUser.user_logo, imgHeadRight);
                 txtRightMoney.setVisibility(View.VISIBLE);
                 txtRightMoney.setText(bean_message.tableUser.lookmonery + "");
-                visBetPoint();
                 break;
         }
     }
@@ -1667,10 +1674,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
                     }
                 if (ConstentNew.IS_GAMER && !ConstentNew.IS_BANKER)
-                if (AppPrefrence.getAmount(context)<ConstentNew.LEFTPOINT){
-                    toastMsg("账户余额不足");
-                    return;
-                }
+                    if (AppPrefrence.getAmount(context) < ConstentNew.LEFTPOINT) {
+                        toastMsg("账户余额不足");
+                        return;
+                    }
                 gamePresenterNew.addMoney();
                 break;
             case R.id.txt_money_left:
@@ -1899,8 +1906,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
                 if (baseBean.id == 1) {
                     resetUserStatue();
-                    logoutGroup();
-                    finish();
+
                 } else Tools.toastMsgCenter(context, baseBean.msg);
 
             }
@@ -1920,6 +1926,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
                 if (baseBean.id == 1) {
                     resetUserStatue();
+                    logoutGroup();
+                    finish();
                 } else Tools.toastMsgCenter(context, baseBean.msg);
             }
         });

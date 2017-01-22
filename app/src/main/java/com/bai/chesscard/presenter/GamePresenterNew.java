@@ -404,10 +404,24 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 break;
             case ConstentNew.TYPE_BET_MONEY:
                 gameOprateView.endBetMoeny();
+                if (!ConstentNew.IS_BET_MONEY && ConstentNew.IS_GAMER && !ConstentNew.IS_BANKER) {
+                    Bean_Message message = new Bean_Message();
+                    message.type = ConstentNew.TYPE_BET_MONEY;
+                    message.gamerPos = ConstentNew.USERPOS;
+                    message.betNum = ConstentNew.LEFTPOINT;
+                    ConstentNew.GAMER_TABLE_MONEY -= ConstentNew.LEFTPOINT;
+                    gameOprateView.updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
+                    message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
+                    sendMessage(message);
+                    gameOprateView.betMoney(ConstentNew.USERPOS, ConstentNew.LEFTPOINT);
+                    ConstentNew.IS_BET_MONEY = false;
+                }
+
                 break;
             case ConstentNew.TYPE_GET_RESULT:
                 gameOprateView.resetTable();
                 break;
+
         }
     }
 
@@ -532,7 +546,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                     for (int j = 0; j < chessString.length; j++) {
                                         ConstentNew.CHESSLIST[i] = Integer.parseInt(chessString[i]);
                                     }
-                                ConstentNew.LAST_CHESS_POINT=Integer.parseInt(chessString[chessString.length-1]);
+                                ConstentNew.LAST_CHESS_POINT = Integer.parseInt(chessString[chessString.length - 1]);
                                 gameOprateView.resetChess();
                                 break;
                             case ConstentNew.TYPE_BET_MONEY: //押注时间
@@ -617,7 +631,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
                                 break;
                             case ConstentNew.EXCHANGE_POS:
-                                if (TextUtils.equals(ConstentNew.USER_ID,bean_message.firstuser.id)){
+                                if (TextUtils.equals(ConstentNew.USER_ID, bean_message.firstuser.id)) {
                                     //如果换庄的玩儿家是自己，那么弹窗提示用户
                                     gameOprateView.changeBankerNotify();
                                 }
@@ -687,6 +701,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 gameOprateView.updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                 message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
                 sendMessage(message);
+                ConstentNew.IS_BET_MONEY = true;
             } else {
                 gameOprateView.updateMoney(0, -baseBean.amount);
             }
@@ -712,15 +727,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     public void getResultSuccess(String result) {
         BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
         if (baseBean.id > 0) {
-            if (ConstentNew.IS_GAMER) {
-//                ConstentNew.GAMER_TABLE_MONEY = Integer.parseInt(baseBean.msg);
-//                Bean_Message message = new Bean_Message();
-//                message.type = ConstentNew.TYPE_GET_RESULT;
-//                message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
-//                message.gamerPos = ConstentNew.USERPOS;
-//                gameOprateView.updateMoney(ConstentNew.USERPOS,ConstentNew.GAMER_TABLE_MONEY);
-//                sendMessage(message);
-            } else gameOprateView.updateMoney(0, Integer.parseInt(baseBean.msg));
+            gameOprateView.updateMoney(0, Integer.parseInt(baseBean.msg));
         }
     }
 

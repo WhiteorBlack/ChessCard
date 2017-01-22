@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="15dp"
-            android:text="是否续庄"
+            android:text="是否续费"
             android:textColor="@color/postionYellow"
             android:textSize="16sp" />
 

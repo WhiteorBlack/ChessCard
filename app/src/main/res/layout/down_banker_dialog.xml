@@ -35,14 +35,21 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/dp20"
+                android:visibility="gone"
                 android:background="@mipmap/btn_user_exit" />
-
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:id="@+id/btn_confirm"
+                android:background="@mipmap/btn_confirm"/>
             <ImageView
                 android:id="@+id/img_cancle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="@dimen/dp20"
+                android:visibility="gone"
                 android:background="@mipmap/btn_banker_exit" />
         </FrameLayout>
     </LinearLayout>

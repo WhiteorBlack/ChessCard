@@ -35,7 +35,7 @@
                 android:textColor="@color/textYellow"
                 android:textSize="16sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/edt_money"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
