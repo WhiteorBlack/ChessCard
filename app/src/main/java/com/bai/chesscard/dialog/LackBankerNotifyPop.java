@@ -54,10 +54,11 @@ public class LackBankerNotifyPop extends BasePopupwind {
         view.findViewById(R.id.img_exit).setOnClickListener(this);
         txtTitle = (TextView) view.findViewById(R.id.txt_title);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
-        money = ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCHARGECOUNT;
+        money = ConstentNew.BANKER_LIMIT_MONEY *2* ConstentNew.BANKERCHARGECOUNT;
         edtMoney = (EditText) view.findViewById(R.id.edt_money);
         edtMoney.setText(money + "");
         view.findViewById(R.id.btn_add).setOnClickListener(this);
+        view.findViewById(R.id.btn_add).setVisibility(View.INVISIBLE);
         this.setContentView(view);
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
@@ -95,8 +96,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
 
             @Override
             public void onFinish() {
-                if (!isCharge)
-                    downTable();
+                dismiss();
 
             }
         }.start();
@@ -114,6 +114,11 @@ public class LackBankerNotifyPop extends BasePopupwind {
                     return;
                 }
                 isCharge = true;
+                money=Integer.parseInt(moneyString);
+                if (money>AppPrefrence.getAmount(context)){
+                    Tools.toastMsgCenter(context,"账户余额不足");
+                    return;
+                }
                 upBanker(Integer.parseInt(moneyString));
 
                 break;
@@ -151,7 +156,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
                     Bundle bundle = new Bundle();
                     bundle.putInt("type", 1);
                     ConstentNew.GAMER_TABLE_MONEY += money;
-                    AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - money);
+                    AppPrefrence.setAmount(context, (AppPrefrence.getAmount(context) - money)<0?0:(AppPrefrence.getAmount(context) - money));
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
                     dismiss();

@@ -540,8 +540,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
         if (bankerBackNotify == null)
             bankerBackNotify = new AlertDialog.Builder(context, R.style.dialogStyle).create();
+        bankerBackNotify.setOwnerActivity(this);
         View view = LayoutInflater.from(context).inflate(R.layout.down_banker_dialog, null);
-        view.findViewById(R.id.btn_confirm).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btn_exit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 levelTable();
@@ -563,7 +564,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         });
         ((TextView) view.findViewById(R.id.txt_content)).setText("庄家中途不能退出游戏");
         bankerBackNotify.setView(view);
-        bankerBackNotify.show();
+        if (this != null && !isFinishing())
+            bankerBackNotify.show();
 
 //        runOnUiThread(new Runnable() {
 //            @Override
@@ -600,6 +602,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void downTable() {
         if (gamerBackNotify == null)
             gamerBackNotify = new AlertDialog.Builder(context, R.style.dialogStyle).create();
+        gamerBackNotify.setOwnerActivity(this);
         View view = LayoutInflater.from(context).inflate(R.layout.down_table_dialog, null);
         view.findViewById(R.id.btn_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -650,33 +653,46 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void renewMoneyBanker(final int time) {
-        runOnUiThread(new Runnable() {
+        if (lackBankerNotifyPop == null)
+            lackBankerNotifyPop = new LackBankerNotifyPop(GamingActivityNew.this);
+        lackBankerNotifyPop.setCountTime(time);
+        lackBankerNotifyPop.setTitle("庄家续庄");
+        lackBankerNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.LACKBANKERPOP);
+        if (this != null && !isFinishing())
+            lackBankerNotifyPop.showPop(txtMoney);
+        else new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (lackBankerNotifyPop == null)
-                    lackBankerNotifyPop = new LackBankerNotifyPop(GamingActivityNew.this);
-                lackBankerNotifyPop.setCountTime(time);
-                lackBankerNotifyPop.showPop(txtLeftMoney);
-                lackBankerNotifyPop.setTitle("庄家续庄");
-                lackBankerNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.LACKBANKERPOP);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        lackBankerNotifyPop.showPop(txtMoney);
+                    }
+                });
             }
-        });
+        }, 300);
 
     }
 
     @Override
     public void renewMoneyGamer(final int time) {
-        runOnUiThread(new Runnable() {
+        if (lackMoneyNotifyPop == null)
+            lackMoneyNotifyPop = new LackMoneyNotifyPop(GamingActivityNew.this);
+        lackMoneyNotifyPop.setCountTime(time);
+        lackMoneyNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.LACKGAMERPOP);
+        if (this != null && !isFinishing())
+            lackMoneyNotifyPop.showPop(txtMoney);
+        else new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (lackMoneyNotifyPop == null)
-                    lackMoneyNotifyPop = new LackMoneyNotifyPop(GamingActivityNew.this);
-                lackMoneyNotifyPop.setCountTime(time);
-                lackMoneyNotifyPop.showPop(txtMidMoney);
-                lackMoneyNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.LACKGAMERPOP);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        lackMoneyNotifyPop.showPop(txtMoney);
+                    }
+                });
             }
-        });
-
+        }, 300);
     }
 
     @Override
@@ -1054,32 +1070,46 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void bankerCharge() {
-        runOnUiThread(new Runnable() {
+        if (chargeBankerNotify == null)
+            chargeBankerNotify = new ChargeBankerNotifyPop(context);
+        chargeBankerNotify.setTitle("庄家续庄");
+
+        chargeBankerNotify.setPopInterfacer(GamingActivityNew.this, ConstentNew.BANKERCHARGEMONEY);
+        if (this != null && !isFinishing())
+            chargeBankerNotify.showPop(txtBankerMoney);
+        else new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (chargeBankerNotify == null)
-                    chargeBankerNotify = new ChargeBankerNotifyPop(context);
-                chargeBankerNotify.setTitle("庄家续庄");
-                chargeBankerNotify.showPop(txtBankerMoney);
-                chargeBankerNotify.setPopInterfacer(GamingActivityNew.this, ConstentNew.BANKERCHARGEMONEY);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        chargeBankerNotify.showPop(txtBankerMoney);
+                    }
+                });
             }
-        });
-
+        }, 300);
     }
 
     @Override
     public void gamerCharge() {
-        runOnUiThread(new Runnable() {
+        if (chargeMoneyNotify == null)
+            chargeMoneyNotify = new ChargeMoneyNotifyPop(context);
+        chargeMoneyNotify.setTitle("玩儿续费");
+
+        chargeMoneyNotify.setPopInterfacer(GamingActivityNew.this, ConstentNew.BANKERCHARGEMONEY);
+        if (this != null && !isFinishing())
+            chargeMoneyNotify.showPop(txtTime);
+        else new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (chargeMoneyNotify == null)
-                    chargeMoneyNotify = new ChargeMoneyNotifyPop(context);
-                chargeMoneyNotify.setTitle("玩儿续费");
-                chargeMoneyNotify.showPop(txtTime);
-                chargeMoneyNotify.setPopInterfacer(GamingActivityNew.this, ConstentNew.BANKERCHARGEMONEY);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        chargeMoneyNotify.showPop(txtTime);
+                    }
+                });
             }
-        });
-
+        }, 300);
     }
 
     @Override
@@ -1087,6 +1117,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
         if (bankerSelectNotify == null)
             bankerSelectNotify = new AlertDialog.Builder(context, R.style.dialogStyle).create();
+        bankerSelectNotify.setOwnerActivity(this);
         View view = LayoutInflater.from(context).inflate(R.layout.banker_notify_pop, null);
         view.findViewById(R.id.btn_go_on).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1111,11 +1142,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         });
         ((TextView) view.findViewById(R.id.txt_notify)).setText("庄家选择");
         bankerSelectNotify.setView(view);
-        try {
+        if (this != null && !isFinishing())
             bankerSelectNotify.show();
-        } catch (Exception e) {
-            bankerSelectNotify.show();
-        }
 
 
 //        runOnUiThread(new Runnable() {
@@ -1335,6 +1363,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 messageTable.tableUser = tableUser;
                 gamePresenterNew.upTable(messageTable);
                 gamePresenterNew.sendMessage(messageTable);
+                setUserMoney();
                 setUserInfo(messageTable);
                 break;
             case ConstentNew.GAMEREXITPOP:
@@ -1370,6 +1399,11 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 if (bundle == null)
                     return;
                 if (bundle.getInt("type") == 1) {
+                    Bean_Message bankerMessage = new Bean_Message();
+                    bankerMessage.gamerPos = 1;
+                    bankerMessage.betPoint = ConstentNew.GAMER_TABLE_MONEY;
+                    bankerMessage.type=ConstentNew.TYPE_NOTIFY_BANKER;
+                    gamePresenterNew.sendMessage(bankerMessage);
                     updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                     txtMoney.setText(AppPrefrence.getAmount(context) + "");
                 }
@@ -1381,6 +1415,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 if (bundle == null)
                     return;
                 if (bundle.getInt("type") == 1) {
+                    Bean_Message bankerMessage = new Bean_Message();
+                    bankerMessage.gamerPos = ConstentNew.USERPOS;
+                    bankerMessage.betPoint = ConstentNew.GAMER_TABLE_MONEY;
+                    gamePresenterNew.sendMessage(bankerMessage);
                     updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                     txtMoney.setText(AppPrefrence.getAmount(context) + "");
                 }
@@ -1402,7 +1440,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 Bean_Message bankerMessage = new Bean_Message();
                 bankerMessage.type = ConstentNew.TYPE_NOTIFY_BANKER;
                 bankerMessage.betPoint = ConstentNew.GAMER_TABLE_MONEY;
-                bankerMessage.gamerPos = ConstentNew.USERPOS;
+                bankerMessage.gamerPos = 1;
                 gamePresenterNew.sendMessage(bankerMessage);
                 updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                 break;
@@ -1449,7 +1487,12 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     private void clearUserInfo(int pos) {
-        ConstentNew.IS_HAS_GAMER[pos - 1] = false;
+        try{
+            ConstentNew.IS_HAS_GAMER[pos - 1] = false;
+        }catch (ArrayIndexOutOfBoundsException e){
+
+        }
+
         imgAdd.setVisibility(View.VISIBLE);
         switch (pos) {
             case 1:
@@ -1507,6 +1550,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void kickOut() {
         if (kickGamerOut == null)
             kickGamerOut = new AlertDialog.Builder(context, R.style.dialogStyle).create();
+        kickGamerOut.setOwnerActivity(this);
         View view = LayoutInflater.from(context).inflate(R.layout.down_table_dialog, null);
         view.findViewById(R.id.btn_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1524,7 +1568,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         });
         final TextView txtContent = (TextView) view.findViewById(R.id.txt_content);
         kickGamerOut.setView(view);
-        kickGamerOut.show();
+        if (this != null && !isFinishing())
+            kickGamerOut.show();
 
         new CountDownTimer(5 * 1000, 1000) {
 
@@ -1604,7 +1649,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     @Override
-    public void refreshUserMoney(final int amount) {
+    public void refreshUserMoney(final long amount) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -1628,6 +1673,38 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     @Override
+    public void bankerExit() {
+        if (bankerBackNotify == null)
+            bankerBackNotify = new AlertDialog.Builder(context, R.style.dialogStyle).create();
+        View view = LayoutInflater.from(context).inflate(R.layout.banker_exit_notify_pop, null);
+        view.findViewById(R.id.btn_confirm).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                levelTable();
+                bankerBackNotify.dismiss();
+            }
+        });
+        view.findViewById(R.id.img_cancle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downTableAsync();
+                bankerBackNotify.dismiss();
+            }
+        });
+        ((TextView) view.findViewById(R.id.txt_content)).setText("是否退出游戲？");
+        bankerBackNotify.setView(view);
+        bankerBackNotify.show();
+    }
+
+    @Override
+    public void clearRenewPop() {
+        if (lackBankerNotifyPop != null)
+            lackBankerNotifyPop.dismiss();
+        if (lackMoneyNotifyPop != null)
+            lackMoneyNotifyPop.dismiss();
+    }
+
+    @Override
     public void OnCancle(int flag) {
         switch (flag) {
             case ConstentNew.SETTING_POP:
@@ -1645,6 +1722,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
+//                renewMoneyGamer(10);
                 gamePresenterNew.back();
                 break;
             case R.id.rel_head_bottom:
@@ -1669,10 +1747,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 gamePresenterNew.showPersonalPop();
                 break;
             case R.id.img_add:
-                if (ConstentNew.IS_BANKER)
-                    if (AppPrefrence.getAmount(context) < ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCHARGECOUNT) {
-
-                    }
                 if (ConstentNew.IS_GAMER && !ConstentNew.IS_BANKER)
                     if (AppPrefrence.getAmount(context) < ConstentNew.LEFTPOINT) {
                         toastMsg("账户余额不足");

@@ -135,8 +135,12 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
      * 返回操作
      */
     public void back() {
-        if (ConstentNew.IS_BANKER)
+        if (ConstentNew.IS_BANKER&&ConstentNew.IS_HAS_GAMER[0]&&ConstentNew.IS_HAS_GAMER[1]
+                &&ConstentNew.IS_HAS_GAMER[2]&&ConstentNew.IS_HAS_GAMER[3])
             gameOprateView.downBanker();
+        if (ConstentNew.IS_BANKER&&(!ConstentNew.IS_HAS_GAMER[0]||!ConstentNew.IS_HAS_GAMER[1]
+                ||!ConstentNew.IS_HAS_GAMER[2]||!ConstentNew.IS_HAS_GAMER[3]))
+            gameOprateView.bankerExit();
         if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER)
             gameOprateView.downTable();
         if (!ConstentNew.IS_BANKER && !ConstentNew.IS_GAMER)
@@ -421,6 +425,9 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
             case ConstentNew.TYPE_GET_RESULT:
                 gameOprateView.resetTable();
                 break;
+            case ConstentNew.TYPE_RENEW_MONEY:
+                gameOprateView.clearRenewPop();
+                break;
 
         }
     }
@@ -515,6 +522,9 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betPoint);
                                 //更新桌面投注的狀態
                                 gameOprateView.betMoney(bean_message.gamerPos, bean_message.betNum);
+                                break;
+                            case ConstentNew.TYPE_RENEW_MONEY:
+                                gameOprateView.updateMoney(bean_message.gamerPos,bean_message.betPoint);
                                 break;
                         }
                     }
@@ -703,7 +713,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 sendMessage(message);
                 ConstentNew.IS_BET_MONEY = true;
             } else {
-                gameOprateView.updateMoney(0, -baseBean.amount);
+//                gameOprateView.updateMoney(0, -baseBean.amount);
             }
             gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
         }

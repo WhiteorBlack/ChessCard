@@ -38,7 +38,7 @@ public class LackMoneyNotifyPop extends BasePopupwind {
     private TextView txtContent;
     private EditText edtMoney;
     private int countTime = 10;
-    private int money = 0;
+    private long money = 0;
     private boolean isCharge = false;
 
     public LackMoneyNotifyPop(Context context) {
@@ -85,8 +85,9 @@ public class LackMoneyNotifyPop extends BasePopupwind {
 
             @Override
             public void onFinish() {
-                if (!isCharge)
-                    downTable();
+                dismiss();
+//                if (!isCharge)
+//                    downTable();
             }
         }.start();
 
@@ -100,6 +101,11 @@ public class LackMoneyNotifyPop extends BasePopupwind {
                 String moneyString = edtMoney.getText().toString();
                 if (TextUtils.isEmpty(moneyString)) {
                     Tools.toastMsgCenter(context, "请输入金额");
+                    return;
+                }
+                money=Long.parseLong(moneyString);
+                if (money>AppPrefrence.getAmount(context)){
+                    Tools.toastMsgCenter(context,"账户余额不足");
                     return;
                 }
                 upBanker(Integer.parseInt(moneyString));

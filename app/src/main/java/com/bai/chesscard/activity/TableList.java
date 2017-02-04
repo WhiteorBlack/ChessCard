@@ -93,7 +93,7 @@ public class TableList extends BaseActivity {
     protected void onStart() {
         super.onStart();
         getTableData(id);
-        Tools.debug("onstart--"+id);
+        Tools.debug("onstart--" + id);
     }
 
 
@@ -117,7 +117,7 @@ public class TableList extends BaseActivity {
                     return;
                 }
                 Bean_Table beanTable = new Gson().fromJson(response, Bean_Table.class);
-                if (beanTable != null && beanTable.id>0 && beanTable.result != null && beanTable.result.size() > 0) {
+                if (beanTable != null && beanTable.id > 0 && beanTable.result != null && beanTable.result.size() > 0) {
                     tabList.clear();
                     tabList.addAll(beanTable.result);
                     tabAdapter.notifyDataSetChanged();
@@ -136,19 +136,22 @@ public class TableList extends BaseActivity {
             @Override
             public void onItemClickListener(View view, final int position) {
                 ChessCardApplication.getInstance().playBtnSound();
-                ConstentNew.GROUP_ID=tabList.get(position).groupname;
-                ConstentNew.TABLE_ID=tabList.get(position).id;
+                ConstentNew.GROUP_ID = tabList.get(position).groupname;
+                ConstentNew.TABLE_ID = tabList.get(position).id;
                 TIMGroupManager.getInstance().applyJoinGroup(tabList.get(position).groupname, "", new TIMCallBack() {
                     @Override
                     public void onError(int i, String s) {
-                        Tools.debug("onError--"+s);
-                        startActivity(new Intent(context, GamingActivityNew.class).putExtra("roomId", tabList.get(position).house_id).
-                                putExtra("tableId", tabList.get(position).id).putExtra("point", minPoint));
+                        Tools.debug("onError--" + s + "code--" + i);
+
+                        if (i == 10013||i==10021)
+                            startActivity(new Intent(context, GamingActivityNew.class).putExtra("roomId", tabList.get(position).house_id).
+                                    putExtra("tableId", tabList.get(position).id).putExtra("point", minPoint));
+                        else Tools.toastMsgCenter(context, "code:"+i+" "+s);
                     }
 
                     @Override
                     public void onSuccess() {
-                        Tools.debug("successful ---"+ConstentNew.GROUP_ID);
+                        Tools.debug("successful ---" + ConstentNew.GROUP_ID);
                         startActivity(new Intent(context, GamingActivityNew.class).putExtra("roomId", tabList.get(position).house_id).
                                 putExtra("tableId", tabList.get(position).id).putExtra("point", minPoint));
                     }

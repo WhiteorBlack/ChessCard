@@ -51,7 +51,7 @@ public class ChargeBankerNotifyPop extends BasePopupwind {
         view.findViewById(R.id.btn_cancel).setOnClickListener(this);
         txtTitle = (TextView) view.findViewById(R.id.txt_title);
 //        txtContent = (TextView) view.findViewById(R.id.txt_content);
-        money = ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCHARGECOUNT;
+        money = ConstentNew.BANKER_LIMIT_MONEY *2*ConstentNew.BANKERCHARGECOUNT;
         edtMoney = (TextView) view.findViewById(R.id.edt_money);
         edtMoney.setText(money + "");
         view.findViewById(R.id.btn_add).setOnClickListener(this);
@@ -87,6 +87,11 @@ public class ChargeBankerNotifyPop extends BasePopupwind {
                 String moneyString = edtMoney.getText().toString();
                 if (TextUtils.isEmpty(moneyString)) {
                     Tools.toastMsgCenter(context, "请输入金额");
+                    return;
+                }
+                money=Integer.parseInt(moneyString);
+                if (money>AppPrefrence.getAmount(context)){
+                    Tools.toastMsgCenter(context,"账户余额不足");
                     return;
                 }
                 upBanker(Integer.parseInt(moneyString));

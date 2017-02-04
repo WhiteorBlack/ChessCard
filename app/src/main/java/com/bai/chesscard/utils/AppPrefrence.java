@@ -26,14 +26,16 @@ public class AppPrefrence {
     private static final String REFERRER = "referrer";
     private static final String AMOUNT="amount";
 
-    public static void setAmount(Context context,int amount){
+    public static void setAmount(Context context,long amount){
+        if (amount<0)
+            amount=0;
         setting=getSp(context.getApplicationContext());
-        setting.edit().putInt(AMOUNT,amount).apply();
+        setting.edit().putLong(AMOUNT,amount).apply();
     }
 
-    public static int getAmount(Context context){
+    public static long getAmount(Context context){
         setting=getSp(context.getApplicationContext());
-        return setting.getInt(AMOUNT,0);
+        return setting.getLong(AMOUNT,0);
     }
 
     public static void setAvatar(Context context,String avatar){

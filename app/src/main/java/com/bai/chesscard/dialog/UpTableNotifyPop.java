@@ -70,6 +70,10 @@ public class UpTableNotifyPop extends BasePopupwind {
                     return;
                 }
                 money = Integer.parseInt(moneyString);
+                if (money>AppPrefrence.getAmount(context)){
+                    Tools.toastMsgCenter(context,"账户余额不足");
+                    return;
+                }
                 upBanker();
 
                 break;

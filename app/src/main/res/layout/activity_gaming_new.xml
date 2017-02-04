@@ -330,6 +330,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_margin="2dp"
+                    android:scaleType="centerCrop"
                     android:background="@mipmap/site_empty" />
 
                 <TextView
@@ -381,6 +382,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_margin="2dp"
+                    android:scaleType="centerCrop"
                     android:background="@mipmap/site_empty" />
 
                 <TextView
@@ -432,6 +434,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_margin="2dp"
+                    android:scaleType="centerCrop"
                     android:background="@mipmap/site_empty" />
 
                 <TextView
@@ -483,6 +486,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_margin="2dp"
+                    android:scaleType="centerCrop"
                     android:background="@mipmap/site_empty" />
 
                 <TextView

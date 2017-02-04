@@ -49,7 +49,7 @@ public class UpBankerNotifyPop extends BasePopupwind {
         money = ConstentNew.BANKER_LIMIT_MONEY * ConstentNew.BANKERCHARGECOUNT;
         txtTitle = (TextView) view.findViewById(R.id.txt_title);
         edtMoney.setText(money + "");
-        view.findViewById(R.id.btn_add).setOnClickListener(this);
+        view.findViewById(R.id.btn_add).setVisibility(View.INVISIBLE);
         this.setContentView(view);
         this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
@@ -76,6 +76,10 @@ public class UpBankerNotifyPop extends BasePopupwind {
                     return;
                 }
                 money = Integer.parseInt(moneyString);
+                if (money>AppPrefrence.getAmount(context)){
+                    Tools.toastMsgCenter(context,"账户余额不足");
+                    return;
+                }
                 upBanker();
                 if (popInterfacer != null)
                     popInterfacer.OnConfirm(flag, null);

@@ -83,7 +83,12 @@ public class ChargeMoneyNotifyPop extends BasePopupwind {
                     Tools.toastMsgCenter(context, "请输入金额");
                     return;
                 }
-                upBanker(Integer.parseInt(moneyString));
+                money=Integer.parseInt(moneyString);
+                if (money>AppPrefrence.getAmount(context)){
+                    Tools.toastMsgCenter(context,"账户余额不足");
+                    return;
+                }
+                upBanker(money);
                 break;
             case R.id.img_exit:
                 dismiss();

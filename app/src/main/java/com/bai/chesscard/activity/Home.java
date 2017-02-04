@@ -457,6 +457,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
 
                     TIMTextElem elem = (TIMTextElem) msg.getElement(i);
                     String msgString = elem.getText().toString();
+                    Tools.debug("home receive---" + elem.getText().toString());
                     if (!TextUtils.isEmpty(msgString)) {
                         final BeanCharge beanCharge = new Gson().fromJson(msgString, BeanCharge.class);
                         if (beanCharge != null && beanCharge.type == 15) {
@@ -464,12 +465,13 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                                 @Override
                                 public void run() {
                                     AppPrefrence.setAmount(context, beanCharge.amount);
+                                    txtUserMoney.setText(beanCharge.amount+"");
                                 }
                             });
                         }
                     }
 
-                    Tools.debug("home receive---" + elem.getText().toString());
+
                 }
             }
         }

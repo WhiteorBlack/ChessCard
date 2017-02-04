@@ -8,5 +8,5 @@ package com.bai.chesscard.bean;/**
  */
 public class BeanCharge {
     public int type;
-    public int amount;
+    public long amount;
 }
