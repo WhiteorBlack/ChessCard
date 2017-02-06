@@ -1722,7 +1722,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
-                renewMoneyBanker(10);
                 gamePresenterNew.back();
                 break;
             case R.id.rel_head_bottom:
