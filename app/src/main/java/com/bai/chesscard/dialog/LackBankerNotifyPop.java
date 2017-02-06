@@ -37,7 +37,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
     private View view;
     private TextView txtTitle;
     private TextView txtContent;
-    private EditText edtMoney;
+    private TextView edtMoney;
     private int countTime = 10;
     private int money = 0;
     private boolean isCharge = false;
@@ -55,7 +55,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
         txtTitle = (TextView) view.findViewById(R.id.txt_title);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
         money = ConstentNew.BANKER_LIMIT_MONEY *2* ConstentNew.BANKERCHARGECOUNT;
-        edtMoney = (EditText) view.findViewById(R.id.edt_money);
+        edtMoney = (TextView) view.findViewById(R.id.edt_money);
         edtMoney.setText(money + "");
         view.findViewById(R.id.btn_add).setOnClickListener(this);
         view.findViewById(R.id.btn_add).setVisibility(View.INVISIBLE);

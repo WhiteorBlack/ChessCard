@@ -42,8 +42,6 @@
                 android:layout_marginLeft="10dp"
                 android:background="@mipmap/bg_edit_code"
                 android:gravity="center"
-                android:imeOptions="flagNoExtractUi|flagNoFullscreen"
-                android:inputType="number"
                 android:text="100"
                 android:textColor="@color/settingYellow"
                 android:textSize="14sp" />
