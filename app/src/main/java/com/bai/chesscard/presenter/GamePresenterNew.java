@@ -444,7 +444,6 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                     if (!TextUtils.isEmpty(msgString)) {
                         final BeanCharge beanCharge = new Gson().fromJson(msgString, BeanCharge.class);
                         if (beanCharge != null && beanCharge.type == 15) {
-
                             gameOprateView.refreshUserMoney(beanCharge.amount);
                         }
                     }
@@ -575,11 +574,25 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 ConstentNew.GAMEROUND = bean_message.ver;
                                 break;
                             case ConstentNew.TYPE_DOWN_BANKER: //下庄
-
+                                gameOprateView.gamerExit(bean_message.gamerPos);
                                 break;
                             case ConstentNew.TYPE_EXIT_GAME: //退出游戏
                                 if (TextUtils.equals(ConstentNew.USER_ID, bean_message.userId)) {
                                     gameOprateView.kickOut();
+                                }
+                                switch (bean_message.gamerPos) {
+                                    case 1:
+                                        bean_tableDetial.firstuser = null;
+                                        break;
+                                    case 2:
+                                        bean_tableDetial.seconduser = null;
+                                        break;
+                                    case 3:
+                                        bean_tableDetial.thirduser = null;
+                                        break;
+                                    case 4:
+                                        bean_tableDetial.fouruser = null;
+                                        break;
                                 }
                                 gameOprateView.gamerExit(bean_message.gamerPos);
                                 break;

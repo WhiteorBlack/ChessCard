@@ -1096,7 +1096,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             chargeMoneyNotify = new ChargeMoneyNotifyPop(context);
         chargeMoneyNotify.setTitle("玩儿续费");
 
-        chargeMoneyNotify.setPopInterfacer(GamingActivityNew.this, ConstentNew.BANKERCHARGEMONEY);
+        chargeMoneyNotify.setPopInterfacer(GamingActivityNew.this, ConstentNew.GAMERCHARGEMONEY);
         if (this != null && !isFinishing())
             chargeMoneyNotify.showPop(txtTime);
         else new Handler().postDelayed(new Runnable() {
@@ -1347,6 +1347,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 gamePresenterNew.sendMessage(bean_message);
                 gamePresenterNew.upTable(bean_message);
                 setUserInfo(bean_message);
+                refreshUserMoney(AppPrefrence.getAmount(this));
                 invisBetPoint();
                 break;
             case ConstentNew.UPTABLE_POP:
@@ -1402,7 +1403,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                     Bean_Message bankerMessage = new Bean_Message();
                     bankerMessage.gamerPos = 1;
                     bankerMessage.betPoint = ConstentNew.GAMER_TABLE_MONEY;
-                    bankerMessage.type=ConstentNew.TYPE_NOTIFY_BANKER;
+                    bankerMessage.type = ConstentNew.TYPE_NOTIFY_BANKER;
                     gamePresenterNew.sendMessage(bankerMessage);
                     updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                     txtMoney.setText(AppPrefrence.getAmount(context) + "");
@@ -1465,7 +1466,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     private void resetUserStatue() {
-        Tools.debug("resetUserStatue---" + ConstentNew.USERPOS);
         AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) + ConstentNew.GAMER_TABLE_MONEY);
         txtMoney.setText(AppPrefrence.getAmount(context) + "");
         ConstentNew.IS_BANKER = false;
@@ -1487,9 +1487,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     private void clearUserInfo(int pos) {
-        try{
+        try {
             ConstentNew.IS_HAS_GAMER[pos - 1] = false;
-        }catch (ArrayIndexOutOfBoundsException e){
+        } catch (ArrayIndexOutOfBoundsException e) {
 
         }
 
@@ -1979,7 +1979,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
                 if (baseBean.id == 1) {
                     resetUserStatue();
-
                 } else Tools.toastMsgCenter(context, baseBean.msg);
 
             }
