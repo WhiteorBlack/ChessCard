@@ -598,6 +598,11 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 break;
                             case ConstentNew.TYPE_GET_RESULT: //结算
                                 gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_GET_RESULT);
+                                bean_tableDetial.firstuser=bean_message.firstuser;
+                                bean_tableDetial.seconduser=bean_message.seconduser;
+                                bean_tableDetial.thirduser=bean_message.thirduser;
+                                bean_tableDetial.fouruser=bean_message.fouruser;
+                                bean_tableDetial.ver=bean_message.ver;
                                 gameOprateView.setUserMoney(1, bean_message.firstuser);
                                 gameOprateView.setUserMoney(2, bean_message.seconduser);
                                 gameOprateView.setUserMoney(3, bean_message.thirduser);

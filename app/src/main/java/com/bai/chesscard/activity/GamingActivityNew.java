@@ -1473,7 +1473,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     private void resetUserStatue() {
-        AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) + ConstentNew.GAMER_TABLE_MONEY);
+//        AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) + ConstentNew.GAMER_TABLE_MONEY);
         txtMoney.setText(AppPrefrence.getAmount(context) + "");
         ConstentNew.IS_BANKER = false;
         ConstentNew.IS_GAMER = false;
