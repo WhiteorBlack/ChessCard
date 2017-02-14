@@ -71,7 +71,7 @@ public class GameOprateData {
      *
      * @param money
      */
-    public void betMoney(int money) {
+    public void betMoney(final int money) {
         if (ConstentNew.IS_GAMER) {
             Map<String, String> params = new HashMap<>();
             params.put("table_id", ConstentNew.TABLE_ID);
@@ -87,7 +87,7 @@ public class GameOprateData {
                         gameDataListener.betMoneyFial();
                         return;
                     }
-                    gameDataListener.betMoneySuccess(response);
+                    gameDataListener.betMoneySuccess(response,money);
                 }
             });
         } else {
@@ -105,30 +105,30 @@ public class GameOprateData {
                         gameDataListener.betMoneyFial();
                         return;
                     }
-                    gameDataListener.betMoneySuccess(response);
+                    gameDataListener.betMoneySuccess(response,money);
                 }
             });
         }
     }
 
     public void getResult() {
-        if (ConstentNew.IS_GAMER) {
-            Map<String, String> params = new HashMap<>();
-            params.put("table_id", ConstentNew.TABLE_ID);
-            params.put("token", CommonUntilities.TOKEN);
-            params.put("ver", ConstentNew.GAMEROUND + "");
-            PostTools.postData(CommonUntilities.MAIN_URL + "GetUserSellete", params, new PostCallBack() {
-                @Override
-                public void onResponse(String response) {
-                    super.onResponse(response);
-                    if (TextUtils.isEmpty(response)) {
-                        gameDataListener.betMoneyFial();
-                        return;
-                    }
-                    gameDataListener.betMoneySuccess(response);
-                }
-            });
-        }else {
+//        if (ConstentNew.IS_GAMER) {
+//            Map<String, String> params = new HashMap<>();
+//            params.put("table_id", ConstentNew.TABLE_ID);
+//            params.put("token", CommonUntilities.TOKEN);
+//            params.put("ver", ConstentNew.GAMEROUND + "");
+//            PostTools.postData(CommonUntilities.MAIN_URL + "GetUserSellete", params, new PostCallBack() {
+//                @Override
+//                public void onResponse(String response) {
+//                    super.onResponse(response);
+//                    if (TextUtils.isEmpty(response)) {
+//                        gameDataListener.getResultFail();
+//                        return;
+//                    }
+//                    gameDataListener.getResultSuccess(response);
+//                }
+//            });
+//        }else {
             Map<String, String> params = new HashMap<>();
             params.put("table_id", ConstentNew.TABLE_ID);
             params.put("token", CommonUntilities.TOKEN);
@@ -138,13 +138,13 @@ public class GameOprateData {
                 public void onResponse(String response) {
                     super.onResponse(response);
                     if (TextUtils.isEmpty(response)) {
-                        gameDataListener.betMoneyFial();
+                        gameDataListener.getResultFail();
                         return;
                     }
-                    gameDataListener.betMoneySuccess(response);
+                    gameDataListener.getResultSuccess(response);
                 }
             });
-        }
+//        }
     }
 
 

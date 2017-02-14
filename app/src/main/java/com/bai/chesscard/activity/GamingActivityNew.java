@@ -1187,8 +1187,15 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void updateMoney(int pos, final int money) {
         switch (pos) {
             case 0:
-                AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) + money);
-                txtMoney.setText(AppPrefrence.getAmount(context) + "");
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) + money);
+                        txtMoney.setText(AppPrefrence.getAmount(context) + "");
+                    }
+                });
+
                 break;
             case 1:
                 runOnUiThread(new Runnable() {
