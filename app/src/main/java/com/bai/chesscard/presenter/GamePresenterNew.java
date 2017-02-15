@@ -525,6 +525,9 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                             case ConstentNew.TYPE_RENEW_MONEY:
                                 gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betPoint);
                                 break;
+                            case ConstentNew.TYPE_LOOK_BET:
+                                gameOprateView.betMoney(bean_message.gamerPos, bean_message.betNum);
+                                break;
                         }
                     }
                 }
@@ -723,20 +726,23 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
         if (baseBean.id > 0) {
             Bean_Message message = new Bean_Message();
-            message.type = ConstentNew.TYPE_BET_MONEY;
-            message.gamerPos = ConstentNew.USERPOS;
-            message.betNum = baseBean.totalpoint;
+
             if (ConstentNew.IS_GAMER) {
+                message.type = ConstentNew.TYPE_BET_MONEY;
+                message.gamerPos = ConstentNew.USERPOS;
+                message.betNum = baseBean.totalpoint;
                 ConstentNew.GAMER_TABLE_MONEY -= baseBean.amount;
                 gameOprateView.updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                 message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
-                sendMessage(message);
                 ConstentNew.IS_BET_MONEY = true;
+                gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
             } else {
-                sendMessage(message);
+                message.type=ConstentNew.TYPE_LOOK_BET;
+                message.gamerPos=ConstentNew.USERPOS;
+                message.betNum=baseBean.amount;
                 gameOprateView.updateMoney(0, -money);
             }
-            gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
+            sendMessage(message);
         }
     }
 

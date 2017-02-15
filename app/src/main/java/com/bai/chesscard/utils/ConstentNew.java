@@ -147,6 +147,10 @@ public class ConstentNew {
      * 玩儿家坐下
      */
     public static final int TYPE_SITE_DOWN = 13;
+    /**
+     * 观众投注信息
+     */
+    public static final int TYPE_LOOK_BET=15;
 
     /**
      * 交換位置
