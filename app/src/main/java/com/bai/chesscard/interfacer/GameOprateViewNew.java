@@ -137,6 +137,8 @@ public interface GameOprateViewNew {
 
     void showUserInfo(Bean_TableDetial.TableUser userInfo);
 
+    void initTable(Bean_TableDetial bean_tableDetial);
+
     /**
      * 玩儿家点击充值按钮
      */

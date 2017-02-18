@@ -22,8 +22,8 @@ public class AudienceAdapter extends BaseRecyAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         ViewHolder mHolder= (ViewHolder) holder;
-        Bean_Audience.Audience audience= (Bean_Audience.Audience) dataList.get(position);
-        mHolder.setImage(R.id.img_head,audience.userinfo.user_logo);
+        Bean_Audience.AudienceNew audience= (Bean_Audience.AudienceNew) dataList.get(position);
+        mHolder.setImage(R.id.img_head,audience.user_logo);
     }
 
     @Override

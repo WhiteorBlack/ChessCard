@@ -34,7 +34,7 @@ import java.util.Map;
 public class AudiencelPop extends BasePopupwind implements XRecyclerView.LoadingListener {
     private View view;
     private XRecyclerView recyclerView;
-    private List<Bean_Audience.Audience> audienceList;
+    private List<Bean_Audience.AudienceNew> audienceList;
     private AudienceAdapter audienceAdapter;
     private GamePresenterNew gamePresenter;
     private int pageIndex = 1, pageSize = 20;
@@ -58,8 +58,8 @@ public class AudiencelPop extends BasePopupwind implements XRecyclerView.Loading
         audienceAdapter.setOnItemClickListener(new BaseRecyAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(View view, int position) {
-                if (gamePresenter != null)
-                    gamePresenter.showUserInfo(audienceList.get(position - 1).userinfo);
+//                if (gamePresenter != null)
+//                    gamePresenter.showUserInfo(audienceList.get(position - 1).userinfo);
             }
 
             @Override
@@ -111,9 +111,9 @@ public class AudiencelPop extends BasePopupwind implements XRecyclerView.Loading
                 if (pageIndex == 1)
                     audienceList.clear();
                 Bean_Audience beanAudience = new Gson().fromJson(response, Bean_Audience.class);
-                if (beanAudience.status) {
-                    if (beanAudience.data != null && beanAudience.data.size() > 0) {
-                        audienceList.addAll(beanAudience.data);
+                if (beanAudience.id>0) {
+                    if (beanAudience.result != null && beanAudience.result.size() > 0) {
+                        audienceList.addAll(beanAudience.result);
                         audienceAdapter.notifyDataSetChanged();
                     }
                 }

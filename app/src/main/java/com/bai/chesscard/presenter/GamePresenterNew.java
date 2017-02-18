@@ -449,10 +449,8 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                         }
                     }
 
-                    Tools.debug("home receive---" + elem.getText().toString());
                 }
             }
-            Tools.debug("elemType--" + msg.getSender() + "--" + msg.getConversation().getType() + "--" + msg.getConversation().getPeer().toString());
             //群内用户发送的消息
             if (msg != null || msg.getConversation().getPeer().equals(conversation.getPeer()) && msg.getConversation().getType() == conversation.getType()
                     && TextUtils.equals(msg.getConversation().getPeer().toString(), ConstentNew.GROUP_ID)) {
@@ -512,6 +510,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 gameOprateView.setTableInfo(bean_tableDetial);
                                 break;
                             case ConstentNew.TYPE_GET_RESULT:
+                                ConstentNew.IS_BET_MONEY=false;
                                 gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betPoint);
                                 break;
                             case ConstentNew.TYPE_NOTIFY_BANKER:
@@ -526,7 +525,6 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 } else {
                                     gameOprateView.betMoney(bean_message.gamerPos, bean_message.betNum);
                                 }
-                                ConstentNew.IS_BET_MONEY = false;
                                 break;
                             case ConstentNew.TYPE_RENEW_MONEY:
                                 gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betPoint);
@@ -721,6 +719,8 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         bean_tableDetial = new Gson().fromJson(result, Bean_TableDetial.class);
         ConstentNew.GAMEROUND = bean_tableDetial.ver;
         gameOprateView.setTableInfo(bean_tableDetial);
+
+        gameOprateView.initTable(bean_tableDetial);
     }
 
     @Override
@@ -737,18 +737,20 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
             if (ConstentNew.IS_GAMER) {
                 message.type = ConstentNew.TYPE_BET_MONEY;
                 message.gamerPos = ConstentNew.USERPOS;
+                message.isBet=true;
                 message.betNum = baseBean.totalpoint;
                 ConstentNew.GAMER_TABLE_MONEY -= baseBean.amount;
                 gameOprateView.updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                 message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
                 ConstentNew.IS_BET_MONEY = true;
+
                 gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
             } else {
                 message.type = ConstentNew.TYPE_LOOK_BET;
                 message.gamerPos = ConstentNew.USERPOS;
                 message.betNum = baseBean.amount;
                 gameOprateView.updateMoney(0, -money);
-                gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
+                gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.amount);
             }
             sendMessage(message);
         }
@@ -772,7 +774,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     public void getResultSuccess(String result) {
         BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
         if (baseBean.id > 0) {
-            gameOprateView.updateMoney(0, baseBean.monery);
+            gameOprateView.updateMoney(0, baseBean.amount);
         }
     }
 

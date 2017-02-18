@@ -1069,6 +1069,129 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     @Override
+    public void initTable(Bean_TableDetial bean_tableDetial) {
+        if (bean_tableDetial.game_status > 0||bean_tableDetial.round>1) {
+            int gamerCount = 0;
+            if (!TextUtils.isEmpty(bean_tableDetial.firstcard)) {
+                gamerCount++;
+            }
+
+            if (!TextUtils.isEmpty(bean_tableDetial.secondcard)) {
+                gamerCount++;
+            }
+
+            if (!TextUtils.isEmpty(bean_tableDetial.thirdcard)) {
+                gamerCount++;
+            }
+
+            if (!TextUtils.isEmpty(bean_tableDetial.fourcard)) {
+                gamerCount++;
+            }
+
+            ConstentNew.GAMEROUND = bean_tableDetial.round;
+            ConstentNew.CURRENTROUND=bean_tableDetial.round;
+            if (bean_tableDetial.game_status == 1) {
+                startBetMoney();
+                countDownTime(bean_tableDetial.lasttime, ConstentNew.TYPE_BET_MONEY);
+            }
+            if (bean_tableDetial.game_status == 16) {
+                dealChessStatue(bean_tableDetial);
+                countDownTime(bean_tableDetial.lasttime, ConstentNew.TYPE_DEAL_CHESS);
+
+            }
+            if (bean_tableDetial.game_status == 17) {
+                dealChessStatue(bean_tableDetial);
+                countDownTime(bean_tableDetial.lasttime, ConstentNew.TYPE_OPEN_CHESS);
+                if (!TextUtils.isEmpty(bean_tableDetial.firstcard)) {
+                    glideImg(chessRes[getChessPoint(bean_tableDetial.firstcard)[0] - 1], imgTopLeft);
+                    glideImg(chessRes[getChessPoint(bean_tableDetial.firstcard)[1] - 1], imgTopRight);
+                    gamePresenterNew.showPoint(0, getChessPoint(bean_tableDetial.firstcard)[0], getChessPoint(bean_tableDetial.firstcard)[0]);
+                }
+
+                if (!TextUtils.isEmpty(bean_tableDetial.secondcard)) {
+                    glideImg(chessRes[getChessPoint(bean_tableDetial.secondcard)[0] - 1], imgChessLeftOne);
+                    glideImg(chessRes[getChessPoint(bean_tableDetial.secondcard)[1] - 1], imgChessLeftTwo);
+                    gamePresenterNew.showPoint(1, getChessPoint(bean_tableDetial.secondcard)[0], getChessPoint(bean_tableDetial.secondcard)[1]);
+                    if (getChessPoint(bean_tableDetial.secondcard)[0] == getChessPoint(bean_tableDetial.secondcard)[1])
+                        imgChessLeftMultiple.setVisibility(View.VISIBLE);
+                }
+
+                if (!TextUtils.isEmpty(bean_tableDetial.thirdcard)) {
+                    glideImg(chessRes[getChessPoint(bean_tableDetial.thirdcard)[0] - 1], imgChessMidOne);
+                    glideImg(chessRes[getChessPoint(bean_tableDetial.thirdcard)[1] - 1], imgChessMidTwo);
+                    gamePresenterNew.showPoint(2, getChessPoint(bean_tableDetial.thirdcard)[0], getChessPoint(bean_tableDetial.thirdcard)[1]);
+                    if (getChessPoint(bean_tableDetial.thirdcard)[1] == getChessPoint(bean_tableDetial.thirdcard)[0])
+                        imgChessMidMultiple.setVisibility(View.VISIBLE);
+
+                }
+
+                if (!TextUtils.isEmpty(bean_tableDetial.fourcard)) {
+                    glideImg(chessRes[getChessPoint(bean_tableDetial.fourcard)[0] - 1], imgChessRightOne);
+                    glideImg(chessRes[getChessPoint(bean_tableDetial.fourcard)[1] - 1], imgChessRightTwo);
+                    imgChessRightOne.setVisibility(View.VISIBLE);
+                    imgChessLeftTwo.setVisibility(View.VISIBLE);
+                    gamePresenterNew.showPoint(3, getChessPoint(bean_tableDetial.fourcard)[1], getChessPoint(bean_tableDetial.fourcard)[0]);
+                    if (getChessPoint(bean_tableDetial.fourcard)[1] == getChessPoint(bean_tableDetial.fourcard)[0])
+                        imgChessRightMultiple.setVisibility(View.VISIBLE);
+                }
+
+            }
+            int count = 0;
+            if (bean_tableDetial.game_status > 14) {
+                count = bean_tableDetial.round * gamerCount;
+            } else {
+                count = (bean_tableDetial.round - 1) * gamerCount;
+            }
+            if (!TextUtils.isEmpty(bean_tableDetial.lastpai)) {
+                ConstentNew.LAST_CHESS_POINT = Integer.parseInt(bean_tableDetial.lastpai);
+                for (int i = 0; i < ConstentNew.CHESSLIST.length / 2; i++) {
+                    Bean_ChessList.Chess chess = new Bean_ChessList.Chess();
+                    if (i < count) {
+                        chess.isVisiable = false;
+                    } else {
+                        chess.isVisiable = true;
+                    }
+                    chessList.add(chess);
+                }
+                recyChess.setVisibility(View.VISIBLE);
+                gameChessAdapter.notifyDataSetChanged();
+            }
+
+        }
+
+    }
+
+    private void dealChessStatue(Bean_TableDetial bean_tableDetial) {
+        if (TextUtils.isEmpty(bean_tableDetial.firstcard)) {
+            glideImg(R.mipmap.bg_chess_back, imgTopLeft);
+            glideImg(R.mipmap.bg_chess_back, imgTopRight);
+            imgTopLeft.setVisibility(View.VISIBLE);
+            imgTopRight.setVisibility(View.VISIBLE);
+        }
+
+        if (!TextUtils.isEmpty(bean_tableDetial.secondcard)) {
+            glideImg(R.mipmap.bg_chess_back, imgChessLeftOne);
+            glideImg(R.mipmap.bg_chess_back, imgChessLeftTwo);
+            imgChessLeftOne.setVisibility(View.VISIBLE);
+            imgChessLeftTwo.setVisibility(View.VISIBLE);
+        }
+
+        if (!TextUtils.isEmpty(bean_tableDetial.thirdcard)) {
+            glideImg(R.mipmap.bg_chess_back, imgChessMidOne);
+            glideImg(R.mipmap.bg_chess_back, imgChessMidTwo);
+            imgChessMidOne.setVisibility(View.VISIBLE);
+            imgChessMidTwo.setVisibility(View.VISIBLE);
+        }
+
+        if (!TextUtils.isEmpty(bean_tableDetial.fourcard)) {
+            glideImg(R.mipmap.bg_chess_back, imgChessRightOne);
+            glideImg(R.mipmap.bg_chess_back, imgChessRightTwo);
+            imgChessRightOne.setVisibility(View.VISIBLE);
+            imgChessRightTwo.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
     public void bankerCharge() {
         if (chargeBankerNotify == null)
             chargeBankerNotify = new ChargeBankerNotifyPop(context);
@@ -1178,6 +1301,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         flUserLeft.setClickable(false);
         flUserMid.setClickable(false);
         flUserRight.setClickable(false);
+        flUserLeft.setBackgroundResource(R.mipmap.table_first);
+        flUserMid.setBackgroundResource(R.mipmap.table_second);
+        flUserRight.setBackgroundResource(R.mipmap.table_last);
         txtMoneyMid.setClickable(false);
         txtMoneyRight.setClickable(false);
         txtMoneyLeft.setClickable(false);
@@ -1187,12 +1313,11 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void updateMoney(int pos, final int money) {
         switch (pos) {
             case 0:
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) + money);
-                        txtMoney.setText(AppPrefrence.getAmount(context) + "");
+//                        txtMoney.setText(AppPrefrence.getAmount(context) + "");
                     }
                 });
 
@@ -1275,9 +1400,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case 2:
                 String moenyString = txtTotalLeft.getText().toString();
                 if (!TextUtils.isEmpty(moenyString)) {
-                  try{
-                      money+=Integer.parseInt(moenyString);
-                  }catch (Exception e){}
+                    try {
+                        money += Integer.parseInt(moenyString);
+                    } catch (Exception e) {
+                    }
                 }
                 txtTotalLeft.setText(money + "");
                 imgBgLeft.setVisibility(View.VISIBLE);
@@ -1285,9 +1411,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case 3:
                 String moenyStringM = txtTotalMid.getText().toString();
                 if (!TextUtils.isEmpty(moenyStringM)) {
-                    try{
-                        money+=Integer.parseInt(moenyStringM);
-                    }catch (Exception e){}
+                    try {
+                        money += Integer.parseInt(moenyStringM);
+                    } catch (Exception e) {
+                    }
                 }
                 txtTotalMid.setText(money + "");
                 imgBgMid.setVisibility(View.VISIBLE);
@@ -1296,9 +1423,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case 4:
                 String moenyStringR = txtTotalRight.getText().toString();
                 if (!TextUtils.isEmpty(moenyStringR)) {
-                    try{
-                        money+=Integer.parseInt(moenyStringR);
-                    }catch (Exception e){}
+                    try {
+                        money += Integer.parseInt(moenyStringR);
+                    } catch (Exception e) {
+                    }
                 }
                 txtTotalRight.setText(money + "");
                 imgBgRight.setVisibility(View.VISIBLE);
@@ -1879,6 +2007,16 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 ConstentNew.USERPOS = 4;
                 break;
         }
+    }
+
+    private int[] getChessPoint(String point) {
+        int[] pointInt = new int[]{0, 0};
+        if (!TextUtils.isEmpty(point)) {
+            String[] pointString = point.split(",");
+            pointInt[0] = Integer.parseInt(pointString[0]);
+            pointInt[1] = Integer.parseInt(pointString[1]);
+        }
+        return pointInt;
     }
 
     public void settleMoneyAnim(int[] startPoint, int[] endPoint) {

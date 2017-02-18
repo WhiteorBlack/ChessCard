@@ -451,13 +451,11 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
     public void update(Observable observable, Object data) {
         if (observable instanceof MessageEvent) {
             TIMMessage msg = (TIMMessage) data;
-            Tools.debug("home receive---" + msg.getConversation().getType() + "peer" + msg.getConversation().getPeer() + "ident" + msg.getConversation().getIdentifer());
             if (msg != null && TextUtils.equals(msg.getConversation().getType().toString(), "C2C")) {
                 for (int i = 0; i < msg.getElementCount(); i++) {
 
                     TIMTextElem elem = (TIMTextElem) msg.getElement(i);
                     String msgString = elem.getText().toString();
-                    Tools.debug("home receive---" + elem.getText().toString());
                     if (!TextUtils.isEmpty(msgString)) {
                         final BeanCharge beanCharge = new Gson().fromJson(msgString, BeanCharge.class);
                         if (beanCharge != null && beanCharge.type == 15) {
