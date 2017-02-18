@@ -169,6 +169,13 @@ public interface GameOprateViewNew {
 
     void betMoney(int pos, int money);
 
+    /**
+     * 如果闲家没有压注,则默认压最低
+     * @param pos
+     * @param money
+     */
+    void betMoneyNormal(int pos, int money);
+
     void setUserInfo(Bean_Message message);
 
     void kickOut();

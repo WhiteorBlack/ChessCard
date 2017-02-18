@@ -133,6 +133,7 @@ public class GameOprateData {
             params.put("table_id", ConstentNew.TABLE_ID);
             params.put("token", CommonUntilities.TOKEN);
             params.put("ver", ConstentNew.GAMEROUND + "");
+            Tools.debug("tableId--"+ConstentNew.TABLE_ID+"--"+"token"+"--"+CommonUntilities.TOKEN+"--"+"ver--"+ConstentNew.GAMEROUND);
             PostTools.postData(CommonUntilities.MAIN_URL + "GetLookUserSellete", params, new PostCallBack() {
                 @Override
                 public void onResponse(String response) {

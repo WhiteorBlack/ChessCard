@@ -13,4 +13,5 @@ public class BaseBean {
     public String token;
     public int totalpoint;
     public int amount;
+    public int monery;
 }

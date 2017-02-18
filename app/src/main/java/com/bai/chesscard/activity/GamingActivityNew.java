@@ -1269,6 +1269,43 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         }
     }
 
+    @Override
+    public void betMoneyNormal(int pos, int money) {
+        switch (pos) {
+            case 2:
+                String moenyString = txtTotalLeft.getText().toString();
+                if (!TextUtils.isEmpty(moenyString)) {
+                  try{
+                      money+=Integer.parseInt(moenyString);
+                  }catch (Exception e){}
+                }
+                txtTotalLeft.setText(money + "");
+                imgBgLeft.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                String moenyStringM = txtTotalMid.getText().toString();
+                if (!TextUtils.isEmpty(moenyStringM)) {
+                    try{
+                        money+=Integer.parseInt(moenyStringM);
+                    }catch (Exception e){}
+                }
+                txtTotalMid.setText(money + "");
+                imgBgMid.setVisibility(View.VISIBLE);
+                break;
+
+            case 4:
+                String moenyStringR = txtTotalRight.getText().toString();
+                if (!TextUtils.isEmpty(moenyStringR)) {
+                    try{
+                        money+=Integer.parseInt(moenyStringR);
+                    }catch (Exception e){}
+                }
+                txtTotalRight.setText(money + "");
+                imgBgRight.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
     /**
      * 隐藏押注的注码
      */

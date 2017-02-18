@@ -413,12 +413,13 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                     message.type = ConstentNew.TYPE_BET_MONEY;
                     message.gamerPos = ConstentNew.USERPOS;
                     message.betNum = ConstentNew.LEFTPOINT;
+                    message.isBet=false;
                     ConstentNew.GAMER_TABLE_MONEY -= ConstentNew.LEFTPOINT;
                     gameOprateView.updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                     message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
                     sendMessage(message);
-                    gameOprateView.betMoney(ConstentNew.USERPOS, ConstentNew.LEFTPOINT);
-                    ConstentNew.IS_BET_MONEY = false;
+                    ConstentNew.IS_BET_MONEY=false;
+                    gameOprateView.betMoneyNormal(ConstentNew.USERPOS, ConstentNew.LEFTPOINT);
                 }
 
                 break;
@@ -520,7 +521,12 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 //更新玩兒傢的桌面金幣書和賬號數目
                                 gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betPoint);
                                 //更新桌面投注的狀態
-                                gameOprateView.betMoney(bean_message.gamerPos, bean_message.betNum);
+                                if (!bean_message.isBet) {
+                                    gameOprateView.betMoneyNormal(bean_message.gamerPos, bean_message.betNum);
+                                } else {
+                                    gameOprateView.betMoney(bean_message.gamerPos, bean_message.betNum);
+                                }
+                                ConstentNew.IS_BET_MONEY = false;
                                 break;
                             case ConstentNew.TYPE_RENEW_MONEY:
                                 gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betPoint);
@@ -601,11 +607,11 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 break;
                             case ConstentNew.TYPE_GET_RESULT: //结算
                                 gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_GET_RESULT);
-                                bean_tableDetial.firstuser=bean_message.firstuser;
-                                bean_tableDetial.seconduser=bean_message.seconduser;
-                                bean_tableDetial.thirduser=bean_message.thirduser;
-                                bean_tableDetial.fouruser=bean_message.fouruser;
-                                bean_tableDetial.ver=bean_message.ver;
+                                bean_tableDetial.firstuser = bean_message.firstuser;
+                                bean_tableDetial.seconduser = bean_message.seconduser;
+                                bean_tableDetial.thirduser = bean_message.thirduser;
+                                bean_tableDetial.fouruser = bean_message.fouruser;
+                                bean_tableDetial.ver = bean_message.ver;
                                 gameOprateView.setUserMoney(1, bean_message.firstuser);
                                 gameOprateView.setUserMoney(2, bean_message.seconduser);
                                 gameOprateView.setUserMoney(3, bean_message.thirduser);
@@ -613,6 +619,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 if (!ConstentNew.IS_GAMER) {
                                     settleResult();
                                 }
+                                ConstentNew.IS_BET_MONEY = false;
                                 break;
                             case ConstentNew.TYPE_NOTIFY_BANKER: //通知庄家进行选择
                                 if (ConstentNew.IS_BANKER)
@@ -722,7 +729,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     }
 
     @Override
-    public void betMoneySuccess(String result,int money) {
+    public void betMoneySuccess(String result, int money) {
         BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
         if (baseBean.id > 0) {
             Bean_Message message = new Bean_Message();
@@ -737,10 +744,11 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 ConstentNew.IS_BET_MONEY = true;
                 gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
             } else {
-                message.type=ConstentNew.TYPE_LOOK_BET;
-                message.gamerPos=ConstentNew.USERPOS;
-                message.betNum=baseBean.amount;
+                message.type = ConstentNew.TYPE_LOOK_BET;
+                message.gamerPos = ConstentNew.USERPOS;
+                message.betNum = baseBean.amount;
                 gameOprateView.updateMoney(0, -money);
+                gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
             }
             sendMessage(message);
         }
@@ -764,7 +772,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     public void getResultSuccess(String result) {
         BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
         if (baseBean.id > 0) {
-            gameOprateView.updateMoney(0, Integer.parseInt(baseBean.msg));
+            gameOprateView.updateMoney(0, baseBean.monery);
         }
     }
 
