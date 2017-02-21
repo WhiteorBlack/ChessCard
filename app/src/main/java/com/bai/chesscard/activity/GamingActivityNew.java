@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -71,6 +72,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -446,6 +449,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         exitGamerNotifyPop.setPopInterfacer(this, ConstentNew.EXITGAMER);
     }
 
+    private CountDownTimer countDownTimer;
+
     @Override
     public void countDownTime(final int time, final int type) {
         visCountTime();
@@ -473,7 +478,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 break;
         }
 
-        CountDownTimer countDownTimer = new CountDownTimer(time * 1000, 1000) {
+        if (countDownTimer != null)
+            countDownTimer.cancel();
+
+        countDownTimer = new CountDownTimer(time * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 if (isFinishing())
@@ -491,10 +499,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 invisCountTime();
             }
         };
-        if (countDownTimer != null)
-            countDownTimer.cancel();
+
         countDownTimer.start();
     }
+
 
     @Override
     public void shakeDice(int one, int two) {
@@ -1125,7 +1133,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 chessList.clear();
                 for (int i = 0; i < 18; i++) {
                     Bean_ChessList.Chess chess = new Bean_ChessList.Chess();
-                    if (i < (18 - (lastCount/2))) {
+                    if (i < (18 - (lastCount / 2))) {
                         chess.isVisiable = false;
                     } else {
                         chess.isVisiable = true;
@@ -2002,6 +2010,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 break;
         }
     }
+
 
     private int[] getChessPoint(String point) {
         int[] pointInt = new int[]{0, 0};

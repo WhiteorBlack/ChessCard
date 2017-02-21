@@ -442,6 +442,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 for (int i = 0; i < msg.getElementCount(); i++) {
                     TIMTextElem elem = (TIMTextElem) msg.getElement(i);
                     String msgString = elem.getText().toString();
+                    Tools.debug("account" + msgString);
                     if (!TextUtils.isEmpty(msgString)) {
                         final BeanCharge beanCharge = new Gson().fromJson(msgString, BeanCharge.class);
                         if (beanCharge != null && beanCharge.type == 15) {
