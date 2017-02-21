@@ -402,6 +402,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     }
 
     public void endCountTime(int type) {
+        Tools.debug("endCountTIme--"+type);
         switch (type) {
             case ConstentNew.TYPE_SHAKE_DICE:
                 gameOprateView.endDice();

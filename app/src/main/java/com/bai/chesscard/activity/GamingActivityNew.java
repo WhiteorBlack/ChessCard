@@ -452,7 +452,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     private CountDownTimer countDownTimer;
 
     @Override
-    public void countDownTime(final int time, final int type) {
+    public void countDownTime(int time, final int type) {
+        Tools.debug("countDownTime--"+type);
         visCountTime();
         switch (type) {
             case ConstentNew.TYPE_WAIT_TIME:  //等待
@@ -478,8 +479,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 break;
         }
 
-        if (countDownTimer != null)
+        if (countDownTimer != null) {
             countDownTimer.cancel();
+//            gamePresenterNew.endCountTime(type);
+        }
 
         countDownTimer = new CountDownTimer(time * 1000, 1000) {
             @Override
