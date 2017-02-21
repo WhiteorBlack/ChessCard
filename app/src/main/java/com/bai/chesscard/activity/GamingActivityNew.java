@@ -1070,26 +1070,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void initTable(Bean_TableDetial bean_tableDetial) {
-        if (bean_tableDetial.game_status > 0||bean_tableDetial.round>1) {
-            int gamerCount = 0;
-            if (!TextUtils.isEmpty(bean_tableDetial.firstcard)) {
-                gamerCount++;
-            }
-
-            if (!TextUtils.isEmpty(bean_tableDetial.secondcard)) {
-                gamerCount++;
-            }
-
-            if (!TextUtils.isEmpty(bean_tableDetial.thirdcard)) {
-                gamerCount++;
-            }
-
-            if (!TextUtils.isEmpty(bean_tableDetial.fourcard)) {
-                gamerCount++;
-            }
-
+        if (bean_tableDetial.game_status > 0 || bean_tableDetial.round > 1) {
             ConstentNew.GAMEROUND = bean_tableDetial.round;
-            ConstentNew.CURRENTROUND=bean_tableDetial.round;
+            ConstentNew.CURRENTROUND = bean_tableDetial.round;
             if (bean_tableDetial.game_status == 1) {
                 startBetMoney();
                 countDownTime(bean_tableDetial.lasttime, ConstentNew.TYPE_BET_MONEY);
@@ -1105,7 +1088,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 if (!TextUtils.isEmpty(bean_tableDetial.firstcard)) {
                     glideImg(chessRes[getChessPoint(bean_tableDetial.firstcard)[0] - 1], imgTopLeft);
                     glideImg(chessRes[getChessPoint(bean_tableDetial.firstcard)[1] - 1], imgTopRight);
-                    gamePresenterNew.showPoint(0, getChessPoint(bean_tableDetial.firstcard)[0], getChessPoint(bean_tableDetial.firstcard)[0]);
                 }
 
                 if (!TextUtils.isEmpty(bean_tableDetial.secondcard)) {
@@ -1136,17 +1118,14 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 }
 
             }
-            int count = 0;
-            if (bean_tableDetial.game_status > 14) {
-                count = bean_tableDetial.round * gamerCount;
-            } else {
-                count = (bean_tableDetial.round - 1) * gamerCount;
-            }
-            if (!TextUtils.isEmpty(bean_tableDetial.lastpai)) {
+
+            if (!TextUtils.isEmpty(bean_tableDetial.lastpai) && !TextUtils.isEmpty(bean_tableDetial.lastpaicount)) {
                 ConstentNew.LAST_CHESS_POINT = Integer.parseInt(bean_tableDetial.lastpai);
-                for (int i = 0; i < ConstentNew.CHESSLIST.length / 2; i++) {
+                int lastCount = Integer.parseInt(bean_tableDetial.lastpaicount);
+                chessList.clear();
+                for (int i = 0; i < 18; i++) {
                     Bean_ChessList.Chess chess = new Bean_ChessList.Chess();
-                    if (i < count) {
+                    if (i < (18 - (lastCount/2))) {
                         chess.isVisiable = false;
                     } else {
                         chess.isVisiable = true;
@@ -1365,6 +1344,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     public void gamerExit(int pos) {
         clearUserInfo(pos);
     }
+
 
     @Override
     public void resetTable() {
@@ -1634,12 +1614,26 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     private void setUserMoney() {
-        txtMoney.setText(AppPrefrence.getAmount(context) + "");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtMoney.setText(AppPrefrence.getAmount(context) + "");
+                    }
+                });
+            }
+        }, 200);
+
+
     }
 
     private void resetUserStatue() {
-        AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) + ConstentNew.GAMER_TABLE_MONEY);
-        txtMoney.setText(AppPrefrence.getAmount(context) + "");
+        if (!ConstentNew.IS_BANKER) {
+            AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) + ConstentNew.GAMER_TABLE_MONEY);
+            txtMoney.setText(AppPrefrence.getAmount(context) + "");
+        }
         ConstentNew.IS_BANKER = false;
         ConstentNew.IS_GAMER = false;
         try {
@@ -2206,7 +2200,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                     message.type = ConstentNew.TYPE_NOTIFY_BANKER;
                     message.gamerPos = ConstentNew.USERPOS;
                     message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
-                    gamePresenterNew.sendMessage(message);
+//                    gamePresenterNew.sendMessage(message);
                 } else Tools.toastMsgCenter(context, baseBean.msg);
 
             }

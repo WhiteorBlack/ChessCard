@@ -18,5 +18,6 @@ public class Bean_Audience extends BaseBean {
     public static class AudienceNew{
         public int id;
         public String user_logo;
+        public Bean_TableDetial.TableUser userinfo;
     }
 }

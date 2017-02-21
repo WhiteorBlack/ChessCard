@@ -58,8 +58,8 @@ public class AudiencelPop extends BasePopupwind implements XRecyclerView.Loading
         audienceAdapter.setOnItemClickListener(new BaseRecyAdapter.OnItemClickListener() {
             @Override
             public void onItemClickListener(View view, int position) {
-//                if (gamePresenter != null)
-//                    gamePresenter.showUserInfo(audienceList.get(position - 1).userinfo);
+                if (gamePresenter != null)
+                    gamePresenter.showUserInfo(audienceList.get(position - 1).userinfo);
             }
 
             @Override

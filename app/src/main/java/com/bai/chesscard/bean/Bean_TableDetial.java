@@ -22,6 +22,7 @@ public class Bean_TableDetial extends BaseBean {
     public String lastpai;
     public int game_status;
     public int lasttime;
+    public String lastpaicount;
     public static class TableUser {
         public String id;
         public String token;
