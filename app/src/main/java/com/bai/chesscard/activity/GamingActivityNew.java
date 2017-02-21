@@ -453,11 +453,12 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void countDownTime(int time, final int type) {
-        Tools.debug("countDownTime--"+type);
+        Tools.debug("countDownTime--" + type);
         visCountTime();
         switch (type) {
             case ConstentNew.TYPE_WAIT_TIME:  //等待
                 txtTimeStatue.setText("准备中...");
+                resetTable();
                 break;
             case ConstentNew.TYPE_BET_MONEY:  //押注
                 txtTimeStatue.setText("押注时间");
@@ -476,6 +477,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 break;
             case ConstentNew.TYPE_RESET_CHESS:
                 txtTimeStatue.setText("洗牌...");
+                break;
+            case ConstentNew.TYPE_NOTIFY_BANKER:
+                txtTimeStatue.setText("等待中...");
                 break;
         }
 
@@ -502,7 +506,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 invisCountTime();
             }
         };
-
         countDownTimer.start();
     }
 

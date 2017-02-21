@@ -135,11 +135,10 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
      * 返回操作
      */
     public void back() {
-        if (ConstentNew.IS_BANKER && ConstentNew.IS_HAS_GAMER[0] && ConstentNew.IS_HAS_GAMER[1]
-                && ConstentNew.IS_HAS_GAMER[2] && ConstentNew.IS_HAS_GAMER[3])
-            gameOprateView.downBanker();
-        if (ConstentNew.IS_BANKER && (!ConstentNew.IS_HAS_GAMER[0] || !ConstentNew.IS_HAS_GAMER[1]
-                || !ConstentNew.IS_HAS_GAMER[2] || !ConstentNew.IS_HAS_GAMER[3]))
+//        if (ConstentNew.IS_BANKER && ConstentNew.IS_HAS_GAMER[0] && ConstentNew.IS_HAS_GAMER[1]
+//                && ConstentNew.IS_HAS_GAMER[2] && ConstentNew.IS_HAS_GAMER[3])
+//            gameOprateView.downBanker();
+        if (ConstentNew.IS_BANKER )
             gameOprateView.bankerExit();
         if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER)
             gameOprateView.downTable();
@@ -622,6 +621,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 ConstentNew.IS_BET_MONEY = false;
                                 break;
                             case ConstentNew.TYPE_NOTIFY_BANKER: //通知庄家进行选择
+                                endCountTime(ConstentNew.TYPE_GET_RESULT);
                                 if (ConstentNew.IS_BANKER)
                                     gameOprateView.BankerNotify();
                                 ConstentNew.GAMEROUND = bean_message.ver;
