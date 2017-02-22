@@ -77,7 +77,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
     @Override
     public void showPop(View parent) {
         super.showPop(parent);
-        money = (int) (ConstentNew.BANKER_LIMIT_MONEY *Math.pow(2,(ConstentNew.BANKERCHARGECOUNT-1)));
+        money = (int) (ConstentNew.BANKER_LIMIT_MONEY * Math.pow(2,(ConstentNew.BANKERCHARGECOUNT-1)));
         edtMoney.setText(money + "");
         startCount();
     }
@@ -110,18 +110,12 @@ public class LackBankerNotifyPop extends BasePopupwind {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.img_confirm:
-                String moneyString = edtMoney.getText().toString();
-                if (TextUtils.isEmpty(moneyString)) {
-                    Tools.toastMsgCenter(context, "请输入金额");
-                    return;
-                }
                 isCharge = true;
-                money=Integer.parseInt(moneyString);
                 if (money>AppPrefrence.getAmount(context)){
                     Tools.toastMsgCenter(context,"账户余额不足");
                     return;
                 }
-                upBanker(Integer.parseInt(moneyString));
+                upBanker(money);
 
                 break;
             case R.id.img_exit:

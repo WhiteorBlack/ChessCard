@@ -98,7 +98,7 @@ public class ChargeMoneyNotifyPop extends BasePopupwind {
                     Tools.toastMsgCenter(context, "账户余额不足");
                     return;
                 }
-                AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - ConstentNew.LEFTPOINT);
+//                AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - ConstentNew.LEFTPOINT);
                 money += ConstentNew.LEFTPOINT;
                 edtMoney.setText(money + "");
                 break;

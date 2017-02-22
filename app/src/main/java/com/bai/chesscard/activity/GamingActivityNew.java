@@ -680,7 +680,11 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        lackBankerNotifyPop.showPop(txtMoney);
+                        try {
+                            lackBankerNotifyPop.showPop(txtMoney);
+                        } catch (Exception e) {
+
+                        }
                     }
                 });
             }
@@ -2170,6 +2174,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
                 if (baseBean.id == 1) {
                     resetUserStatue();
+                    gamePresenterNew.resetUserInfo(ConstentNew.USERPOS);
                 } else Tools.toastMsgCenter(context, baseBean.msg);
 
             }
