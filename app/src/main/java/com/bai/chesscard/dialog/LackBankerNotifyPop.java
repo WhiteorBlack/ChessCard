@@ -54,9 +54,9 @@ public class LackBankerNotifyPop extends BasePopupwind {
         view.findViewById(R.id.img_exit).setOnClickListener(this);
         txtTitle = (TextView) view.findViewById(R.id.txt_title);
         txtContent = (TextView) view.findViewById(R.id.txt_content);
-        money = ConstentNew.BANKER_LIMIT_MONEY *2* ConstentNew.BANKERCHARGECOUNT;
+
         edtMoney = (TextView) view.findViewById(R.id.edt_money);
-        edtMoney.setText(money + "");
+
         view.findViewById(R.id.btn_add).setOnClickListener(this);
         view.findViewById(R.id.btn_add).setVisibility(View.INVISIBLE);
         this.setContentView(view);
@@ -77,6 +77,8 @@ public class LackBankerNotifyPop extends BasePopupwind {
     @Override
     public void showPop(View parent) {
         super.showPop(parent);
+        money = (int) (ConstentNew.BANKER_LIMIT_MONEY *Math.pow(2,(ConstentNew.BANKERCHARGECOUNT-1)));
+        edtMoney.setText(money + "");
         startCount();
     }
 

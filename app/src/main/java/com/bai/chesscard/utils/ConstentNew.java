@@ -23,6 +23,11 @@ public class ConstentNew {
      * 当前用户是否为普通玩儿家
      */
     public static boolean IS_GAMER = false;
+
+    /**
+     * 用户是否已经结算过了
+     */
+    public static boolean IS_GET_RESULT=false;
     /**
      * 当前游戏桌子id
      */

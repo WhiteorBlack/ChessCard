@@ -425,6 +425,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 break;
             case ConstentNew.TYPE_GET_RESULT:
                 gameOprateView.resetTable();
+                ConstentNew.IS_GET_RESULT=false;
                 break;
             case ConstentNew.TYPE_RENEW_MONEY:
                 gameOprateView.clearRenewPop();
@@ -629,6 +630,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
                                 break;
                             case ConstentNew.TYPE_OPEN_CHESS: //开牌
+                                ConstentNew.IS_GET_RESULT=false;
                                 ConstentNew.GAMEROUND = bean_message.ver;
                                 gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_OPEN_CHESS);
                                 Bundle bundle = new Bundle();
@@ -648,8 +650,8 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                             case ConstentNew.TYPE_RENEW_MONEY: //续费
                                 gameOprateView.countDownTime(bean_message.time, ConstentNew.TYPE_RENEW_MONEY);
                                 if (ConstentNew.IS_BANKER && TextUtils.equals(ConstentNew.USER_ID, bean_message.userId)) {
-                                    gameOprateView.renewMoneyBanker(bean_message.time);
                                     ConstentNew.BANKERCHARGECOUNT = bean_message.seatnumber;
+                                    gameOprateView.renewMoneyBanker(bean_message.time);
                                 }
                                 if (!ConstentNew.IS_BANKER && ConstentNew.IS_GAMER && TextUtils.equals(ConstentNew.USER_ID, bean_message.userId))
                                     gameOprateView.renewMoneyGamer(bean_message.time);
@@ -774,10 +776,16 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
     @Override
     public void getResultSuccess(String result) {
-        BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
-        if (baseBean.id > 0) {
-            gameOprateView.updateMoney(0, baseBean.amount);
+        if (ConstentNew.IS_GET_RESULT){
+
+        }else {
+            ConstentNew.IS_GET_RESULT=true;
+            BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
+            if (baseBean.id > 0) {
+                gameOprateView.updateMoney(0, baseBean.amount);
+            }
         }
+
     }
 
     private int[] getChessPoint(String point) {
