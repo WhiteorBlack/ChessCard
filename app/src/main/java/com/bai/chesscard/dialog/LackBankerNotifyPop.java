@@ -77,7 +77,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
     @Override
     public void showPop(View parent) {
         super.showPop(parent);
-        money = (int) (ConstentNew.BANKER_LIMIT_MONEY * Math.pow(2,(ConstentNew.BANKERCHARGECOUNT-1)));
+        money = (int) (ConstentNew.BANKER_LIMIT_MONEY * Math.pow(2, (ConstentNew.BANKERCHARGECOUNT - 1)));
         edtMoney.setText(money + "");
         startCount();
     }
@@ -111,8 +111,8 @@ public class LackBankerNotifyPop extends BasePopupwind {
         switch (v.getId()) {
             case R.id.img_confirm:
                 isCharge = true;
-                if (money>AppPrefrence.getAmount(context)){
-                    Tools.toastMsgCenter(context,"账户余额不足");
+                if (money > AppPrefrence.getAmount(context)) {
+                    Tools.toastMsgCenter(context, "账户余额不足");
                     return;
                 }
                 upBanker(money);
@@ -147,15 +147,15 @@ public class LackBankerNotifyPop extends BasePopupwind {
                 super.onResponse(response);
                 if (TextUtils.isEmpty(response))
                     return;
-                Bean_SiteTable siteTable = new Gson().fromJson(response, Bean_SiteTable.class);
+                BaseBean siteTable = new Gson().fromJson(response, BaseBean.class);
                 if (siteTable.id > 0) {
                     Bundle bundle = new Bundle();
                     bundle.putInt("type", 1);
                     ConstentNew.GAMER_TABLE_MONEY += money;
-                    AppPrefrence.setAmount(context, (AppPrefrence.getAmount(context) - money)<0?0:(AppPrefrence.getAmount(context) - money));
+                    AppPrefrence.setAmount(context, (AppPrefrence.getAmount(context) - money) < 0 ? 0 : (AppPrefrence.getAmount(context) - money));
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
-                    dismiss();
+//                    dismiss();
                 } else {
                     Tools.toastMsgCenter(context, siteTable.msg);
                 }
@@ -180,7 +180,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
                     bundle.putInt("type", 2);
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
-                    dismiss();
+//                    dismiss();
                 } else Tools.toastMsgCenter(context, baseBean.msg);
             }
         });

@@ -1569,6 +1569,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case ConstentNew.LACKBANKERPOP:
                 if (bundle == null)
                     return;
+                if (lackBankerNotifyPop != null)
+                    lackBankerNotifyPop.dismiss();
                 if (bundle.getInt("type") == 1) {
                     Bean_Message bankerMessage = new Bean_Message();
                     bankerMessage.gamerPos = 1;
@@ -1665,7 +1667,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         message.userId = AppPrefrence.getUserNo(context);
         gamePresenterNew.sendMessage(message);
         clearUserInfo(ConstentNew.USERPOS);
-
         ConstentNew.USERPOS = -1;
         visBetPoint();
     }
