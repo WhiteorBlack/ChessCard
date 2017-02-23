@@ -75,6 +75,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     public void resetUserInfo(int pos) {
         switch (pos) {
             case 1:
+                ConstentNew.BANKERCHARGECOUNT = 1;
                 bean_tableDetial.firstuser = null;
                 break;
             case 2:
@@ -100,6 +101,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
      * 用户投注
      */
     public void betMoney(int money) {
+        gameOprateView.betMoneyDisable();
         GameOprateData.getInstance(this).betMoney(money);
     }
 
@@ -507,7 +509,8 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                         bean_tableDetial.fouruser = bean_message.tableUser;
                                         break;
                                 }
-                                gameOprateView.setUserInfo(bean_message);
+                                if (!TextUtils.equals(ConstentNew.USER_ID, bean_message.tableUser.id))
+                                    gameOprateView.setUserInfo(bean_message);
                                 break;
                             case ConstentNew.TYPE_EXIT_GAME:
                                 switch (bean_message.gamerPos) {
@@ -600,6 +603,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 ConstentNew.GAMEROUND = bean_message.ver;
                                 break;
                             case ConstentNew.TYPE_DOWN_BANKER: //下庄
+                                ConstentNew.BANKERCHARGECOUNT = 1;
                                 gameOprateView.gamerExit(bean_message.gamerPos);
                                 break;
                             case ConstentNew.TYPE_EXIT_GAME: //退出游戏
@@ -694,6 +698,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                     //如果换庄的玩儿家是自己，那么弹窗提示用户
                                     gameOprateView.changeBankerNotify();
                                 }
+                                gameOprateView.clearChargePop();
                                 bean_tableDetial.firstuser = bean_message.firstuser;
                                 bean_tableDetial.seconduser = bean_message.seconduser;
                                 bean_tableDetial.thirduser = bean_message.thirduser;
@@ -740,19 +745,20 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         bean_tableDetial = new Gson().fromJson(result, Bean_TableDetial.class);
         ConstentNew.GAMEROUND = bean_tableDetial.ver;
         gameOprateView.setTableInfo(bean_tableDetial);
-
         gameOprateView.initTable(bean_tableDetial);
     }
 
     @Override
     public void betMoneyFial() {
-
+        gameOprateView.betMoneyAble();
     }
 
     @Override
     public void betMoneySuccess(String result, int money) {
+        gameOprateView.betMoneyAble();
         BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
         if (baseBean.id > 0) {
+
             Bean_Message message = new Bean_Message();
 
             if (ConstentNew.IS_GAMER) {

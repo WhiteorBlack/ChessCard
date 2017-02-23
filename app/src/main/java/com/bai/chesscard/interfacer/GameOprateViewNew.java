@@ -191,4 +191,10 @@ public interface GameOprateViewNew {
     void bankerExit();
 
     void clearRenewPop();
+
+    void clearChargePop();
+
+    void betMoneyAble();
+
+    void betMoneyDisable();
 }

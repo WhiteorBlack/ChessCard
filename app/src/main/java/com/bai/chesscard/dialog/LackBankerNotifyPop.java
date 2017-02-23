@@ -110,12 +110,20 @@ public class LackBankerNotifyPop extends BasePopupwind {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.img_confirm:
-                isCharge = true;
                 if (money > AppPrefrence.getAmount(context)) {
                     Tools.toastMsgCenter(context, "账户余额不足");
                     return;
                 }
-                upBanker(money);
+                if (isCharge){
+                    return;
+                }
+                isCharge = true;
+                try {
+                    upBanker(money);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Tools.toastMsgCenter(context, "请求数据出错:" + e.toString());
+                }
 
                 break;
             case R.id.img_exit:
@@ -147,8 +155,14 @@ public class LackBankerNotifyPop extends BasePopupwind {
                 super.onResponse(response);
                 if (TextUtils.isEmpty(response))
                     return;
-                BaseBean siteTable = new Gson().fromJson(response, BaseBean.class);
-                if (siteTable.id > 0) {
+                BaseBean siteTable = null;
+                try {
+                    siteTable = new Gson().fromJson(response, BaseBean.class);
+                } catch (Exception e) {
+                    Tools.toastMsgCenter(context, "解析输错:" + e.toString());
+                }
+
+                if (siteTable != null && siteTable.id > 0) {
                     Bundle bundle = new Bundle();
                     bundle.putInt("type", 1);
                     ConstentNew.GAMER_TABLE_MONEY += money;
@@ -157,6 +171,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
                         popInterfacer.OnConfirm(flag, bundle);
 //                    dismiss();
                 } else {
+                    isCharge=false;
                     Tools.toastMsgCenter(context, siteTable.msg);
                 }
 

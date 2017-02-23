@@ -1054,6 +1054,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 txtRightMoney.setVisibility(View.VISIBLE);
                 glideImg(bean_tableDetial.fouruser.user_logo, imgHeadRight);
                 ConstentNew.IS_HAS_GAMER[3] = true;
+
             }
 
             if (TextUtils.equals(bean_tableDetial.fouruser.id, AppPrefrence.getUserNo(context))) {
@@ -1067,8 +1068,12 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             ConstentNew.IS_HAS_GAMER[3] = false;
         }
 
-        if (ConstentNew.IS_GAMER || ConstentNew.IS_BANKER)
+        if (ConstentNew.IS_GAMER && !ConstentNew.IS_BANKER) {
             imgAdd.setVisibility(View.VISIBLE);
+        } else {
+            imgAdd.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     @Override
@@ -1506,6 +1511,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 if (bundle == null || !bundle.getBoolean("result"))
                     return;
                 Bean_Message bean_message = new Bean_Message();
+                ConstentNew.USERPOS = 1;
                 bean_message.gamerPos = 1;
                 bean_message.type = ConstentNew.TYPE_SITE_DOWN;
                 Bean_TableDetial.TableUser bankerUser = new Bean_TableDetial.TableUser();
@@ -1678,7 +1684,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
         }
 
-        imgAdd.setVisibility(View.VISIBLE);
+        imgAdd.setVisibility(View.INVISIBLE);
         switch (pos) {
             case 1:
                 glideImg(R.mipmap.site_empty, imgHeadTop);
@@ -1887,6 +1893,30 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             lackBankerNotifyPop.dismiss();
         if (lackMoneyNotifyPop != null)
             lackMoneyNotifyPop.dismiss();
+    }
+
+    @Override
+    public void clearChargePop() {
+        if (chargeBankerNotify != null && chargeBankerNotify.isShowing()) {
+            chargeBankerNotify.dismiss();
+        }
+        if (chargeMoneyNotify != null && chargeMoneyNotify.isShowing()) {
+            chargeMoneyNotify.dismiss();
+        }
+    }
+
+    @Override
+    public void betMoneyAble() {
+        txtMoneyLeft.setClickable(true);
+        txtMoneyMid.setClickable(true);
+        txtMoneyRight.setClickable(true);
+    }
+
+    @Override
+    public void betMoneyDisable() {
+        txtMoneyLeft.setClickable(false);
+        txtMoneyMid.setClickable(false);
+        txtMoneyRight.setClickable(false);
     }
 
     @Override
@@ -2174,8 +2204,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                     return;
                 BaseBean baseBean = new Gson().fromJson(response, BaseBean.class);
                 if (baseBean.id == 1) {
-                    resetUserStatue();
                     gamePresenterNew.resetUserInfo(ConstentNew.USERPOS);
+                    resetUserStatue();
                 } else Tools.toastMsgCenter(context, baseBean.msg);
 
             }
