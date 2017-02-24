@@ -454,6 +454,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     @Override
     public void countDownTime(int time, final int type) {
         Tools.debug("countDownTime--" + type);
+        if (type!=ConstentNew.TYPE_BET_MONEY){
+            endBetMoeny();
+        }
         visCountTime();
         switch (type) {
             case ConstentNew.TYPE_WAIT_TIME:  //等待
