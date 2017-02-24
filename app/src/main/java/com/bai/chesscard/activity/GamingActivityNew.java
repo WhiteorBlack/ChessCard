@@ -454,7 +454,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     @Override
     public void countDownTime(int time, final int type) {
         Tools.debug("countDownTime--" + type);
-        if (type!=ConstentNew.TYPE_BET_MONEY){
+        if (type != ConstentNew.TYPE_BET_MONEY) {
             endBetMoeny();
         }
         visCountTime();
@@ -995,11 +995,16 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 txtBankerMoney.setVisibility(View.VISIBLE);
                 glideImg(bean_tableDetial.firstuser.user_logo, imgHeadTop);
                 ConstentNew.IS_HAS_GAMER[0] = true;
+            } else {
+                invisTabelMoney(0);
+                glideImg(R.mipmap.site_empty, imgHeadTop);
+                ConstentNew.IS_HAS_GAMER[0] = false;
             }
 
             if (TextUtils.equals(bean_tableDetial.firstuser.id, AppPrefrence.getUserNo(context))) {
                 ConstentNew.IS_BANKER = true;
                 ConstentNew.USERPOS = 1;
+                ConstentNew.GAMER_TABLE_MONEY=bean_tableDetial.firstuser.lookmonery;
                 invisBetPoint();
             } else {
                 ConstentNew.IS_BANKER = false;
@@ -1009,7 +1014,6 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             invisTabelMoney(0);
             glideImg(R.mipmap.site_empty, imgHeadTop);
             ConstentNew.IS_HAS_GAMER[0] = false;
-
         }
 
         if (bean_tableDetial.seconduser != null) {
@@ -1019,12 +1023,17 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 txtLeftMoney.setVisibility(View.VISIBLE);
                 glideImg(bean_tableDetial.seconduser.user_logo, imgHeadLeft);
                 ConstentNew.IS_HAS_GAMER[1] = true;
+            } else {
+                invisTabelMoney(1);
+                glideImg(R.mipmap.site_empty, imgHeadLeft);
+                ConstentNew.IS_HAS_GAMER[1] = false;
             }
 
             if (TextUtils.equals(bean_tableDetial.seconduser.id, AppPrefrence.getUserNo(context))) {
                 ConstentNew.IS_GAMER = true;
                 ConstentNew.IS_BANKER = false;
                 ConstentNew.USERPOS = 2;
+                ConstentNew.GAMER_TABLE_MONEY=bean_tableDetial.seconduser.lookmonery;
             }
         } else {
             invisTabelMoney(1);
@@ -1038,12 +1047,17 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 txtMidMoney.setVisibility(View.VISIBLE);
                 glideImg(bean_tableDetial.thirduser.user_logo, imgHeadBottom);
                 ConstentNew.IS_HAS_GAMER[2] = true;
+            } else {
+                invisTabelMoney(2);
+                glideImg(R.mipmap.site_empty, imgHeadBottom);
+                ConstentNew.IS_HAS_GAMER[2] = false;
             }
 
             if (TextUtils.equals(bean_tableDetial.thirduser.id, AppPrefrence.getUserNo(context))) {
                 ConstentNew.IS_GAMER = true;
                 ConstentNew.IS_BANKER = false;
                 ConstentNew.USERPOS = 3;
+                ConstentNew.GAMER_TABLE_MONEY=bean_tableDetial.seconduser.lookmonery;
             }
         } else {
             invisTabelMoney(2);
@@ -1058,12 +1072,17 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 glideImg(bean_tableDetial.fouruser.user_logo, imgHeadRight);
                 ConstentNew.IS_HAS_GAMER[3] = true;
 
+            } else {
+                invisTabelMoney(3);
+                glideImg(R.mipmap.site_empty, imgHeadRight);
+                ConstentNew.IS_HAS_GAMER[3] = false;
             }
 
             if (TextUtils.equals(bean_tableDetial.fouruser.id, AppPrefrence.getUserNo(context))) {
                 ConstentNew.IS_GAMER = true;
                 ConstentNew.IS_BANKER = false;
                 ConstentNew.USERPOS = 4;
+                ConstentNew.GAMER_TABLE_MONEY=bean_tableDetial.fouruser.lookmonery;
             }
         } else {
             invisTabelMoney(3);

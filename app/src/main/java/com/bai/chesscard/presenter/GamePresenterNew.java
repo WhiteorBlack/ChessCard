@@ -770,7 +770,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 gameOprateView.updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                 message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
                 ConstentNew.IS_BET_MONEY = true;
-
+                Tools.debug("leftMoney----"+ConstentNew.GAMER_TABLE_MONEY);
                 gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
             } else {
                 message.type = ConstentNew.TYPE_LOOK_BET;

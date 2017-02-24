@@ -38,6 +38,7 @@ public class ChargeMoneyNotifyPop extends BasePopupwind {
     private TextView txtContent;
     private EditText edtMoney;
     private int money = 0;
+    private boolean isCharge = false;
 
     public ChargeMoneyNotifyPop(Context context) {
         super(context);
@@ -83,12 +84,15 @@ public class ChargeMoneyNotifyPop extends BasePopupwind {
                     Tools.toastMsgCenter(context, "请输入金额");
                     return;
                 }
-                money=Integer.parseInt(moneyString);
-                if (money>AppPrefrence.getAmount(context)){
-                    Tools.toastMsgCenter(context,"账户余额不足");
+                money = Integer.parseInt(moneyString);
+                if (money > AppPrefrence.getAmount(context)) {
+                    Tools.toastMsgCenter(context, "账户余额不足");
                     return;
                 }
+                if (isCharge)
+                    return;
                 upBanker(money);
+                isCharge = true;
                 break;
             case R.id.img_exit:
                 dismiss();
@@ -124,11 +128,12 @@ public class ChargeMoneyNotifyPop extends BasePopupwind {
                     bundle.putInt("type", 2);
                     ConstentNew.GAMER_TABLE_MONEY += money;
                     AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - money);
-                    bundle.putInt("money",ConstentNew.GAMER_TABLE_MONEY);
+                    bundle.putInt("money", ConstentNew.GAMER_TABLE_MONEY);
                     if (popInterfacer != null)
                         popInterfacer.OnConfirm(flag, bundle);
                     dismiss();
                 } else {
+                    isCharge = false;
                     Tools.toastMsgCenter(context, siteTable.msg);
                 }
             }

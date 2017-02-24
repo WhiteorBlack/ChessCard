@@ -103,11 +103,13 @@ public class LackMoneyNotifyPop extends BasePopupwind {
                     Tools.toastMsgCenter(context, "请输入金额");
                     return;
                 }
-                money=Long.parseLong(moneyString);
-                if (money>AppPrefrence.getAmount(context)){
-                    Tools.toastMsgCenter(context,"账户余额不足");
+                money = Long.parseLong(moneyString);
+                if (money > AppPrefrence.getAmount(context)) {
+                    Tools.toastMsgCenter(context, "账户余额不足");
                     return;
                 }
+                if (isCharge)
+                    return;
                 upBanker(Integer.parseInt(moneyString));
                 isCharge = true;
                 break;
@@ -150,6 +152,7 @@ public class LackMoneyNotifyPop extends BasePopupwind {
                         popInterfacer.OnConfirm(flag, bundle);
                     dismiss();
                 } else {
+                    isCharge=false;
                     Tools.toastMsgCenter(context, siteTable.msg);
                 }
             }

@@ -155,6 +155,7 @@
                     android:id="@+id/img_user_photo"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
                     android:background="@mipmap/icon_default_head"
                     android:onClick="cardClick" />
             </FrameLayout>

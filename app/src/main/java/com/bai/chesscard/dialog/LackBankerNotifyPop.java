@@ -183,6 +183,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
         Map<String, String> params = new HashMap<>();
         params.put("table_id", ConstentNew.TABLE_ID);
         params.put("token", CommonUntilities.TOKEN);
+        params.put("type","3");
         PostTools.postData(CommonUntilities.MAIN_URL + "UserSiteUp", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
