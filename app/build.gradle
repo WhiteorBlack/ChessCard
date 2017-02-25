@@ -7,8 +7,8 @@ android {
             keyAlias 'chesscard'
             keyPassword 'chesscard2016'
 //            storeFile file('F:\\myProject\\ChessCard\\chessCard.jks')
-            storeFile file('C:\\Users\\41508\\Documents\\MyProject\\ChessCard\\chessCard.jks')
-//            storeFile file('E:\\androidApp\\ChessCard\\chessCard.jks')
+//            storeFile file('C:\\Users\\41508\\Documents\\MyProject\\ChessCard\\chessCard.jks')
+            storeFile file('E:\\androidApp\\ChessCard\\chessCard.jks')
             storePassword 'chesscard2016'
         }
     }

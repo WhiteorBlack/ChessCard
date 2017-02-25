@@ -428,6 +428,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
             case ConstentNew.TYPE_BET_MONEY:
                 gameOprateView.endBetMoeny();
                 if (!ConstentNew.IS_BET_MONEY && ConstentNew.IS_GAMER && !ConstentNew.IS_BANKER) {
+                    Tools.debug("betMoney"+ConstentNew.USERPOS+"---"+ConstentNew.GAMER_TABLE_MONEY);
                     Bean_Message message = new Bean_Message();
                     message.type = ConstentNew.TYPE_BET_MONEY;
                     message.gamerPos = ConstentNew.USERPOS;
@@ -439,7 +440,6 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                     sendMessage(message);
                     gameOprateView.betMoneyNormal(ConstentNew.USERPOS, ConstentNew.LEFTPOINT);
                 }
-
                 break;
             case ConstentNew.TYPE_GET_RESULT:
                 gameOprateView.resetTable();
@@ -482,7 +482,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                         Bean_Message bean_message = null;
 
                         TIMTextElem elemText = (TIMTextElem) elem;
-                        Tools.debug("UserMessage" + elemText.getText());
+                        Tools.debug("UserMessage--" + msg.getConversation().getPeer().toString() + elemText.getText());
                         try {
                             bean_message = new Gson().fromJson(elemText.getText(), Bean_Message.class);
                         } catch (JsonSyntaxException e) {
@@ -563,7 +563,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                     TIMElemType elemType = elem.getType();
                     if (elemType == TIMElemType.GroupSystem) {
                         TIMGroupSystemElem elemText = (TIMGroupSystemElem) elem;
-                        Tools.debug("SystemMessage" + new String(elemText.getUserData()));
+                        Tools.debug("SystemMessage---" + msg.getConversation().getPeer().toString() + new String(elemText.getUserData()));
                         Bean_Message bean_message = null;
                         try {
                             bean_message = new Gson().fromJson(new String(elemText.getUserData()), Bean_Message.class);
@@ -770,7 +770,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 gameOprateView.updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                 message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
                 ConstentNew.IS_BET_MONEY = true;
-                Tools.debug("leftMoney----"+ConstentNew.GAMER_TABLE_MONEY);
+                Tools.debug("leftMoney----" + ConstentNew.GAMER_TABLE_MONEY);
                 gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
             } else {
                 message.type = ConstentNew.TYPE_LOOK_BET;

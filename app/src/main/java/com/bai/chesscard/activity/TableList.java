@@ -127,6 +127,8 @@ public class TableList extends BaseActivity {
     }
 
     private void initView() {
+        ConstentNew.TABLE_ID="";
+        ConstentNew.GROUP_ID="";
         minPoint = getIntent().getIntExtra("point", 0);
         tabList = new ArrayList();
         tabAdapter = new TableAdapter(tabList);
