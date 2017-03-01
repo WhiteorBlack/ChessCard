@@ -716,7 +716,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                     public void run() {
                         try {
                             lackMoneyNotifyPop.showPop(txtMoney);
-                        }catch (WindowManager.BadTokenException e){
+                        } catch (WindowManager.BadTokenException e) {
                             renewMoneyGamer(time);
                         }
 
@@ -1014,7 +1014,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             if (TextUtils.equals(bean_tableDetial.firstuser.id, ConstentNew.USER_ID)) {
                 ConstentNew.IS_BANKER = true;
                 ConstentNew.USERPOS = 1;
-                ConstentNew.GAMER_TABLE_MONEY=bean_tableDetial.firstuser.lookmonery;
+                ConstentNew.GAMER_TABLE_MONEY = bean_tableDetial.firstuser.lookmonery;
             } else {
                 ConstentNew.IS_BANKER = false;
             }
@@ -1041,7 +1041,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 ConstentNew.IS_GAMER = true;
                 ConstentNew.IS_BANKER = false;
                 ConstentNew.USERPOS = 2;
-                ConstentNew.GAMER_TABLE_MONEY=bean_tableDetial.seconduser.lookmonery;
+                ConstentNew.GAMER_TABLE_MONEY = bean_tableDetial.seconduser.lookmonery;
             }
         } else {
             invisTabelMoney(1);
@@ -1061,11 +1061,11 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 ConstentNew.IS_HAS_GAMER[2] = false;
             }
 
-            if (TextUtils.equals(bean_tableDetial.thirduser.id,ConstentNew.USER_ID)) {
+            if (TextUtils.equals(bean_tableDetial.thirduser.id, ConstentNew.USER_ID)) {
                 ConstentNew.IS_GAMER = true;
                 ConstentNew.IS_BANKER = false;
                 ConstentNew.USERPOS = 3;
-                ConstentNew.GAMER_TABLE_MONEY=bean_tableDetial.thirduser.lookmonery;
+                ConstentNew.GAMER_TABLE_MONEY = bean_tableDetial.thirduser.lookmonery;
             }
         } else {
             invisTabelMoney(2);
@@ -1086,11 +1086,11 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 ConstentNew.IS_HAS_GAMER[3] = false;
             }
 
-            if (TextUtils.equals(bean_tableDetial.fouruser.id,ConstentNew.USER_ID)) {
+            if (TextUtils.equals(bean_tableDetial.fouruser.id, ConstentNew.USER_ID)) {
                 ConstentNew.IS_GAMER = true;
                 ConstentNew.IS_BANKER = false;
                 ConstentNew.USERPOS = 4;
-                ConstentNew.GAMER_TABLE_MONEY=bean_tableDetial.fouruser.lookmonery;
+                ConstentNew.GAMER_TABLE_MONEY = bean_tableDetial.fouruser.lookmonery;
             }
         } else {
             invisTabelMoney(3);
@@ -1098,15 +1098,15 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             ConstentNew.IS_HAS_GAMER[3] = false;
         }
 
-        if (ConstentNew.IS_BANKER){
+        if (ConstentNew.IS_BANKER) {
             invisBetPoint();
-        }else {
+        } else {
             visBetPoint();
         }
 
-        if (ConstentNew.IS_GAMER&&!ConstentNew.IS_BANKER){
+        if (ConstentNew.IS_GAMER && !ConstentNew.IS_BANKER) {
             imgAdd.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             imgAdd.setVisibility(View.INVISIBLE);
         }
 
@@ -1438,35 +1438,29 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         switch (pos) {
             case 2:
                 String moenyString = txtTotalLeft.getText().toString();
-                if (!TextUtils.isEmpty(moenyString)) {
-                    try {
-                        money += Integer.parseInt(moenyString);
-                    } catch (Exception e) {
-                    }
+                if (TextUtils.isEmpty(moenyString)) {
+                    moenyString = "0";
                 }
+                money += Integer.parseInt(moenyString);
                 txtTotalLeft.setText(money + "");
                 imgBgLeft.setVisibility(View.VISIBLE);
                 break;
             case 3:
                 String moenyStringM = txtTotalMid.getText().toString();
-                if (!TextUtils.isEmpty(moenyStringM)) {
-                    try {
-                        money += Integer.parseInt(moenyStringM);
-                    } catch (Exception e) {
-                    }
+                if (TextUtils.isEmpty(moenyStringM)) {
+                    moenyStringM = "0";
                 }
+                money += Integer.parseInt(moenyStringM);
                 txtTotalMid.setText(money + "");
                 imgBgMid.setVisibility(View.VISIBLE);
                 break;
 
             case 4:
                 String moenyStringR = txtTotalRight.getText().toString();
-                if (!TextUtils.isEmpty(moenyStringR)) {
-                    try {
-                        money += Integer.parseInt(moenyStringR);
-                    } catch (Exception e) {
-                    }
+                if (TextUtils.isEmpty(moenyStringR)) {
+                   moenyStringR="0";
                 }
+                money += Integer.parseInt(moenyStringR);
                 txtTotalRight.setText(money + "");
                 imgBgRight.setVisibility(View.VISIBLE);
                 break;
@@ -1634,7 +1628,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                     Bean_Message bankerMessage = new Bean_Message();
                     bankerMessage.gamerPos = ConstentNew.USERPOS;
                     bankerMessage.betPoint = ConstentNew.GAMER_TABLE_MONEY;
-                    bankerMessage.type=ConstentNew.TYPE_RENEW_MONEY;
+                    bankerMessage.type = ConstentNew.TYPE_RENEW_MONEY;
                     gamePresenterNew.sendMessage(bankerMessage);
                     updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                     txtMoney.setText(AppPrefrence.getAmount(context) + "");

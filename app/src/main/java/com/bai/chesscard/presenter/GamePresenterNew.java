@@ -428,7 +428,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
             case ConstentNew.TYPE_BET_MONEY:
                 gameOprateView.endBetMoeny();
                 if (!ConstentNew.IS_BET_MONEY && ConstentNew.IS_GAMER && !ConstentNew.IS_BANKER) {
-                    Tools.debug("betMoney"+ConstentNew.USERPOS+"---"+ConstentNew.GAMER_TABLE_MONEY);
+                    Tools.debug("betMoney" + ConstentNew.USERPOS + "---" + ConstentNew.GAMER_TABLE_MONEY);
                     Bean_Message message = new Bean_Message();
                     message.type = ConstentNew.TYPE_BET_MONEY;
                     message.gamerPos = ConstentNew.USERPOS;
@@ -551,7 +551,9 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betPoint);
                                 break;
                             case ConstentNew.TYPE_LOOK_BET:
-                                gameOprateView.betMoney(bean_message.gamerPos, bean_message.betNum);
+//                                gameOprateView.betMoney(bean_message.gamerPos, bean_message.betNum);
+                                gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betNum);
+                                gameOprateView.betMoneyNormal(bean_message.gamerPos, bean_message.betPoint);
                                 break;
                         }
                     }
@@ -755,31 +757,34 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
     @Override
     public void betMoneySuccess(String result, int money) {
-        gameOprateView.betMoneyAble();
+
         BaseBean baseBean = new Gson().fromJson(result, BaseBean.class);
         if (baseBean.id > 0) {
 
             Bean_Message message = new Bean_Message();
-
             if (ConstentNew.IS_GAMER) {
-                message.type = ConstentNew.TYPE_BET_MONEY;
+                message.type = ConstentNew.TYPE_LOOK_BET;
                 message.gamerPos = ConstentNew.USERPOS;
                 message.isBet = true;
-                message.betNum = baseBean.totalpoint;
+
                 ConstentNew.GAMER_TABLE_MONEY -= baseBean.amount;
                 gameOprateView.updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
-                message.betPoint = ConstentNew.GAMER_TABLE_MONEY;
+                message.betPoint = money;
                 ConstentNew.IS_BET_MONEY = true;
-                Tools.debug("leftMoney----" + ConstentNew.GAMER_TABLE_MONEY);
-                gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
+                message.betNum = ConstentNew.GAMER_TABLE_MONEY;
+                gameOprateView.betMoneyNormal(ConstentNew.USERPOS, money);
+//                gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.totalpoint);
             } else {
                 message.type = ConstentNew.TYPE_LOOK_BET;
                 message.gamerPos = ConstentNew.USERPOS;
                 message.betNum = baseBean.amount;
+                message.betPoint = money;
                 gameOprateView.updateMoney(0, -money);
-                gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.amount);
+                gameOprateView.betMoneyNormal(ConstentNew.USERPOS, money);
+//                gameOprateView.betMoney(ConstentNew.USERPOS, baseBean.amount);
             }
             sendMessage(message);
+            gameOprateView.betMoneyAble();
         }
     }
 
