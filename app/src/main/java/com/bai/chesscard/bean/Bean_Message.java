@@ -38,6 +38,7 @@ public class Bean_Message {
     public Bean_TableDetial.TableUser tableUser;
 
     public boolean isBet=false;
+    public boolean isGamer=false;
     public int status;
     public int state;
     public int second_point;

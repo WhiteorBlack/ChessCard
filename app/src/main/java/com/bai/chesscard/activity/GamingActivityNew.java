@@ -1661,6 +1661,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 gamerMessage.betPoint = ConstentNew.GAMER_TABLE_MONEY;
                 gamerMessage.gamerPos = ConstentNew.USERPOS;
                 gamePresenterNew.sendMessage(gamerMessage);
+                gamePresenterNew.updateTableMoney();
                 updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                 break;
             case ConstentNew.KICKOUTPOP:
@@ -1747,7 +1748,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
         switch (bean_message.gamerPos) {
             case 1:
-                imgAdd.setVisibility(View.INVISIBLE);
+                if (TextUtils.equals(bean_message.userId,ConstentNew.USER_ID)){
+                    imgAdd.setVisibility(View.INVISIBLE);
+                }
                 glideImg(bean_message.tableUser.user_logo, imgHeadTop);
                 txtBankerMoney.setVisibility(View.VISIBLE);
                 txtBankerMoney.setText(bean_message.tableUser.lookmonery + "");
@@ -1993,6 +1996,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 if (audiencePop == null)
                     audiencePop = new AudiencelPop(GamingActivityNew.this);
                 audiencePop.showPop(txtBankerMoney);
+                audiencePop.setPresenter(gamePresenterNew);
                 audiencePop.setPopInterfacer(this, ConstentNew.AUDIENCEPOP);
                 break;
             case R.id.img_head:

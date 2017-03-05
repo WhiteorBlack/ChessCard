@@ -552,7 +552,9 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 break;
                             case ConstentNew.TYPE_LOOK_BET:
 //                                gameOprateView.betMoney(bean_message.gamerPos, bean_message.betNum);
-                                gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betNum);
+                                if (bean_message.isGamer) {
+                                    gameOprateView.updateMoney(bean_message.gamerPos, bean_message.betNum);
+                                }
                                 gameOprateView.betMoneyNormal(bean_message.gamerPos, bean_message.betPoint);
                                 break;
                         }
@@ -716,6 +718,26 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         }
     }
 
+    public void updateTableMoney(){
+        switch (ConstentNew.USERPOS){
+            case 2:
+                if (TextUtils.equals(ConstentNew.USER_ID,bean_tableDetial.seconduser.id)){
+                    bean_tableDetial.seconduser.lookmonery=ConstentNew.GAMER_TABLE_MONEY;
+                }
+                break;
+            case 3:
+                if (TextUtils.equals(ConstentNew.USER_ID,bean_tableDetial.thirduser.id)){
+                    bean_tableDetial.thirduser.lookmonery=ConstentNew.GAMER_TABLE_MONEY;
+                }
+                break;
+            case 4:
+                if (TextUtils.equals(ConstentNew.USER_ID,bean_tableDetial.fouruser.id)){
+                    bean_tableDetial.fouruser.lookmonery=ConstentNew.GAMER_TABLE_MONEY;
+                }
+                break;
+        }
+    }
+
     @Override
     public void onConnected() {
         gameOprateView.reContect();
@@ -770,6 +792,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 ConstentNew.GAMER_TABLE_MONEY -= baseBean.amount;
                 gameOprateView.updateMoney(ConstentNew.USERPOS, ConstentNew.GAMER_TABLE_MONEY);
                 message.betPoint = money;
+                message.isGamer = true;
                 ConstentNew.IS_BET_MONEY = true;
                 message.betNum = ConstentNew.GAMER_TABLE_MONEY;
                 gameOprateView.betMoneyNormal(ConstentNew.USERPOS, money);
@@ -777,7 +800,8 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
             } else {
                 message.type = ConstentNew.TYPE_LOOK_BET;
                 message.gamerPos = ConstentNew.USERPOS;
-                message.betNum = baseBean.amount;
+//                message.betNum = baseBean.amount;
+                message.isGamer = false;
                 message.betPoint = money;
                 gameOprateView.updateMoney(0, -money);
                 gameOprateView.betMoneyNormal(ConstentNew.USERPOS, money);

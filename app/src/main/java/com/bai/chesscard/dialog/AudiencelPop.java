@@ -15,6 +15,7 @@ import com.bai.chesscard.adapter.AudienceAdapter;
 import com.bai.chesscard.adapter.BaseRecyAdapter;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.Bean_Audience;
+import com.bai.chesscard.bean.Bean_TableDetial;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.presenter.GamePresenterNew;
 import com.bai.chesscard.utils.CommonUntilities;
@@ -59,7 +60,15 @@ public class AudiencelPop extends BasePopupwind implements XRecyclerView.Loading
             @Override
             public void onItemClickListener(View view, int position) {
                 if (gamePresenter != null)
-                    gamePresenter.showUserInfo(audienceList.get(position - 1).userinfo);
+                {
+                    Bean_TableDetial.TableUser tableUser=new Bean_TableDetial.TableUser();
+                    tableUser.nick_name=audienceList.get(position-1).real_name;
+                    tableUser.user_logo=audienceList.get(position-1).user_logo;
+                    tableUser.id=audienceList.get(position-1).id+"";
+                    tableUser.mobile=audienceList.get(position-1).user_name;
+                    tableUser.amount=audienceList.get(position-1).amount;
+                    gamePresenter.showUserInfo(tableUser);
+                }
             }
 
             @Override

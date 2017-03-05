@@ -66,7 +66,7 @@ import java.util.regex.Pattern;
  * @todo TODO
  */
 public class Tools {
-    public static boolean DEBUG_FLAG = false;
+    public static boolean DEBUG_FLAG = true;
     public static String DEBUG_TAG = "--YEXIU--";
     private static SimpleDateFormat sf = null;
 

@@ -2,6 +2,7 @@ package com.bai.chesscard.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,11 +76,19 @@ public class PersonalPopInfo extends BasePopupwind {
     }
 
     public void setInfo(Bean_TableDetial.TableUser user) {
-        txtAccount.setText("账号: " + user.mobile);
-        txtName.setText("昵称:" + user.nick_name);
+        try{
+            txtAccount.setText("账号: " + (TextUtils.isEmpty(user.mobile)?"":user.mobile));
+        }catch (NullPointerException e){
+            txtAccount.setText("");
+        }
+        try{
+            txtName.setText("昵称:" + user.nick_name);
+        }catch (NullPointerException e){
+            txtName.setText("昵称:"+user.real_name);
+        }
         txtNo.setText("编号: " + user.id);
         txtMoney.setText(user.amount+"");
-        Glide.with(context).load(CommonUntilities.PIC_URL + user.user_logo).error(R.mipmap.icon_default_head).into(imgPhoto);
+        Glide.with(context).load( user.user_logo).error(R.mipmap.icon_default_head).into(imgPhoto);
     }
 
 }

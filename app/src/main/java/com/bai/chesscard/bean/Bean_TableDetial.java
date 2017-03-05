@@ -29,6 +29,7 @@ public class Bean_TableDetial extends BaseBean {
         public String mobile;
         public String user_logo;
         public String nick_name;
+        public String real_name;
         public int lookmonery;
         public int amount;
     }
