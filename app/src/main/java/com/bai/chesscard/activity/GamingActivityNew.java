@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,7 +31,6 @@ import com.bai.chesscard.BaseActivity;
 import com.bai.chesscard.ChessCardApplication;
 import com.bai.chesscard.R;
 import com.bai.chesscard.adapter.GameChessAdapter;
-import com.bai.chesscard.async.GameOprateData;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.BaseBean;
 import com.bai.chesscard.bean.Bean_ChessList;
@@ -56,14 +53,12 @@ import com.bai.chesscard.dialog.PersonalPopInfo;
 import com.bai.chesscard.dialog.SettingPop;
 import com.bai.chesscard.dialog.UpBankerNotifyPop;
 import com.bai.chesscard.dialog.UpTableNotifyPop;
-import com.bai.chesscard.interfacer.GameDataListener;
 import com.bai.chesscard.interfacer.GameOprateViewNew;
 import com.bai.chesscard.interfacer.PopInterfacer;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.presenter.GamePresenterNew;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
-import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.StrokeTextView;
@@ -71,14 +66,11 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.tencent.TIMCallBack;
 import com.tencent.TIMGroupManager;
-import com.tencent.TIMManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -214,6 +206,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     ImageView imgSetting;
     @BindView(R.id.txt_time_statue)
     StrokeTextView txtTimeStatue;
+    @BindView(R.id.img_shake_dice)
+    ImageView imgShakeDice;
 
     private GamePresenterNew gamePresenterNew;
     private List<Bean_ChessList.Chess> chessList;
@@ -406,6 +400,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         recyChess.setAdapter(gameChessAdapter);
 
         imgAdd.setVisibility(View.GONE);
+        imgShakeDice.setVisibility(View.GONE);
     }
 
     /**
@@ -462,6 +457,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         if (type != ConstentNew.TYPE_BET_MONEY) {
             endBetMoeny();
         }
+        if (!ConstentNew.IS_BANKER || type != ConstentNew.SHAKE_DICE) {
+            imgShakeDice.setVisibility(View.GONE);
+        }
         visCountTime();
         switch (type) {
             case ConstentNew.TYPE_WAIT_TIME:  //等待
@@ -489,6 +487,16 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case ConstentNew.TYPE_NOTIFY_BANKER:
                 txtTimeStatue.setText("等待中...");
                 break;
+            case ConstentNew.SHAKE_DICE:
+                if (!ConstentNew.IS_BET_MONEY){
+                    gamePresenterNew.endCountTime(ConstentNew.TYPE_BET_MONEY);
+                }
+                txtTimeStatue.setText("等待中...");
+                if (ConstentNew.IS_BANKER) {
+                    imgShakeDice.setVisibility(View.VISIBLE);
+                    imgAdd.setVisibility(View.GONE);
+                }
+                break;
         }
 
         if (countDownTimer != null) {
@@ -512,6 +520,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 }
                 gamePresenterNew.endCountTime(type);
                 invisCountTime();
+//                countDownTimer=null;
             }
         };
         countDownTimer.start();
@@ -1458,7 +1467,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case 4:
                 String moenyStringR = txtTotalRight.getText().toString();
                 if (TextUtils.isEmpty(moenyStringR)) {
-                   moenyStringR="0";
+                    moenyStringR = "0";
                 }
                 money += Integer.parseInt(moenyStringR);
                 txtTotalRight.setText(money + "");
@@ -1555,7 +1564,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 setUserInfo(bean_message);
                 refreshUserMoney(AppPrefrence.getAmount(this));
                 invisBetPoint();
-                imgAdd.setVisibility(View.INVISIBLE);
+                imgAdd.setVisibility(View.GONE);
                 break;
             case ConstentNew.UPTABLE_POP:
                 if (bundle == null || !bundle.getBoolean("result"))
@@ -1717,7 +1726,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
         }
 
-        imgAdd.setVisibility(View.INVISIBLE);
+        imgAdd.setVisibility(View.GONE);
         switch (pos) {
             case 1:
                 glideImg(R.mipmap.site_empty, imgHeadTop);
@@ -1748,27 +1757,33 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
         switch (bean_message.gamerPos) {
             case 1:
-                if (TextUtils.equals(bean_message.userId,ConstentNew.USER_ID)){
-                    imgAdd.setVisibility(View.INVISIBLE);
+                if (TextUtils.equals(bean_message.tableUser.id, ConstentNew.USER_ID)) {
+                    imgAdd.setVisibility(View.GONE);
                 }
                 glideImg(bean_message.tableUser.user_logo, imgHeadTop);
                 txtBankerMoney.setVisibility(View.VISIBLE);
                 txtBankerMoney.setText(bean_message.tableUser.lookmonery + "");
                 break;
             case 2:
-                imgAdd.setVisibility(View.VISIBLE);
+                if (TextUtils.equals(bean_message.tableUser.id, ConstentNew.USER_ID)) {
+                    imgAdd.setVisibility(View.VISIBLE);
+                }
                 glideImg(bean_message.tableUser.user_logo, imgHeadLeft);
                 txtLeftMoney.setVisibility(View.VISIBLE);
                 txtLeftMoney.setText(bean_message.tableUser.lookmonery + "");
                 break;
             case 3:
-                imgAdd.setVisibility(View.VISIBLE);
+                if (TextUtils.equals(bean_message.tableUser.id, ConstentNew.USER_ID)) {
+                    imgAdd.setVisibility(View.VISIBLE);
+                }
                 glideImg(bean_message.tableUser.user_logo, imgHeadBottom);
                 txtMidMoney.setVisibility(View.VISIBLE);
                 txtMidMoney.setText(bean_message.tableUser.lookmonery + "");
                 break;
             case 4:
-                imgAdd.setVisibility(View.VISIBLE);
+                if (TextUtils.equals(bean_message.tableUser.id, ConstentNew.USER_ID)) {
+                    imgAdd.setVisibility(View.VISIBLE);
+                }
                 glideImg(bean_message.tableUser.user_logo, imgHeadRight);
                 txtRightMoney.setVisibility(View.VISIBLE);
                 txtRightMoney.setText(bean_message.tableUser.lookmonery + "");
@@ -1974,7 +1989,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
 
     @OnClick({R.id.img_back, R.id.rel_head_left, R.id.rel_head_bottom, R.id.rel_head_right, R.id.rel_head_top, R.id.img_gameing_user,
-            R.id.img_head, R.id.img_add, R.id.txt_money_left, R.id.txt_money_mid, R.id.txt_money_right, R.id.img_setting, R.id.fl_user_left, R.id.fl_user_mid, R.id.fl_user_right})
+            R.id.img_head, R.id.img_add, R.id.txt_money_left, R.id.txt_money_mid, R.id.txt_money_right, R.id.img_setting,
+            R.id.fl_user_left, R.id.fl_user_mid, R.id.fl_user_right, R.id.img_shake_dice})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.img_back:
@@ -2090,6 +2106,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 flUserMid.setBackgroundResource(R.mipmap.table_second);
                 flUserLeft.setBackgroundResource(R.mipmap.table_first);
                 ConstentNew.USERPOS = 4;
+                break;
+            case R.id.img_shake_dice:
+                gamePresenterNew.shakeDice();
                 break;
         }
     }
@@ -2342,4 +2361,5 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             dialog = null;
         }
     }
+
 }

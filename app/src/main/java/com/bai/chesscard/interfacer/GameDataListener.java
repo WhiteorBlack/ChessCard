@@ -33,4 +33,6 @@ public interface GameDataListener {
 
     void getResultFail();
     void getResultSuccess(String result);
+
+    void shakeDiceFail();
 }

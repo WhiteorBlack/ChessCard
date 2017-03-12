@@ -591,8 +591,16 @@
                 android:id="@+id/img_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_marginRight="@dimen/dp21"
                 android:background="@mipmap/icon_add"
+                android:onClick="cardClick" />
+            <ImageView
+                android:id="@+id/img_shake_dice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/dp21"
+                android:background="@mipmap/btn_shake_dice"
                 android:onClick="cardClick" />
         </LinearLayout>
 

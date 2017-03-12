@@ -162,6 +162,11 @@ public class ConstentNew {
      */
     public static final int EXCHANGE_POS=14;
 
+    /**
+     * 摇色子时间
+     */
+    public static final int SHAKE_DICE=16;
+
     public static final int SETTING_POP = 0;
     public static final int PERSONAL_POP = 1;
     public static final int DISCONTECT_POP = 2;

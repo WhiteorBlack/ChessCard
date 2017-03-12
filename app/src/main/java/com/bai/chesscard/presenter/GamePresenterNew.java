@@ -150,6 +150,10 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         }
     }
 
+    public void shakeDice() {
+        GameOprateData.getInstance(this).shakeDice();
+    }
+
     /**
      * 返回操作
      */
@@ -428,7 +432,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
             case ConstentNew.TYPE_BET_MONEY:
                 gameOprateView.endBetMoeny();
                 if (!ConstentNew.IS_BET_MONEY && ConstentNew.IS_GAMER && !ConstentNew.IS_BANKER) {
-                    Tools.debug("betMoney" + ConstentNew.USERPOS + "---" + ConstentNew.GAMER_TABLE_MONEY);
+                    ConstentNew.IS_BET_MONEY=true;
                     Bean_Message message = new Bean_Message();
                     message.type = ConstentNew.TYPE_BET_MONEY;
                     message.gamerPos = ConstentNew.USERPOS;
@@ -710,6 +714,9 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 gameOprateView.setTableInfo(bean_tableDetial);
                                 gameOprateView.toastMsg("已换庄,请注意位置变化");
                                 break;
+                            case ConstentNew.SHAKE_DICE:
+                                gameOprateView.countDownTime(bean_message.time, bean_message.type);
+                                break;
                         }
                     }
                 }
@@ -718,21 +725,21 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
         }
     }
 
-    public void updateTableMoney(){
-        switch (ConstentNew.USERPOS){
+    public void updateTableMoney() {
+        switch (ConstentNew.USERPOS) {
             case 2:
-                if (TextUtils.equals(ConstentNew.USER_ID,bean_tableDetial.seconduser.id)){
-                    bean_tableDetial.seconduser.lookmonery=ConstentNew.GAMER_TABLE_MONEY;
+                if (TextUtils.equals(ConstentNew.USER_ID, bean_tableDetial.seconduser.id)) {
+                    bean_tableDetial.seconduser.lookmonery = ConstentNew.GAMER_TABLE_MONEY;
                 }
                 break;
             case 3:
-                if (TextUtils.equals(ConstentNew.USER_ID,bean_tableDetial.thirduser.id)){
-                    bean_tableDetial.thirduser.lookmonery=ConstentNew.GAMER_TABLE_MONEY;
+                if (TextUtils.equals(ConstentNew.USER_ID, bean_tableDetial.thirduser.id)) {
+                    bean_tableDetial.thirduser.lookmonery = ConstentNew.GAMER_TABLE_MONEY;
                 }
                 break;
             case 4:
-                if (TextUtils.equals(ConstentNew.USER_ID,bean_tableDetial.fouruser.id)){
-                    bean_tableDetial.fouruser.lookmonery=ConstentNew.GAMER_TABLE_MONEY;
+                if (TextUtils.equals(ConstentNew.USER_ID, bean_tableDetial.fouruser.id)) {
+                    bean_tableDetial.fouruser.lookmonery = ConstentNew.GAMER_TABLE_MONEY;
                 }
                 break;
         }
@@ -837,6 +844,22 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                 gameOprateView.updateMoney(0, baseBean.amount);
             }
         }
+
+    }
+
+    private int recontectCount = 1;
+
+    @Override
+    public void shakeDiceFail() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (recontectCount < 4) {
+                    recontectCount++;
+                    shakeDice();
+                }
+            }
+        }, recontectCount * 1000);
 
     }
 

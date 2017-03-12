@@ -147,5 +147,28 @@ public class GameOprateData {
 //        }
     }
 
+    /**
+     * 庄家摇色子
+     */
+    public void shakeDice() {
+        Map<String, String> params = new HashMap<>();
+        params.put("table_id", ConstentNew.TABLE_ID);
+        params.put("ver", ConstentNew.GAMEROUND+"");
+        params.put("token", CommonUntilities.TOKEN);
+        PostTools.postData(CommonUntilities.MAIN_URL + "UpdateGameStatus", params, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                if (TextUtils.isEmpty(response)) {
+                    gameDataListener.shakeDiceFail();
+                    return;
+                }
+                BaseBean baseBean=new Gson().fromJson(response,BaseBean.class);
+                if (baseBean.id!=1){
+                    gameDataListener.shakeDiceFail();
+                }
+            }
+        });
+    }
 
 }
