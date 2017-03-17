@@ -163,6 +163,11 @@ public class ConstentNew {
     public static final int EXCHANGE_POS=14;
 
     /**
+     * 玩儿家掉线
+     */
+    public static final int DISCONNECT=17;
+
+    /**
      * 摇色子时间
      */
     public static final int SHAKE_DICE=16;
@@ -183,4 +188,5 @@ public class ConstentNew {
     public static final int BANKERCHARGEMONEY=13;
     public static final int GAMERCHARGEMONEY=14;
     public static final int KICKOUTPOP=15;
+    public static final int DISCONNECTPOP=16;
 }

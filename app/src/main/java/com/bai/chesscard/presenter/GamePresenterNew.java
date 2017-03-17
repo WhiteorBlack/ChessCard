@@ -58,11 +58,11 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
     public GamePresenterNew(GameOprateViewNew gameOprateView) {
         this.gameOprateView = gameOprateView;
-        conversation = TIMManager.getInstance().getConversation(TIMConversationType.Group, ConstentNew.GROUP_ID);
-        conversation.disableStorage();
     }
 
     public void startService() {
+        conversation = TIMManager.getInstance().getConversation(TIMConversationType.Group, ConstentNew.GROUP_ID);
+        conversation.disableStorage();
         TIMManager.getInstance().setConnectionListener(this);
         MessageEvent.getInstance().addObserver(this);
     }
@@ -184,6 +184,10 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     public void sendMessage(Bean_Message bean_message) {
         if (bean_message == null)
             return;
+        if (conversation == null) {
+            gameOprateView.toastMsg("获取房间失败,请重新进入");
+            return;
+        }
         String msg = new Gson().toJson(bean_message, Bean_Message.class);
         TIMMessage message = new TIMMessage();
         TIMTextElem elem = new TIMTextElem();
@@ -432,7 +436,7 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
             case ConstentNew.TYPE_BET_MONEY:
                 gameOprateView.endBetMoeny();
                 if (!ConstentNew.IS_BET_MONEY && ConstentNew.IS_GAMER && !ConstentNew.IS_BANKER) {
-                    ConstentNew.IS_BET_MONEY=true;
+                    ConstentNew.IS_BET_MONEY = true;
                     Bean_Message message = new Bean_Message();
                     message.type = ConstentNew.TYPE_BET_MONEY;
                     message.gamerPos = ConstentNew.USERPOS;
@@ -498,6 +502,9 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
                         switch (bean_message.type) {
                             case ConstentNew.TYPE_SITE_DOWN:
+                                if (bean_tableDetial == null) {
+                                    bean_tableDetial = new Bean_TableDetial();
+                                }
                                 ConstentNew.IS_HAS_GAMER[bean_message.gamerPos - 1] = true;
                                 switch (bean_message.gamerPos) {
                                     case 1:
@@ -517,6 +524,10 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                     gameOprateView.setUserInfo(bean_message);
                                 break;
                             case ConstentNew.TYPE_EXIT_GAME:
+                                if (TextUtils.equals(ConstentNew.USER_ID, bean_message.userId)) {
+                                    ConstentNew.IS_BANKER = false;
+                                    ConstentNew.IS_GAMER = false;
+                                }
                                 switch (bean_message.gamerPos) {
                                     case 1:
                                         bean_tableDetial.firstuser = null;
@@ -616,13 +627,20 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 break;
                             case ConstentNew.TYPE_EXIT_GAME: //退出游戏
                                 if (TextUtils.equals(ConstentNew.USER_ID, bean_message.userId)) {
+                                    ConstentNew.IS_BANKER = false;
+                                    ConstentNew.IS_GAMER = false;
                                     gameOprateView.kickOut();
+                                }
+                                if (bean_tableDetial == null) {
+                                    bean_tableDetial = new Bean_TableDetial();
                                 }
                                 switch (bean_message.gamerPos) {
                                     case 1:
+                                        ConstentNew.IS_BANKER = false;
                                         bean_tableDetial.firstuser = null;
                                         break;
                                     case 2:
+
                                         bean_tableDetial.seconduser = null;
                                         break;
                                     case 3:
@@ -717,6 +735,9 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                             case ConstentNew.SHAKE_DICE:
                                 gameOprateView.countDownTime(bean_message.time, bean_message.type);
                                 break;
+                            case ConstentNew.DISCONNECT: //玩家掉线
+                                gameOprateView.disconnect();
+                                break;
                         }
                     }
                 }
@@ -773,9 +794,14 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
 
     @Override
     public void getInGameSuccess(String result) {
+        gameOprateView.getInSuccess();
         bean_tableDetial = new Gson().fromJson(result, Bean_TableDetial.class);
         ConstentNew.GAMEROUND = bean_tableDetial.ver;
         gameOprateView.setTableInfo(bean_tableDetial);
+//        gameOprateView.initTable(bean_tableDetial);
+    }
+
+    public void initTable() {
         gameOprateView.initTable(bean_tableDetial);
     }
 

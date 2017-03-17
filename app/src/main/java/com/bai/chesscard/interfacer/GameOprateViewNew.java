@@ -197,4 +197,11 @@ public interface GameOprateViewNew {
     void betMoneyAble();
 
     void betMoneyDisable();
+
+    void getInSuccess();
+
+    /**
+     * 提示玩儿家已经掉线
+     */
+    void disconnect();
 }

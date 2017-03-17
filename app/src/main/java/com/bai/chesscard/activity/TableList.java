@@ -140,7 +140,7 @@ public class TableList extends BaseActivity {
                 ChessCardApplication.getInstance().playBtnSound();
                 ConstentNew.GROUP_ID = tabList.get(position).groupname;
                 ConstentNew.TABLE_ID = tabList.get(position).id;
-                TIMGroupManager.getInstance().applyJoinGroup(tabList.get(position).groupname, "", new TIMCallBack() {
+                /*TIMGroupManager.getInstance().applyJoinGroup(tabList.get(position).groupname, "", new TIMCallBack() {
                     @Override
                     public void onError(int i, String s) {
                         Tools.debug("onError--" + s + "code--" + i);
@@ -157,7 +157,9 @@ public class TableList extends BaseActivity {
                         startActivity(new Intent(context, GamingActivityNew.class).putExtra("roomId", tabList.get(position).house_id).
                                 putExtra("tableId", tabList.get(position).id).putExtra("point", minPoint));
                     }
-                });
+                });*/
+                startActivity(new Intent(context, GamingActivityNew.class).putExtra("roomId", tabList.get(position).house_id).
+                        putExtra("tableId", tabList.get(position).id).putExtra("point", minPoint));
 
             }
 

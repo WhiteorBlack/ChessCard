@@ -66,7 +66,7 @@ import java.util.regex.Pattern;
  * @todo TODO
  */
 public class Tools {
-    public static boolean DEBUG_FLAG = false;
+    public static boolean DEBUG_FLAG = true;
     public static String DEBUG_TAG = "--YEXIU--";
     private static SimpleDateFormat sf = null;
 
@@ -79,25 +79,23 @@ public class Tools {
 
     public static String getDeviceId(Context context) {
         String deviceId = "";
-        if (deviceId != null && !"".equals(deviceId)) {
-            return deviceId;
-        }
 
-        if (deviceId == null || "".equals(deviceId)) {
+
+        if (TextUtils.isEmpty(deviceId)) {
             try {
                 deviceId = getAndroidId(context);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        if (deviceId == null || "".equals(deviceId)) {
+        if (TextUtils.isEmpty(deviceId)) {
 
-            if (deviceId == null || "".equals(deviceId)) {
+            if (TextUtils.isEmpty(deviceId)) {
                 UUID uuid = UUID.randomUUID();
                 deviceId = uuid.toString().replace("-", "");
             }
         }
-        if (deviceId == null || "".equals(deviceId)) {
+        if (TextUtils.isEmpty(deviceId)) {
             try {
                 deviceId = getLocalMac(context).replace(":", "");
             } catch (Exception e) {
@@ -106,6 +104,7 @@ public class Tools {
         }
         return deviceId;
     }
+
     // Mac地址
     private static String getLocalMac(Context context) {
         WifiManager wifi = (WifiManager) context
@@ -130,8 +129,12 @@ public class Tools {
         return progressDialog;
     }
 
+    private static Toast toast = null;
+
     public static void toastMsgCenter(Context context, String msg) {
-        Toast toast = new Toast(context);
+        if (toast == null) {
+            toast = new Toast(context);
+        }
         View view = LayoutInflater.from(context).inflate(R.layout.toast_textview, null);
         TextView textView = (TextView) view.findViewById(R.id.txt_toast);
         textView.setText(msg);
@@ -142,7 +145,9 @@ public class Tools {
     }
 
     public static void toastMsgCenter(Context context, int msg) {
-        Toast toast = new Toast(context);
+        if (toast == null) {
+            toast = new Toast(context);
+        }
         View view = LayoutInflater.from(context).inflate(R.layout.toast_textview, null);
         TextView textView = (TextView) view.findViewById(R.id.txt_toast);
         textView.setText(context.getResources().getString(R.string.no_network));

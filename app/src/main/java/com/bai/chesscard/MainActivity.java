@@ -31,6 +31,7 @@ import com.tencent.TIMManager;
 import com.tencent.TIMMessage;
 import com.tencent.TIMTextElem;
 import com.tencent.TIMUser;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,6 +78,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer, Observe
             imgLoading.setVisibility(View.VISIBLE);
         }
         progressDilaog = Tools.getDialog(context, "");
+        MobclickAgent.setDebugMode(true);
     }
 
     @Override
@@ -94,6 +96,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer, Observe
         Map<String, String> params = new HashMap<>();
         params.put("username", AppPrefrence.getUserPhone(context));
         params.put("password", AppPrefrence.getUserPwd(context));
+        params.put("deviceid",Tools.getDeviceId(context));
         PostTools.postData(CommonUntilities.MAIN_URL + "login", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {

@@ -7,6 +7,8 @@ import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.umeng.analytics.MobclickAgent;
+
 /**
  * Created by Administrator on 2016/11/3.
  */
@@ -27,12 +29,14 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 //        ChessCardApplication.getInstance().playBack();
+        MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 //        ChessCardApplication.getInstance().stopBack();
+        MobclickAgent.onResume(this);
     }
 
     @Override

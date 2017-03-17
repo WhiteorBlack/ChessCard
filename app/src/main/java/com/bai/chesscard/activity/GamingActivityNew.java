@@ -24,6 +24,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -43,6 +44,7 @@ import com.bai.chesscard.dialog.ChangeBankerPop;
 import com.bai.chesscard.dialog.ChargeBankerNotifyPop;
 import com.bai.chesscard.dialog.ChargeMoneyNotifyPop;
 import com.bai.chesscard.dialog.DiscontectNotifyPop;
+import com.bai.chesscard.dialog.DiscontectPop;
 import com.bai.chesscard.dialog.ExitGamerNotifyPop;
 import com.bai.chesscard.dialog.GamerExitNotifyPop;
 import com.bai.chesscard.dialog.KickOutNotifyPop;
@@ -59,6 +61,7 @@ import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.presenter.GamePresenterNew;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.StrokeTextView;
@@ -230,6 +233,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     private ChargeMoneyNotifyPop chargeMoneyNotify;
     private KickOutNotifyPop kickOutNotifyPop;
     private ChangeBankerPop changeBankerPop;
+    private DiscontectPop discontectPop;
 
     /**
      * dialog
@@ -255,7 +259,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gaming_new);
         gamePresenterNew = new GamePresenterNew(this);
-        gamePresenterNew.startService();
+
         ButterKnife.bind(this);
         initView();
         initData();
@@ -488,7 +492,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 txtTimeStatue.setText("等待中...");
                 break;
             case ConstentNew.SHAKE_DICE:
-                if (!ConstentNew.IS_BET_MONEY){
+                if (!ConstentNew.IS_BET_MONEY) {
                     gamePresenterNew.endCountTime(ConstentNew.TYPE_BET_MONEY);
                 }
                 txtTimeStatue.setText("等待中...");
@@ -1015,6 +1019,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 glideImg(bean_tableDetial.firstuser.user_logo, imgHeadTop);
                 ConstentNew.IS_HAS_GAMER[0] = true;
             } else {
+                ConstentNew.IS_BANKER = false;
                 invisTabelMoney(0);
                 glideImg(R.mipmap.site_empty, imgHeadTop);
                 ConstentNew.IS_HAS_GAMER[0] = false;
@@ -1028,6 +1033,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 ConstentNew.IS_BANKER = false;
             }
         } else {
+            ConstentNew.IS_BANKER = false;
             invisTabelMoney(0);
             glideImg(R.mipmap.site_empty, imgHeadTop);
             ConstentNew.IS_HAS_GAMER[0] = false;
@@ -1138,7 +1144,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void initTable(Bean_TableDetial bean_tableDetial) {
-        if (bean_tableDetial.game_status > 0 || bean_tableDetial.round > 1) {
+        if (bean_tableDetial.game_status > 0 || bean_tableDetial.round > 1 || !TextUtils.isEmpty(bean_tableDetial.lastpai)) { //判断游戏是否正在进行中
             ConstentNew.GAMEROUND = bean_tableDetial.round;
             ConstentNew.CURRENTROUND = bean_tableDetial.round;
             if (bean_tableDetial.game_status == 1) {
@@ -1719,6 +1725,27 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         visBetPoint();
     }
 
+
+    private void resetDisUserStatue() {
+
+        ConstentNew.IS_BANKER = false;
+        ConstentNew.IS_GAMER = false;
+        try {
+            ConstentNew.IS_HAS_GAMER[ConstentNew.USERPOS - 1] = false;
+        } catch (Exception e) {
+        }
+
+        Bean_Message message = new Bean_Message();
+        message.gamerPos = ConstentNew.USERPOS;
+        message.type = ConstentNew.TYPE_EXIT_GAME;
+        message.userId = AppPrefrence.getUserNo(context);
+        gamePresenterNew.sendMessage(message);
+        clearUserInfo(ConstentNew.USERPOS);
+        ConstentNew.USERPOS = -1;
+        visBetPoint();
+    }
+
+
     private void clearUserInfo(int pos) {
         try {
             ConstentNew.IS_HAS_GAMER[pos - 1] = false;
@@ -1759,6 +1786,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case 1:
                 if (TextUtils.equals(bean_message.tableUser.id, ConstentNew.USER_ID)) {
                     imgAdd.setVisibility(View.GONE);
+                    ConstentNew.IS_BANKER = true;
+                } else {
+                    ConstentNew.IS_BANKER = false;
                 }
                 glideImg(bean_message.tableUser.user_logo, imgHeadTop);
                 txtBankerMoney.setVisibility(View.VISIBLE);
@@ -1767,6 +1797,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case 2:
                 if (TextUtils.equals(bean_message.tableUser.id, ConstentNew.USER_ID)) {
                     imgAdd.setVisibility(View.VISIBLE);
+                    ConstentNew.IS_BANKER = false;
+                    ConstentNew.IS_GAMER = true;
                 }
                 glideImg(bean_message.tableUser.user_logo, imgHeadLeft);
                 txtLeftMoney.setVisibility(View.VISIBLE);
@@ -1775,6 +1807,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case 3:
                 if (TextUtils.equals(bean_message.tableUser.id, ConstentNew.USER_ID)) {
                     imgAdd.setVisibility(View.VISIBLE);
+                    ConstentNew.IS_BANKER = false;
+                    ConstentNew.IS_GAMER = true;
                 }
                 glideImg(bean_message.tableUser.user_logo, imgHeadBottom);
                 txtMidMoney.setVisibility(View.VISIBLE);
@@ -1783,6 +1817,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             case 4:
                 if (TextUtils.equals(bean_message.tableUser.id, ConstentNew.USER_ID)) {
                     imgAdd.setVisibility(View.VISIBLE);
+                    ConstentNew.IS_BANKER = false;
+                    ConstentNew.IS_GAMER = true;
                 }
                 glideImg(bean_message.tableUser.user_logo, imgHeadRight);
                 txtRightMoney.setVisibility(View.VISIBLE);
@@ -1854,6 +1890,8 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                     ConstentNew.IS_GAMER = true;
                     ConstentNew.USERPOS = 1;
                     invisBetPoint();
+                } else {
+                    ConstentNew.IS_BANKER = false;
                 }
                 glideImg(user.user_logo, imgHeadTop);
                 txtBankerMoney.setVisibility(View.VISIBLE);
@@ -1945,10 +1983,12 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void clearRenewPop() {
-        if (lackBankerNotifyPop != null)
-            lackBankerNotifyPop.dismiss();
-        if (lackMoneyNotifyPop != null)
-            lackMoneyNotifyPop.dismiss();
+        if (lackBankerNotifyPop != null) {
+            dismissWithCheckPop(lackBankerNotifyPop);
+        }
+        if (lackMoneyNotifyPop != null) {
+            dismissWithCheckPop(lackMoneyNotifyPop);
+        }
     }
 
     @Override
@@ -1976,6 +2016,40 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     }
 
     @Override
+    public void getInSuccess() {
+        TIMGroupManager.getInstance().applyJoinGroup(ConstentNew.GROUP_ID, "", new TIMCallBack() {
+            @Override
+            public void onError(int i, String s) {
+                if (i != 10013 && i != 10021) {
+                    toastMsg("获取房间数据失败,请重试");
+                } else if (i == 10013) {
+                    gamePresenterNew.startService();
+                    gamePresenterNew.initTable();
+                }
+
+            }
+
+            @Override
+            public void onSuccess() {
+                gamePresenterNew.startService();
+                gamePresenterNew.initTable();
+            }
+        });
+    }
+
+    @Override
+    public void disconnect() {
+        if (discontectPop==null){
+            discontectPop=new DiscontectPop(context);
+            discontectPop.setPopInterfacer(this,ConstentNew.DISCONNECTPOP);
+        }
+        discontectPop.setNotify("你已经掉线,请检查网络后重试!");
+        discontectPop.showPop(txtMoney);
+        gamePresenterNew.resetUserInfo(ConstentNew.USERPOS);
+        resetDisUserStatue();
+    }
+
+    @Override
     public void OnCancle(int flag) {
         switch (flag) {
             case ConstentNew.SETTING_POP:
@@ -1983,6 +2057,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 break;
             case ConstentNew.PERSONAL_POP:
                 personalPop = null;
+                break;
+            case ConstentNew.LACKBANKERPOP:
+                dismissWithCheckPop(lackBankerNotifyPop);
                 break;
         }
     }
@@ -2361,5 +2438,46 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
             dialog = null;
         }
     }
+
+    public void dismissWithCheckPop(PopupWindow dialog) {
+        if (dialog != null) {
+            if (dialog.isShowing()) {
+
+                //get the Context object that was used to great the dialog
+
+                // if the Context used here was an activity AND it hasn't been finished or destroyed
+                // then dismiss it
+
+                // Api >=17
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    if (!isFinishing() && !isDestroyed()) {
+                        dismissWithTryCatchPop(dialog);
+                    }
+                } else {
+
+                    // Api < 17. Unfortunately cannot check for isDestroyed()
+                    if (!((Activity) context).isFinishing()) {
+                        dismissWithTryCatchPop(dialog);
+                    }
+                }
+            } else
+                // if the Context used wasn't an Activity, then dismiss it too
+                dismissWithTryCatchPop(dialog);
+            dialog = null;
+        }
+    }
+
+    public void dismissWithTryCatchPop(PopupWindow dialog) {
+        try {
+            dialog.dismiss();
+        } catch (final IllegalArgumentException e) {
+            // Do nothing.
+        } catch (final Exception e) {
+            // Do nothing.
+        } finally {
+            dialog = null;
+        }
+    }
+
 
 }

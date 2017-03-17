@@ -98,7 +98,9 @@ public class LackBankerNotifyPop extends BasePopupwind {
 
             @Override
             public void onFinish() {
-                dismiss();
+                if (popInterfacer != null) {
+                    popInterfacer.OnCancle(flag);
+                }
 
             }
         }.start();
@@ -114,7 +116,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
                     Tools.toastMsgCenter(context, "账户余额不足");
                     return;
                 }
-                if (isCharge){
+                if (isCharge) {
                     return;
                 }
                 isCharge = true;
@@ -130,7 +132,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
                 isCharge = true;
                 downTable();
                 break;
-            case R.id.img_add:
+           /* case R.id.img_add:
                 if (AppPrefrence.getAmount(context) < ConstentNew.BANKER_LIMIT_MONEY) {
                     Tools.toastMsgCenter(context, "账户余额不足");
                     return;
@@ -138,7 +140,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
                 AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - ConstentNew.BANKER_LIMIT_MONEY);
                 money += ConstentNew.BANKER_LIMIT_MONEY;
                 edtMoney.setText(money + "");
-                break;
+                break;*/
         }
 
     }
@@ -171,7 +173,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
                         popInterfacer.OnConfirm(flag, bundle);
 //                    dismiss();
                 } else {
-                    isCharge=false;
+                    isCharge = false;
                     Tools.toastMsgCenter(context, siteTable.msg);
                 }
 
@@ -183,7 +185,7 @@ public class LackBankerNotifyPop extends BasePopupwind {
         Map<String, String> params = new HashMap<>();
         params.put("table_id", ConstentNew.TABLE_ID);
         params.put("token", CommonUntilities.TOKEN);
-        params.put("type","3");
+        params.put("type", "3");
         PostTools.postData(CommonUntilities.MAIN_URL + "UserSiteUp", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
