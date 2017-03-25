@@ -736,7 +736,28 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 gameOprateView.countDownTime(bean_message.time, bean_message.type);
                                 break;
                             case ConstentNew.DISCONNECT: //玩家掉线
-                                gameOprateView.disconnect();
+                                if (TextUtils.equals(ConstentNew.USER_ID, bean_message.userId)) {
+                                    ConstentNew.USERPOS=bean_message.gamerPos;
+                                    gameOprateView.disconnect();
+                                }else {
+                                    if(TextUtils.equals(bean_message.userId,bean_tableDetial.firstuser.id)){
+                                        //掉线的是庄家
+                                        bean_tableDetial.firstuser=null;
+                                    }
+                                    if(TextUtils.equals(bean_message.userId,bean_tableDetial.seconduser.id)){
+                                        //掉线的是庄家
+                                        bean_tableDetial.seconduser=null;
+                                    }
+                                    if(TextUtils.equals(bean_message.userId,bean_tableDetial.thirduser.id)){
+                                        //掉线的是庄家
+                                        bean_tableDetial.thirduser=null;
+                                    }
+                                    if(TextUtils.equals(bean_message.userId,bean_tableDetial.fouruser.id)){
+                                        //掉线的是庄家
+                                        bean_tableDetial.fouruser=null;
+                                    }
+                                    gameOprateView.setTableInfo(bean_tableDetial);
+                                }
                                 break;
                         }
                     }

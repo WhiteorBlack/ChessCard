@@ -36,4 +36,11 @@ public class PostTools {
             OkHttpUtils.postFile().url(url).file(file).params(params).build().execute(postCallBack);
         }
     }
+
+    public static void getData(final String url, Map<String, String> params, final PostCallBack postCallBack) {
+        if (params == null)
+            params = new HashMap<>();
+        params.put("timestamp",System.currentTimeMillis()+"");
+        OkHttpUtils.get().url(url).params(params).addHeader("sign", Tools.get32MD5Str(CommonUntilities.TOKEN)).build().execute(postCallBack);
+    }
 }

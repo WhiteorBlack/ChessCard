@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +23,7 @@ import com.bai.chesscard.R;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.BeanCharge;
 import com.bai.chesscard.bean.Bean_Avatar;
+import com.bai.chesscard.bean.Bean_GetVersion;
 import com.bai.chesscard.bean.Bean_Notify;
 import com.bai.chesscard.bean.Bean_Room;
 import com.bai.chesscard.dialog.EditNamePop;
@@ -28,11 +31,13 @@ import com.bai.chesscard.dialog.HelpPop;
 import com.bai.chesscard.dialog.NotifyDetialPop;
 import com.bai.chesscard.dialog.PersonalPop;
 import com.bai.chesscard.dialog.SettingPop;
+import com.bai.chesscard.dialog.UpdatePop;
 import com.bai.chesscard.interfacer.PopInterfacer;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.service.MessageEvent;
 import com.bai.chesscard.utils.AppPrefrence;
 import com.bai.chesscard.utils.CommonUntilities;
+import com.bai.chesscard.utils.Constent;
 import com.bai.chesscard.utils.ConstentNew;
 import com.bai.chesscard.utils.Tools;
 import com.bai.chesscard.widget.BaseScollTextView;
@@ -58,6 +63,7 @@ import java.util.Observer;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Call;
 
 /**
  * Created by Administrator on 2016/11/8.
@@ -108,8 +114,11 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
     private List<Bean_Room.Room> roomList;
     private NotifyDetialPop notifyDetialPop;
 
+    private UpdatePop updatePop;
+
     private int count = 0;
     private ProgressDialog progressDialog;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,6 +129,53 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
         initData();
         MessageEvent.getInstance().addObserver(this);
         ChessCardApplication.getInstance().playBack();
+        getAppVersion();
+    }
+
+
+    private String downUrl = "";
+
+    private void getAppVersion() {
+        PostTools.getData(CommonUntilities.MAIN_URL + "GetAppVersion", null, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                Tools.debug("getVersion--" + response);
+                if (!TextUtils.isEmpty(response)) {
+                    Bean_GetVersion bean_getVersion = new Gson().fromJson(response, Bean_GetVersion.class);
+                    if (bean_getVersion != null) {
+                        if (bean_getVersion.appId > getVersionCode(context)) {
+                            downUrl = bean_getVersion.appDownUrl;
+                            if (updatePop == null) {
+                                updatePop = new UpdatePop(context);
+                                updatePop.setPopInterfacer(Home.this, 5);
+                            }
+                            updatePop.showPop(txtHelp);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Call call, Exception e) {
+                super.onError(call, e);
+                Tools.debug("onError--" + e.toString());
+            }
+        });
+    }
+
+
+    public static int getVersionCode(Context context) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(
+                    context.getPackageName(), 0);
+            return packageInfo.versionCode;
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     private void initData() {
@@ -325,6 +381,9 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
             case 4:
                 notifyDetialPop = null;
                 break;
+            case 5:
+                updatePop = null;
+                break;
         }
     }
 
@@ -391,6 +450,16 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                     personalPop.setName(bundle.getString("name"));
                 txtUserName.setText(bundle.getString("name"));
                 break;
+            case 5:
+                if (updatePop != null) {
+                    updatePop.dismiss();
+                }
+                Intent intent = new Intent();
+                intent.setAction("android.intent.action.VIEW");
+                Uri downUri = Uri.parse(downUrl);
+                intent.setData(downUri);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -436,8 +505,8 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                     AppPrefrence.setAvatar(context, baseBean.msg);
 
                     TIMFriendshipManager.getInstance().setFaceUrl(baseBean.msg, null);
-                }else
-                Tools.toastMsgCenter(context, baseBean.msg);
+                } else
+                    Tools.toastMsgCenter(context, baseBean.msg);
             }
         });
     }
@@ -463,7 +532,7 @@ public class Home extends TakePhotoActivity implements PopInterfacer, Observer {
                                 @Override
                                 public void run() {
                                     AppPrefrence.setAmount(context, beanCharge.amount);
-                                    txtUserMoney.setText(beanCharge.amount+"");
+                                    txtUserMoney.setText(beanCharge.amount + "");
                                 }
                             });
                         }

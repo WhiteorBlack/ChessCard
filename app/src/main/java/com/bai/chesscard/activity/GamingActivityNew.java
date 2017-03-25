@@ -1738,7 +1738,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
         Bean_Message message = new Bean_Message();
         message.gamerPos = ConstentNew.USERPOS;
         message.type = ConstentNew.TYPE_EXIT_GAME;
-        message.userId = AppPrefrence.getUserNo(context);
+        message.userId = ConstentNew.USER_ID;
         gamePresenterNew.sendMessage(message);
         clearUserInfo(ConstentNew.USERPOS);
         ConstentNew.USERPOS = -1;
