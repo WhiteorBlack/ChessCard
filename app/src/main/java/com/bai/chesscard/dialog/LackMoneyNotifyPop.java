@@ -85,7 +85,12 @@ public class LackMoneyNotifyPop extends BasePopupwind {
 
             @Override
             public void onFinish() {
-                dismiss();
+                if (popInterfacer != null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("type", 5);
+                    popInterfacer.OnConfirm(flag, bundle);
+                }
+//                dismiss();
 //                if (!isCharge)
 //                    downTable();
             }
@@ -152,7 +157,7 @@ public class LackMoneyNotifyPop extends BasePopupwind {
                         popInterfacer.OnConfirm(flag, bundle);
                     dismiss();
                 } else {
-                    isCharge=false;
+                    isCharge = false;
                     Tools.toastMsgCenter(context, siteTable.msg);
                 }
             }

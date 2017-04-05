@@ -737,24 +737,27 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
                                 break;
                             case ConstentNew.DISCONNECT: //玩家掉线
                                 if (TextUtils.equals(ConstentNew.USER_ID, bean_message.userId)) {
-                                    ConstentNew.USERPOS=bean_message.gamerPos;
+                                    ConstentNew.USERPOS = bean_message.gamerPos;
                                     gameOprateView.disconnect();
-                                }else {
-                                    if(TextUtils.equals(bean_message.userId,bean_tableDetial.firstuser.id)){
-                                        //掉线的是庄家
-                                        bean_tableDetial.firstuser=null;
+                                } else {
+                                    if (bean_tableDetial == null) {
+                                        return;
                                     }
-                                    if(TextUtils.equals(bean_message.userId,bean_tableDetial.seconduser.id)){
+                                    if (bean_tableDetial.firstuser != null && TextUtils.equals(bean_message.userId, bean_tableDetial.firstuser.id)) {
                                         //掉线的是庄家
-                                        bean_tableDetial.seconduser=null;
+                                        bean_tableDetial.firstuser = null;
                                     }
-                                    if(TextUtils.equals(bean_message.userId,bean_tableDetial.thirduser.id)){
+                                    if (bean_tableDetial.seconduser != null && TextUtils.equals(bean_message.userId, bean_tableDetial.seconduser.id)) {
                                         //掉线的是庄家
-                                        bean_tableDetial.thirduser=null;
+                                        bean_tableDetial.seconduser = null;
                                     }
-                                    if(TextUtils.equals(bean_message.userId,bean_tableDetial.fouruser.id)){
+                                    if (bean_tableDetial.thirduser != null && TextUtils.equals(bean_message.userId, bean_tableDetial.thirduser.id)) {
                                         //掉线的是庄家
-                                        bean_tableDetial.fouruser=null;
+                                        bean_tableDetial.thirduser = null;
+                                    }
+                                    if (bean_tableDetial.fouruser != null && TextUtils.equals(bean_message.userId, bean_tableDetial.fouruser.id)) {
+                                        //掉线的是庄家
+                                        bean_tableDetial.fouruser = null;
                                     }
                                     gameOprateView.setTableInfo(bean_tableDetial);
                                 }
@@ -770,17 +773,17 @@ public class GamePresenterNew implements Observer, TIMConnListener, GameDataList
     public void updateTableMoney() {
         switch (ConstentNew.USERPOS) {
             case 2:
-                if (TextUtils.equals(ConstentNew.USER_ID, bean_tableDetial.seconduser.id)) {
+                if (bean_tableDetial.seconduser != null && TextUtils.equals(ConstentNew.USER_ID, bean_tableDetial.seconduser.id)) {
                     bean_tableDetial.seconduser.lookmonery = ConstentNew.GAMER_TABLE_MONEY;
                 }
                 break;
             case 3:
-                if (TextUtils.equals(ConstentNew.USER_ID, bean_tableDetial.thirduser.id)) {
+                if (bean_tableDetial.thirduser != null && TextUtils.equals(ConstentNew.USER_ID, bean_tableDetial.thirduser.id)) {
                     bean_tableDetial.thirduser.lookmonery = ConstentNew.GAMER_TABLE_MONEY;
                 }
                 break;
             case 4:
-                if (TextUtils.equals(ConstentNew.USER_ID, bean_tableDetial.fouruser.id)) {
+                if (bean_tableDetial.firstuser != null && TextUtils.equals(ConstentNew.USER_ID, bean_tableDetial.fouruser.id)) {
                     bean_tableDetial.fouruser.lookmonery = ConstentNew.GAMER_TABLE_MONEY;
                 }
                 break;

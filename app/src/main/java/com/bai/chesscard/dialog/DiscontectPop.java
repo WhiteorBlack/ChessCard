@@ -56,7 +56,9 @@ public class DiscontectPop extends BasePopupwind {
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        dismiss();
+        if (popInterfacer != null) {
+            popInterfacer.OnConfirm(flag, null);
+        }
     }
 
 }

@@ -6,9 +6,8 @@ android {
         config {
             keyAlias 'chesscard'
             keyPassword 'chesscard2016'
-//            storeFile file('F:\\myProject\\ChessCard\\chessCard.jks')
-            storeFile file('C:\\Users\\41508\\Documents\\MyProject\\ChessCard\\chessCard.jks')
-//            storeFile file('E:\\androidApp\\ChessCard\\chessCard.jks')
+//            storeFile file('C:\\Users\\41508\\Documents\\MyProject\\ChessCard\\chessCard.jks')
+            storeFile file('E:\\androidApp\\ChessCard\\chessCard.jks')
             storePassword 'chesscard2016'
         }
     }
@@ -18,8 +17,8 @@ android {
         applicationId "com.bai.chesscard"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 3
-        versionName "1.2"
+        versionCode 5
+        versionName "1.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

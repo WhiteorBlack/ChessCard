@@ -689,7 +689,7 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
     @Override
     public void renewMoneyBanker(final int time) {
         if (lackBankerNotifyPop == null)
-            lackBankerNotifyPop = new LackBankerNotifyPop(GamingActivityNew.this);
+            lackBankerNotifyPop = new LackBankerNotifyPop(this);
         lackBankerNotifyPop.setCountTime(time);
         lackBankerNotifyPop.setTitle("庄家续庄");
         lackBankerNotifyPop.setPopInterfacer(GamingActivityNew.this, ConstentNew.LACKBANKERPOP);
@@ -1651,6 +1651,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 if (bundle.getInt("type") == 2) {
                     resetUserStatue();
                 }
+                if (bundle.getInt("type") == 5) {
+                    dismissWithCheckPop(lackMoneyNotifyPop);
+                }
                 break;
             case ConstentNew.BANKERNOTIFYPOP:
                 if (bundle == null)
@@ -1683,6 +1686,9 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 if (kickOutNotifyPop != null)
                     kickOutNotifyPop.dismiss();
                 finish();
+                break;
+            case ConstentNew.DISCONNECTPOP:
+                dismissWithCheckPop(discontectPop);
                 break;
         }
     }
@@ -2039,12 +2045,25 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
 
     @Override
     public void disconnect() {
-        if (discontectPop==null){
-            discontectPop=new DiscontectPop(context);
-            discontectPop.setPopInterfacer(this,ConstentNew.DISCONNECTPOP);
+        if (discontectPop == null) {
+            discontectPop = new DiscontectPop(context);
+            discontectPop.setPopInterfacer(this, ConstentNew.DISCONNECTPOP);
         }
         discontectPop.setNotify("你已经掉线,请检查网络后重试!");
-        discontectPop.showPop(txtMoney);
+        if (this != null && !isFinishing()) {
+            discontectPop.showPop(txtMoney);
+        } else new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        discontectPop.showPop(txtMoney);
+                    }
+                });
+            }
+        }, 300);
+
         gamePresenterNew.resetUserInfo(ConstentNew.USERPOS);
         resetDisUserStatue();
     }

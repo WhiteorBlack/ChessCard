@@ -48,19 +48,20 @@ public class LackBankerNotifyPop extends BasePopupwind {
     }
 
     private void initView() {
-        if (view == null)
+        if (view == null) {
             view = LayoutInflater.from(context).inflate(R.layout.lack_banker_pop, null);
-        view.findViewById(R.id.img_confirm).setOnClickListener(this);
-        view.findViewById(R.id.img_exit).setOnClickListener(this);
-        txtTitle = (TextView) view.findViewById(R.id.txt_title);
-        txtContent = (TextView) view.findViewById(R.id.txt_content);
+            view.findViewById(R.id.img_confirm).setOnClickListener(this);
+            view.findViewById(R.id.img_exit).setOnClickListener(this);
+            txtTitle = (TextView) view.findViewById(R.id.txt_title);
+            txtContent = (TextView) view.findViewById(R.id.txt_content);
 
-        edtMoney = (TextView) view.findViewById(R.id.edt_money);
+            edtMoney = (TextView) view.findViewById(R.id.edt_money);
 
-        view.findViewById(R.id.btn_add).setOnClickListener(this);
-        view.findViewById(R.id.btn_add).setVisibility(View.INVISIBLE);
+            view.findViewById(R.id.btn_add).setOnClickListener(this);
+            view.findViewById(R.id.btn_add).setVisibility(View.INVISIBLE);
+        }
+
         this.setContentView(view);
-        this.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         this.setFocusable(true);
         this.setOutsideTouchable(true);
     }
@@ -132,15 +133,6 @@ public class LackBankerNotifyPop extends BasePopupwind {
                 isCharge = true;
                 downTable();
                 break;
-           /* case R.id.img_add:
-                if (AppPrefrence.getAmount(context) < ConstentNew.BANKER_LIMIT_MONEY) {
-                    Tools.toastMsgCenter(context, "账户余额不足");
-                    return;
-                }
-                AppPrefrence.setAmount(context, AppPrefrence.getAmount(context) - ConstentNew.BANKER_LIMIT_MONEY);
-                money += ConstentNew.BANKER_LIMIT_MONEY;
-                edtMoney.setText(money + "");
-                break;*/
         }
 
     }

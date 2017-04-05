@@ -1,7 +1,11 @@
 package com.bai.chesscard;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -13,11 +17,13 @@ import android.widget.TextView;
 import com.bai.chesscard.activity.Home;
 import com.bai.chesscard.async.PostTools;
 import com.bai.chesscard.bean.BaseBean;
+import com.bai.chesscard.bean.Bean_GetVersion;
 import com.bai.chesscard.bean.Bean_Login;
 import com.bai.chesscard.dialog.FindPwdPop;
 import com.bai.chesscard.dialog.InputPwdPop;
 import com.bai.chesscard.dialog.LoginPop;
 import com.bai.chesscard.dialog.RegisterPop;
+import com.bai.chesscard.dialog.UpdatePop;
 import com.bai.chesscard.interfacer.PopInterfacer;
 import com.bai.chesscard.interfacer.PostCallBack;
 import com.bai.chesscard.service.MessageEvent;
@@ -66,6 +72,8 @@ public class MainActivity extends BaseActivity implements PopInterfacer, Observe
     private FindPwdPop findPwdPop;
     private FrameLayout flTEst;
 
+    private UpdatePop updatePop;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
@@ -74,11 +82,57 @@ public class MainActivity extends BaseActivity implements PopInterfacer, Observe
             txtLoading.setVisibility(View.VISIBLE);
             imgLoading.setVisibility(View.GONE);
         } else {
+            getAppVersion();
             txtLoading.setVisibility(View.GONE);
             imgLoading.setVisibility(View.VISIBLE);
         }
         progressDilaog = Tools.getDialog(context, "");
         MobclickAgent.setDebugMode(true);
+    }
+
+    private String downUrl = "";
+
+    private void getAppVersion() {
+        PostTools.getData(CommonUntilities.MAIN_URL + "GetAppVersion", null, new PostCallBack() {
+            @Override
+            public void onResponse(String response) {
+                super.onResponse(response);
+                Tools.debug("getVersion--" + response);
+                if (!TextUtils.isEmpty(response)) {
+                    Bean_GetVersion bean_getVersion = new Gson().fromJson(response, Bean_GetVersion.class);
+                    if (bean_getVersion != null) {
+                        if (bean_getVersion.appId > getVersionCode(context)) {
+                            downUrl = bean_getVersion.appDownUrl;
+                            if (updatePop == null) {
+                                updatePop = new UpdatePop(context);
+                                updatePop.setPopInterfacer(MainActivity.this, 5);
+                            }
+                            updatePop.showPop(txtLoading);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Call call, Exception e) {
+                super.onError(call, e);
+                Tools.debug("onError--" + e.toString());
+            }
+        });
+    }
+
+
+    public static int getVersionCode(Context context) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(
+                    context.getPackageName(), 0);
+            return packageInfo.versionCode;
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     @Override
@@ -96,7 +150,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer, Observe
         Map<String, String> params = new HashMap<>();
         params.put("username", AppPrefrence.getUserPhone(context));
         params.put("password", AppPrefrence.getUserPwd(context));
-        params.put("deviceid",Tools.getDeviceId(context));
+        params.put("deviceid", Tools.getDeviceId(context));
         PostTools.postData(CommonUntilities.MAIN_URL + "login", params, new PostCallBack() {
             @Override
             public void onResponse(String response) {
@@ -106,7 +160,7 @@ public class MainActivity extends BaseActivity implements PopInterfacer, Observe
                     return;
                 }
                 final Bean_Login login = new Gson().fromJson(response, Bean_Login.class);
-                if (login.id ==1) {
+                if (login.id == 1) {
                     CommonUntilities.TOKEN = login.result.token;
                     TIMUser user = new TIMUser();
                     user.setAccountType(CommonUntilities.ACCOUNTTYPE);
@@ -133,7 +187,18 @@ public class MainActivity extends BaseActivity implements PopInterfacer, Observe
                     AppPrefrence.setUserName(context, login.result.real_name);
                     startActivity(new Intent(context, Home.class));
                     finish();
-                } else Tools.toastMsgCenter(context, login.msg);
+                } else {
+                    getAppVersion();
+                    Tools.toastMsgCenter(context, login.msg);
+                    imgLoading.setVisibility(View.VISIBLE);
+                    txtLoading.setVisibility(View.GONE);
+                    AppPrefrence.setIsLogin(context, false);
+                    AppPrefrence.setToken(context, "");
+                    AppPrefrence.setAvatar(context, "");
+                    AppPrefrence.setAmount(context, 0);
+                    AppPrefrence.setUserNo(context, "");
+                    AppPrefrence.setUserName(context, "");
+                }
 
             }
 
@@ -216,6 +281,16 @@ public class MainActivity extends BaseActivity implements PopInterfacer, Observe
             case 4:
                 pwd = bundle.getString("pwd");
                 findPwd();
+                break;
+            case 5:
+                if (updatePop != null) {
+                    updatePop.dismiss();
+                }
+                Intent intent = new Intent();
+                intent.setAction("android.intent.action.VIEW");
+                Uri downUri = Uri.parse(downUrl);
+                intent.setData(downUri);
+                startActivity(intent);
                 break;
         }
     }
@@ -341,7 +416,9 @@ public class MainActivity extends BaseActivity implements PopInterfacer, Observe
                     });
 
                     dismissPop();
-                } else Tools.toastMsgCenter(context, login.msg);
+                } else {
+                    Tools.toastMsgCenter(context, login.msg);
+                }
 
             }
         });
