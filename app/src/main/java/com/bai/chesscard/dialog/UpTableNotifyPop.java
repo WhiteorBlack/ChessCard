@@ -120,7 +120,7 @@ public class UpTableNotifyPop extends BasePopupwind {
                     ConstentNew.IS_BANKER = false;
                     ConstentNew.IS_GAMER = true;
                     ConstentNew.USERPOS = pos;
-                    dismiss();
+
                 } else {
                     bundle.putBoolean("result", false);
                     Tools.toastMsgCenter(context, siteTable.msg);

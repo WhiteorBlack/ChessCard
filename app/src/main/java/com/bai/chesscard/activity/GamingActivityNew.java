@@ -1573,8 +1573,10 @@ public class GamingActivityNew extends BaseActivity implements GameOprateViewNew
                 imgAdd.setVisibility(View.GONE);
                 break;
             case ConstentNew.UPTABLE_POP:
-                if (bundle == null || !bundle.getBoolean("result"))
+                if (bundle == null || !bundle.getBoolean("result")) {
                     return;
+                }
+                dismissWithCheckPop(upTableNotifyPop);
                 Bean_Message messageTable = new Bean_Message();
                 messageTable.gamerPos = ConstentNew.USERPOS;
                 messageTable.type = ConstentNew.TYPE_SITE_DOWN;
